@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.HealDiaryMapper">
+
+    <!-- ==================== ResultMap ==================== -->
+    <resultMap id="HealDiaryMap" type="com.nwpu.healthsystem.backend.entity.scale.HealDiary">
+        <id     column="id"                 property="id"/>
+        <result column="user_id"            property="userId"/>
+        <result column="content"            property="content"/>
+        <result column="mood_score"         property="moodScore"/>
+        <result column="mood_label"         property="moodLabel"/>
+        <result column="image_urls"         property="imageUrls"/>
+        <result column="is_private"         property="isPrivate"/>
+        <result column="add_timestamp_mils" property="addTimestampMils"/>
+    </resultMap>
+
+    <!-- ==================== 新增日记 ==================== -->
+    <insert id="insertDiary" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO heal_diary (
+            user_id, content, mood_score, mood_label,
+            image_urls, is_private
+        ) VALUES (
+            #{userId}, #{content}, #{moodScore}, #{moodLabel},
+            #{imageUrls}, #{isPrivate}
+        )
+    </insert>
+
+    <!-- ==================== 更新日记 ==================== -->
+    <update id="updateDiary">
+        UPDATE heal_diary
+        SET
+            content    = #{content},
+            mood_score = #{moodScore},
+            mood_label = #{moodLabel},
+            image_urls = #{imageUrls}
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </update>
+
+    <!-- ==================== 删除日记（仅本人） ==================== -->
+    <delete id="deleteDiary">
+        DELETE FROM heal_diary
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </delete>
+
+    <!-- ==================== 查询用户全部日记（时间降序） ==================== -->
+    <select id="listDiariesByUser" resultMap="HealDiaryMap">
+        SELECT id, user_id, content, mood_score, mood_label,
+               image_urls, is_private, add_timestamp_mils
+        FROM heal_diary
+        WHERE user_id = #{userId}
+        ORDER BY id DESC
+    </select>
+
+    <!-- ==================== 根据ID查询单条日记 ==================== -->
+    <select id="getDiaryById" resultMap="HealDiaryMap">
+        SELECT id, user_id, content, mood_score, mood_label,
+               image_urls, is_private, add_timestamp_mils
+        FROM heal_diary
+        WHERE id = #{id}
+    </select>
+
+</mapper>

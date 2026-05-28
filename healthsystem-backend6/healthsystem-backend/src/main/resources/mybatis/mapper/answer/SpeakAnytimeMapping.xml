@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.answer.SpeakAnytimeMapper">
+    <!-- TODO -->
+    <insert id="insertSpeakAnytime" >
+        insert into speak_anytime
+        (user_id,speech_url)
+        values
+        (#{userId},#{speechUrl})
+    </insert>
+
+
+
+    <select id="getSpeakAnytimeListByPage" resultType="com.nwpu.healthsystem.backend.entity.answer.SpeakAnytime">
+        select *
+        from speak_anytime
+        where user_id=#{userId}
+        ORDER BY id DESC
+    </select>
+
+
+    <update id="updateInference">
+        update speak_anytime
+        set inference=#{inference},infer_cost=#{inferCost}
+        where speech_url = #{speechUrl}
+    </update>
+
+
+    <select id="getInferenceByDate" resultType="com.nwpu.healthsystem.backend.common.dto.echarts.Inference">
+        select log_date, log_time, inference, infer_cost
+        from speak_anytime
+        where user_id=#{userId} and log_date=#{date}
+    </select>
+</mapper>

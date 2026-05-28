@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PHQ9Chart</title>
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+<body>
+
+<div>
+    <div class="title">
+        最近3次的抑郁量表测试结果
+    </div>
+
+    <div class="dr-wrapper">
+        <!--PHQ9 图表-->
+        <div class="PHQ9" ref="PHQ9" id="PHQ9"></div>
+    </div>
+
+    <p class="note">
+        注：
+        <b style="color: rgb(110, 210, 100)">绿色</b>标识分数<b>最大值</b>，
+        <b style="color: rgb(85, 156, 255)">蓝色</b>标识分数<b>最小值</b>，
+        <b>虚线</b>标识分数<b>平均值</b>
+    </p>
+
+    <div class="box-card">
+        <p>量表测试结果<b>不是</b>专业医生的诊断结果。如果测试结果不甚良好，您<b>不必慌张</b>，我们建议您积极调节心态并及时寻求医生或心理医师的帮助。
+        </p>
+    </div>
+
+    <table border="1" class="table">
+        <tr>
+            <th>分数段</th>
+            <th>分数说明</th>
+            <th>医生建议</th>
+        </tr>
+        <tr>
+            <td>0-52</td>
+            <td>没有抑郁症</td>
+            <td>注意自我保护</td>
+        </tr>
+        <tr>
+            <td>53-62</td>
+            <td>可能有轻微抑郁症</td>
+            <td>建议咨询心理医生或心理医学工作者</td>
+        </tr>
+        <tr>
+            <td>63-72</td>
+            <td>可能有中度抑郁症</td>
+            <td>最好咨询心理医生或心理医学工作者</td>
+        </tr>
+        <tr>
+            <td>73-80</td>
+            <td>可能有重度抑郁症</td>
+            <td>一定要看心理医生或精神科医生</td>
+        </tr>
+    </table>
+
+
+</div>
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<!-- 引入myjs -->
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use(['jquery', 'echarts'], function() {
+        var $ = layui.jquery;
+        var echarts = layui.echarts;
+
+        // userId需要确定
+        userId = parent.userInfo.userId;
+        // 引入token
+        let token = getToken();
+
+
+        currentPage= 1,
+        pageSize =5,
+        charts='',
+
+        //数据类型为数组
+        phq9Data= [],
+        logDate= [],
+        score= [],
+
+        console.log(this.currentPage);
+        console.log(currentPage);
+        console.log(window.currentPage);
+        console.log(this);
+
+        function getData(){
+            // 方法里面用 this 可以直接取到 全局变量， 当然和调用者有关系，
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: "/doctor/getph9list?currentPage=" + this.currentPage+"&pageSize="+this.pageSize +"&userId=" + this.userId,
+                headers: {
+                    Authorization: token
+                },
+                contentType: "application/json;charset=UTF-8",//指定消息请求类型
+                success: function (data,status) {
+                    if(data.code == 200) {
+                        processData(data);
+                    } else if(data.code == 401) {
+                        reLoginForShiroExecption();
+                    } else {
+                        layer.alert('错误代码：' + data.code + ', 请联系后台管理员');
+                    }
+
+                }
+            });
+        }
+        function processData(data){
+            console.log(data)
+            //处理get到的数据
+            this.phq9Data = data.result.data
+
+            console.log(this.phq9Data);
+
+            //对日期进行升序排列
+            this.phq9Data.sort(function (a, b) {
+                return Date.parse(a.logDate) - Date.parse(b.logDate);
+            });
+
+            for (var i = 0, l = this.phq9Data.length; i < l; i++) {
+                this.logDate.push(this.phq9Data[i].logDate.slice(-5));
+                this.score.push(this.phq9Data[i].score);
+            }
+
+            console.log(this.logDate);
+            console.log(this.score);
+            drawScore();
+        }
+        function drawScore(){
+            console.log('echarts');
+            this.charts = echarts.init(document.getElementById('PHQ9'), 'walden');
+            console.log(charts);
+            // 绘图
+            this.charts.setOption({
+
+                // 线的颜色，默认是红色
+                color: ["white"],
+
+                //提示框部分，就是鼠标放上去能显示数据的透明框
+                tooltip: {
+                    trigger: 'axis',
+                    triggerOn: 'mousemove',//网页版时，鼠标放上去就会显示，不用点那个数据点，但手机版需要点击
+
+                    //坐标轴指示器，坐标轴触发有效
+                    axisPointer: {
+                        type: "shadow"
+                    },
+
+                    //提示框需要显示的内容及格式
+                    formatter: function (param) {
+                        param = param[0];
+                        return [
+                            '日期:' + param.name + '</br>',
+                            '分数:' + param.value + '分</br>'
+                        ].join('');
+                    }
+                },
+
+                //直角坐标系底板
+                grid: {},
+
+                //图例，右上角说明图表中绘制了几个数据的那个东西
+                legend: {
+                    left: 'right',
+                    data: ['测试得分'],
+                    textStyle: {
+                        color: "white"
+                    },
+                    selectedMode: false, //点击图例是否改变现在的显示状态
+                },
+
+                //直角坐标系 X 轴
+                xAxis: {
+                    name: "日期", //坐标轴单位
+                    data: this.logDate,
+
+                    //坐标轴刻度标签
+                    axisLabel: {
+                        interval: 0,//X轴信息全部显示
+                        rotate: -60,//坐标轴刻度标签倾斜，便于显示所有数据
+                        color: "white",//刻度标签文字的颜色
+                    },
+
+                    //刻度线
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true
+                    },
+
+                    //坐标轴
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+                },
+
+                //直角坐标系Y轴
+                yAxis: {
+                    name: "分数", //坐标轴单位
+
+                    //坐标轴刻度标签
+                    axisLabel: {
+                        color: "white"
+                    },
+
+                    //刻度线
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+
+                    //坐标轴
+                    axisLine: {
+                        lineStyle: {
+                            color: "white"
+                        }
+                    },
+
+                    //分隔线
+                    splitLine: {
+                        show: false
+                    }
+                },
+
+                //数据及绘图
+                series: [{
+                    name: "测试得分",
+                    type: 'line', //图表类型，折线图
+                    smooth: true,
+                    data: this.score,
+
+                    markPoint: {
+                        symbol: 'pin', //标记(气泡)的图形
+                        symbolSize: 40, //标记(气泡)的大小
+                        itemStyle: {
+                            color: 'rgb(85, 156, 255)', //图形的颜色。
+                            borderColor: '#000',//图形的描边颜色。支持的颜色格式同 color，不支持回调函数。
+                            borderWidth: 0,//描边线宽。为 0 时无描边。
+                            borderType: 'solid', //柱条的描边类型，默认为实线，支持 ‘solid’, ‘dashed’, ‘dotted’。
+                        },
+                        data: [
+                            {
+                                type: 'max', name: '最大值', label: {formatter: '{c}'},
+                                itemStyle: {
+                                    color: "rgb(110, 210, 100)",
+                                },
+                            },
+                            {
+                                type: 'min', name: '最小值', label: {formatter: '{c}'},
+                                itemStyle: {
+                                    color: "rgb(85, 156, 255)",
+                                },
+                            }
+                        ]
+                    },
+
+                    markLine: {
+                        data: [
+                            {
+                                type: 'average', name: '平均值', label: {formatter: '{c}'},
+                                itemStyle: {
+                                    color: "rgb(255, 255, 255)",
+                                },
+                            }
+                        ]
+                    }
+
+                }]
+            })
+        }
+
+        console.log(this);
+        getData();
+    });
+
+</script>
+<style lang="scss" scoped>
+
+.title{
+    font-size: 1.2em;
+    color: rgb(40, 40, 40);
+    padding: 2px 0 2px 5px; // 文字
+    margin: 10px auto;
+    border-left: 8px solid rgb(234, 129, 87);
+}
+
+.dr-wrapper {
+    /*margin: 20px;*/
+    height: 100%;
+    border-radius: 10px;
+    background: rgb(234, 129, 87);
+}
+
+.PHQ9 {
+    height: 200px;
+    width: 100%;
+}
+
+.note {
+    font-size: 0.8em;
+    color: rgb(100, 100, 100);
+}
+
+.box-card {
+    width: auto;
+    height: 80px;
+    background: rgb(246, 246, 246);
+    border-radius: 10px;
+
+    p {
+        font-size: 0.95em;
+        color: rgb(40, 40, 40);
+        padding: 6px 10px 0 10px;
+    }
+}
+
+  .table {
+        width: 100%; /* 设置表格宽度为页面的80% */
+        margin: auto; /* 使表格在页面中居中显示 */
+    }
+    .table th, .table td {
+        text-align: center; /* 设置表格内容居中 */
+        padding: 8px; /* 设置单元格内边距 */
+    }
+    .table th {
+        font-weight: bold; /* 表头字体加粗 */
+        font-size: 1.2em; /* 表头字号为2.2em */
+    }
+    .table td {
+        font-size: 1.0em; /* 表格其他部分字体大小为1.8em */
+    }
+
+</style>
+
+</body>
+</html>

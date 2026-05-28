@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PAMChart</title>
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+<body>
+    <div>
+        <div class="title">
+            情绪变化曲线
+        </div>
+
+        <div class="center">
+            <div class="layui-inline"> <!-- 注意：这一层元素并不是必须的 -->
+                <input type="text" class="layui-input" id="test1">
+            </div>
+        </div>
+
+        <!-- 愉悦度 -->
+        <div class="title">
+            愉悦度变化曲线
+        </div>
+
+        <div class="va-wrapper">
+            <!-- 愉悦度 -->
+            <div class="valence" ref="valence" id="Valence"></div>
+        </div>
+
+        <p class="note">
+            注：<b>愉悦度</b>整数取值范围-2至2，值越高表示越开心
+        </p>
+
+
+        <!--  唤醒度 -->
+        <div class="title">
+            唤醒度变化曲线
+        </div>
+
+        <div class="ar-wrapper">
+            <!--  唤醒度 -->
+            <div class="arousal" ref="arousal" id="Arousal"></div>
+        </div>
+
+        <p class="note">
+            注：<b>唤醒度</b>整数取值范围-2至2，表示对外界刺激的情感反映程度
+        </p>
+
+        <!--    包含不同主题的照片，每张照片都以某种方式描绘了一种情绪状态。-->
+
+        <!--  音视频情感推断 -->
+<!--        <div class="title">-->
+<!--            情感日志-->
+<!--        </div>-->
+
+<!--        <div class="ar-wrapper">-->
+<!--            &lt;!&ndash;  音视频情感推断 &ndash;&gt;-->
+<!--            <div class="emotion" ref="emotion" id="Emotion"></div>-->
+<!--        </div>-->
+
+<!--        <p class="note">-->
+<!--            注：<b>音视频情感推断</b>-->
+<!--        </p>-->
+
+    </div>
+
+<!-- 引入layui -->
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<!-- 引入myjs -->
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use(['jquery', 'echarts', 'laydate'], function() {
+        var $ = layui.jquery;
+        var echarts = layui.echarts;
+        var laydate = layui.laydate;
+
+        // userId需要确定
+        userId = parent.userInfo.userId;
+        // 引入token
+        let token = getToken();
+
+        charts= '',
+        opinionData=[],
+        pamScoreLogDateData= [], // pam score的时间
+        pamScoreData= [], // pam score
+        valenceData = [], // valence data
+        arousalData = [], // arousal data
+
+        emotionLogTime = [],
+        emotionList = [],
+
+        date= getTodayDate(),
+        pickerOptions= {
+            disabledDate(time) {
+                return time.getTime() > Date.now();
+            },
+        };
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#test1' //指定元素
+            ,format: 'yyyy-MM-dd' //可任意组合
+            ,value: date
+            ,calendar: true //允许显示公历节日
+            ,done: function(value, date, endDate){
+                $('#test1').change();
+                console.log(value); //得到日期生成的值，如：2017-08-18
+                // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                updateCharts(value);
+            }
+        });
+
+        // 当日期选择器更新日期之后，会重新刷新图表， 本来可以不用这个函数的，但是done里面变量冲突了，都有date
+        function updateCharts(newDate) {
+            // console.log('old date:' + date);
+            date = newDate;
+            // console.log('new date:' + date);
+            getData();
+        }
+
+        /**
+         * 获取当天的日期，并转化为 YYYY-MM-dd 的格式（与数据库保持一致
+         * @returns {*}
+         */
+        function getTodayDate() {
+            let tmp = new Date()
+            //// 格式为 2020/10/01
+            //// console.log("tmp:",tmp.toLocaleDateString())
+
+            const Y = tmp.getFullYear();
+            const M = tmp.getMonth() + 1;
+            const D = tmp.getDate();
+
+            // 我们需要的格式是2020-10-01, 与数据库保持一致
+            return Y + (M < 10 ? "-0" : "-") + M + (D < 10 ? "-0" : "-") + D;
+        };
+
+        /**
+         *
+         * 向服务器请求数据
+         *
+         */
+        function getData() {
+            // 每次请求数据前，要清空之前请求过的数据
+            this.pamScoreLogDateData = [];
+            this.pamScoreData = [];
+            this.valenceData = []; // valence data
+            this.arousalData = []; // arousal data
+
+            this.emotionLogTime = [];
+            this.emotionList = [];
+
+            console.log(this.date)
+            console.log(typeof this.date)
+
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                // url: "/doctor/getPamListByDate?userId=" + this.userId,
+                url: "/doctor/getPamListByDate?userId=" + this.userId,
+                data: JSON.stringify({
+                    'logDate': this.date
+                }),
+                headers: {
+                    Authorization: token
+                },
+                contentType: "application/json;charset=UTF-8",//指定消息请求类型
+                success: function (data,status) {
+                    if(data.code == 200) {
+                        processData(data);
+                    } else if(data.code == 401) {
+                        reLoginForShiroExecption();
+                    } else {
+                        layer.alert('错误代码：' + data.code + ', 请联系后台管理员');
+                    }
+
+                }
+            });
+        };
+
+        function processData(data) {
+            console.log("response.data:", data);
+            // 获得数据
+            this.opinionData = data.result.pam;
+            console.log("opinionData:", this.opinionData);
+
+
+            for (var i = 0, l = this.opinionData.length; i < l; i++) {
+                // 日期的形式是 10:23:58，slice(0, 5)切出 10:23
+                // this.pamScoreLogDateData.push(this.opinionData[i].logTime.slice(0, 5));
+                this.pamScoreLogDateData.push(this.opinionData[i].logTime);
+
+                console.log("opinionData[i].logTime:", this.opinionData[i].logTime)
+                // this.pamScoreData.push(this.opinionData[i].pamScore);
+                this.valenceData.push(this.opinionData[i].valence);
+                console.log("this.opinionData[i].valence:", this.opinionData[i].valence)
+                console.log("valenceData:", this.valenceData);
+
+
+                this.arousalData.push(this.opinionData[i].arousal);
+                console.log("this.opinionData[i].arousal:", this.opinionData[i].arousal)
+                console.log("valenceData:", this.arousalData);
+            }
+
+            var emotionData = data.result.emotion;
+            for(var i = 0, l = emotionData.length; i < l; i++) {
+                this.emotionLogTime.push(emotionData[i].logTime);
+
+                switch (emotionData[i].inference) {
+                    case 'Happy':
+                        this.emotionList.push(1);
+                        break;
+                    case 'Neutral':
+                        this.emotionList.push(0);
+                        break;
+                    case 'Sad':
+                        this.emotionList.push(-6);
+                        break;
+                    case 'Angry':
+                        this.emotionList.push(-5);
+                        break;
+                    case 'Fear':
+                        this.emotionList.push(-4);
+                        break;
+                    case 'Anxious':
+                        this.emotionList.push(-3);
+                        break;
+                    case 'Disgust':
+                        this.emotionList.push(-2);
+                        break;
+                    case 'Tired':
+                        this.emotionList.push(-1);
+                        break;
+                }
+            }
+
+            console.log(emotionLogTime);
+            console.log(emotionList);
+
+            // drawPAMScore()
+            drawValence();
+            drawArousal();
+            drawEmotion();
+        }
+
+        function drawValence() {
+            console.log("pamScoreLogDateData:", this.pamScoreLogDateData);
+            console.log("valenceData:", this.valenceData);
+
+            // 初始化echarts实例
+            this.charts = echarts.init(document.getElementById('Valence'), 'walden');
+            // this.charts = echarts.init(this.$refs.valence);
+            // 绘制图表
+            // 配置项option的文档：https://echarts.apache.org/zh/option.html#title
+            this.charts.setOption({
+
+
+                // 线的颜色，默认是红色
+                color: ["white"],
+
+
+                // 提示框组件
+                tooltip: {
+                    trigger: 'axis',
+
+                    axisPointer: {
+                        // 坐标轴指示器，坐标轴触发有效
+                        type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+                    },
+
+                    formatter: function (param) {
+                        // 打印一下看看param有什么，才能知道可以用哪些东西
+                        // console.log(param[0])
+                        param = param[0];
+                        return [
+                            '时间:' + param.name + '<br/>',
+                            '值:' + param.value + '<br/>',
+                        ].join('');
+                    }
+                },
+
+
+                // 图例
+                // legend的data 与 series的name 两者必须同时存在，且数量和文字内容必须一致。
+                legend: {
+                    // bottom: 10,
+                    left: 'right',
+                    data: ['愉悦度'],
+                    textStyle: {
+                        color: "white",
+                    },
+                    selectedMode: false, // 图例选择的模式，控制是否可以通过点击图例改变系列的显示状态。默认开启图例选择，可以设成 false 关闭。
+                },
+
+
+                // 直角坐标系 X 轴
+                xAxis: {
+                    name: "时间", //  坐标轴的单位
+                    data: this.pamScoreLogDateData,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                },
+
+                // 直角坐标系 Y 轴
+                yAxis: {
+                    name: "值", //  坐标轴的单位
+                    minInterval: 1,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                    // 是否显示分隔线
+                    splitLine: {
+                        show: false,
+                    },
+                },
+
+                // 一组数值以及他们映射成的图
+                series: [{
+                    name: "愉悦度",
+                    type: 'line',  // 图表类型，折线图还是柱状图还是饼图
+                    smooth: true,
+                    // barWidth: "50%",
+                    data: this.valenceData, // valence data
+
+                }]
+            })
+        }
+
+        function drawArousal() {
+            console.log("pamScoreLogDateData:", this.pamScoreLogDateData);
+            console.log("arousalData:", this.arousalData);
+
+            // 初始化echarts实例
+            this.charts = echarts.init(document.getElementById('Arousal'), 'walden');
+
+            // 绘制图表
+            // 配置项option的文档：https://echarts.apache.org/zh/option.html#title
+            this.charts.setOption({
+
+                // 线的颜色，默认是红色
+                color: ["white"],
+
+                // 提示框组件
+                tooltip: {
+                    trigger: 'axis',
+
+                    axisPointer: {
+                        // 坐标轴指示器，坐标轴触发有效
+                        type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+                    },
+
+                    formatter: function (param) {
+                        // 打印一下看看param有什么，才能知道可以用哪些东西
+                        // console.log(param[0])
+                        param = param[0];
+                        return [
+                            '时间:' + param.name + '<br/>',
+                            '值:' + param.value + '<br/>',
+                        ].join('');
+                    }
+                },
+
+                // 图例
+                // legend的data 与 series的name 两者必须同时存在，且数量和文字内容必须一致。
+                legend: {
+                    // bottom: 10,
+                    left: 'right',
+                    data: ['唤醒度'],
+                    textStyle: {
+                        color: "white",
+                    },
+                    selectedMode: false, // 图例选择的模式，控制是否可以通过点击图例改变系列的显示状态。默认开启图例选择，可以设成 false 关闭。
+                },
+
+
+                // 直角坐标系 X 轴
+                xAxis: {
+                    name: "时间", //  坐标轴的单位
+                    data: this.pamScoreLogDateData,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                },
+
+                // 直角坐标系 Y 轴
+                yAxis: {
+                    name: "值", //  坐标轴的单位
+                    minInterval: 1,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                    // 是否显示分隔线
+                    splitLine: {
+                        show: false,
+                    },
+                },
+
+                // 一组数值以及他们映射成的图
+                series: [{
+                    name: "唤醒度",
+                    type: 'line',  // 图表类型，折线图还是柱状图还是饼图
+                    smooth: true,
+                    // barWidth: "50%",
+                    data: this.arousalData, // arousal data
+
+                }]
+            })
+        }
+
+
+        /**
+         *
+         * */
+
+        function drawEmotion() {
+            // 初始化echarts实例
+            this.charts = echarts.init(document.getElementById('Emotion'), 'walden');
+
+            // 绘制图表
+            // 配置项option的文档：https://echarts.apache.org/zh/option.html#title
+            this.charts.setOption({
+
+                // 线的颜色，默认是红色
+                color: ["white"],
+
+                // 提示框组件
+                tooltip: {
+                    trigger: 'axis',
+
+                    axisPointer: {
+                        // 坐标轴指示器，坐标轴触发有效
+                        type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+                    },
+
+                    formatter: function (param) {
+                        // 打印一下看看param有什么，才能知道可以用哪些东西
+                        // console.log(param[0])
+                        param = param[0];
+
+                        var result="";
+                        switch(param.value){
+                            case 1:result="高兴";break;
+                            case 0:result="中性";break;
+                            case -6:result="悲伤";break;
+                            case -5:result="生气";break;
+                            case -4:result="恐惧";break;
+                            case -3:result="焦虑";break;
+                            case -2:result="厌恶";break;
+                            case -1:result="疲惫";break;
+                            default:"-";
+                        }
+
+                        return [
+                            '时间:' + param.name + '<br/>',
+                            '情感:' + result + '<br/>',
+                        ].join('');
+                    }
+                },
+
+                // 图例
+                // legend的data 与 series的name 两者必须同时存在，且数量和文字内容必须一致。
+                legend: {
+                    // bottom: 10,
+                    left: 'right',
+                    data: ['情感'],
+                    textStyle: {
+                        color: "white",
+                    },
+                    selectedMode: false, // 图例选择的模式，控制是否可以通过点击图例改变系列的显示状态。默认开启图例选择，可以设成 false 关闭。
+                },
+
+
+                // 直角坐标系 X 轴
+                xAxis: {
+                    name: "时间", //  坐标轴的单位
+                    data: this.emotionLogTime,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                },
+
+                // 直角坐标系 Y 轴
+                yAxis: {
+                    name: "情感类别", //  坐标轴的单位
+                    minInterval: 1,
+                    // interval: 0,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                        rotate: 45,     // 倾斜角度
+                        //函数模板
+                        formatter:function (value, index) {
+                            var result="";
+                            switch(value){
+                                case 1:result="高兴";break;
+                                case 0:result="中性";break;
+                                case -6:result="悲伤";break;
+                                case -5:result="生气";break;
+                                case -4:result="恐惧";break;
+                                case -3:result="焦虑";break;
+                                case -2:result="厌恶";break;
+                                case -1:result="疲惫";break;
+                                default:"-";
+                            }
+                            return result;
+                        }
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                    // 本来想设置不隐藏y坐标轴的值的，但是无效
+                    // axisLabel: {
+                    //     retote: 45
+                    // },
+
+                    // 是否显示分隔线
+                    // splitLine: {
+                    //   show: true,
+                    // },
+                },
+
+                // 一组数值以及他们映射成的图
+                series: [{
+                    name: "情感",
+                    type: 'bar',  // 图表类型，折线图还是柱状图还是饼图
+                    smooth: true,
+                    // barWidth: "50%",
+                    data: this.emotionList, // arousal data
+
+                }]
+            })
+        }
+
+
+        /**
+         *
+         * 绘制 PAMScore 的折线图
+         *
+         */
+        function drawPAMScore() {
+
+            console.log("pamScoreLogDateData:", this.pamScoreLogDateData);
+            console.log("pamScoreData:", this.pamScoreData);
+
+            // 初始化echarts实例
+            this.charts = echarts.init(document.getElementById('pamChart'), 'walden');
+            // 绘制图表
+            // 配置项option的文档：https://echarts.apache.org/zh/option.html#title
+            this.charts.setOption({
+
+                // title: {
+                //   text: this.date + " 情绪",
+                //   subtext: "",
+                //   textStyle: {
+                //     color: "white",
+                //   },
+                //
+                // },
+
+                // 线的颜色，默认是红色
+                color: ["white"],
+
+
+                // 滑动条，不好看......
+                // dataZoom: [
+                //   {
+                //     type: 'slider',
+                //     show: true, //是否显示
+                //     realtime: true, //拖动时，是否实时更新系列的视图
+                //     start: 0, //伸缩条开始位置（1-100），可以随时更改
+                //     end: 15, //伸缩条结束位置（1-100），可以随时更改
+                //   }
+                // ],
+
+                // 提示框组件
+                tooltip: {
+                    trigger: 'axis',
+
+                    axisPointer: {
+                        // 坐标轴指示器，坐标轴触发有效
+                        type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+                    },
+
+                    formatter: function (param) {
+                        // 打印一下看看param有什么，才能知道可以用哪些东西
+                        // console.log(param[0])
+                        param = param[0];
+                        return [
+                            '时间:' + param.name + '<br/>',
+                            '分数:' + param.value + '<br/>',
+                        ].join('');
+                    }
+                },
+
+                // 直角坐标系底板
+                grid: {
+                    // left: '1%',
+                    // right: '1%',
+                    // bottom: '3%',
+                    // containLabel: true
+                },
+
+                // 图例
+                // legend的data 与 series的name 两者必须同时存在，且数量和文字内容必须一致。
+                legend: {
+                    // bottom: 10,
+                    left: 'right',
+                    data: ['情绪量化分数'],
+                    textStyle: {
+                        color: "white",
+                    },
+                    selectedMode: false, // 图例选择的模式，控制是否可以通过点击图例改变系列的显示状态。默认开启图例选择，可以设成 false 关闭。
+                },
+
+
+                // 直角坐标系 X 轴
+                xAxis: {
+                    name: "时间", //  坐标轴的单位
+                    data: this.pamScoreLogDateData,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                },
+
+                // 直角坐标系 Y 轴
+                yAxis: {
+                    name: "分数", //  坐标轴的单位
+
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                    // 是否显示分隔线
+                    splitLine: {
+                        show: false,
+                    },
+                },
+
+                // 一组数值以及他们映射成的图
+                series: [{
+                    name: "情绪量化分数",
+                    type: 'line',  // 图表类型，折线图还是柱状图还是饼图
+                    smooth: true,
+                    // barWidth: "50%",
+                    data: this.pamScoreData, // pam score
+
+                }]
+            })
+        }
+
+        // 入口函数
+        getData();
+    });
+
+</script>
+
+
+<style lang="scss" scoped>
+
+    .title {
+        font-size: 1.2em;
+        color: rgb(40, 40, 40);
+        padding: 2px 0 2px 5px; // 文字
+        margin: 10px auto;
+        border-left: 8px solid rgb(234, 129, 87);
+    }
+
+    .va-wrapper {
+        /*margin: 20px;*/
+        border-radius: 10px;
+        /*background: rgb(239, 157, 90);*/
+        background: rgb(234, 129, 87);
+
+    }
+
+    .ar-wrapper {
+        /*margin: 20px;*/
+        border-radius: 10px;
+        /*background: rgb(239, 157, 90);*/
+        background: rgb(234, 129, 87);
+
+    }
+
+    .valence {
+        height: 200px;
+        width: 100%;
+    }
+
+    .arousal {
+        height: 200px;
+        width: 100%;
+    }
+
+    .emotion {
+        width: 100%;
+        height: 300px;
+    }
+
+    .center {
+        /*居中*/
+        text-align: center;
+    }
+
+    .note {
+        font-size: 0.8em;
+        color: rgb(100, 100, 100);
+    }
+
+</style>
+
+
+</body>
+</html>

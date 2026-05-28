@@ -1,0 +1,459 @@
+{
+	"easycom": { //easycom,按需自动注册组件。原则上可以把所有页面引入组件方法删掉，会自动引入。
+		"autoscan": true,
+		"custom": {
+			"^uni-(.*)": "@/components/uni-$1/uni-$1.vue",
+			"^nx-(.*)": "@/components/nx-$1/nx-$1.vue"
+		}
+	},
+
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/home/home",
+			"aliasPath": "/", //对于h5端你必须在首页加上aliasPath并设置为/
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
+			"path": "pages/news/news",
+			"style": {
+				"navigationBarTitleText": "推荐",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/heal/heal",
+			"style": {
+				"navigationBarTitleText": "疗愈",
+				"navigationBarBackgroundColor": "#a1c4fd"
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/health/DailyReport",
+			"style": {
+				"navigationBarTitleText": "日常状态"
+			}
+		},
+		{
+			"path": "pages/news/detail",
+			"style": {
+				"navigationBarTitleText": "新闻详情"
+			}
+		},
+		{
+			"path": "pages/news/publish",
+			"style": {
+				"navigationBarTitleText": "发布"
+			}
+		},
+		{
+			"path": "pages/Emotion/EMA",
+			"style": {
+				"navigationBarTitleText": "情绪"
+			}
+		},
+		{
+			"path": "pages/Scale/SDS",
+			"style": {
+				"navigationBarTitleText": "抑郁自测量表SDS"
+			}
+		},
+		{
+			"path": "pages/Response/RePHQ",
+			"style": {
+				"navigationBarTitleText": "您的抑郁测评报告"
+			}
+		},
+		{
+			"path": "pages/Scale/PSS",
+			"style": {
+				"navigationBarTitleText": "压力自测量表PSS"
+			}
+		},
+		{
+			"path": "pages/Response/ReDailyR",
+			"style": {
+				"navigationBarTitleText": "您的状态报告"
+			}
+		},
+		{
+			"path": "pages/Response/RePSS",
+			"style": {
+				"navigationBarTitleText": "您的压力测评报告"
+			}
+		},
+		{
+			"path": "pages/Scale/SAS",
+			"style": {
+				"navigationBarTitleText": "焦虑自测量表SAS"
+			}
+		},
+		{
+			"path": "pages/Response/ReSAS",
+			"style": {
+				"navigationBarTitleText": "您的焦虑测评报告"
+			}
+		},
+		{
+			"path": "pages/Chart/ChartMain",
+			"style": {
+				"navigationBarTitleText": "历史记录"
+			}
+		},
+		{
+			"path": "pages/Chart/DailyReportChart",
+			"style": {
+				"navigationBarTitleText": "日常状态历史记录"
+			}
+		},
+		{
+			"path": "pages/Chart/PAMChart",
+			"style": {
+				"navigationBarTitleText": "情绪历史记录"
+			}
+		},
+		{
+			"path": "pages/Chart/DepressionChart",
+			"style": {
+				"navigationBarTitleText": "抑郁评估历史记录"
+			}
+		},
+		{
+			"path": "pages/Chart/PHQ9Chart",
+			"style": {
+				"navigationBarTitleText": "抑郁历史记录"
+			}
+		},
+		{
+			"path": "pages/Chart/PSSChart",
+			"style": {
+				"navigationBarTitleText": "压力历史记录"
+			}
+		},
+		{
+			"path": "pages/Chart/SASChart",
+			"style": {
+				"navigationBarTitleText": "焦虑历史记录"
+			}
+		},
+		{
+			"path": "pages/video/Video",
+			"style": {
+				"navigationBarTitleText": "迷你访谈"
+			}
+		},
+		{
+			"path": "pages/health/BasicInfo",
+			"style": {
+				"navigationBarTitleText": "基本信息"
+			}
+		},
+		{
+			"path": "pages/me/ChangePass",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "pages/login/reg",
+			"style": {
+				"navigationBarTitleText": "注册",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "pages/login/forget",
+			"style": {
+				"navigationBarTitleText": "忘记密码",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "pages/login/agreement",
+			"style": {
+				"navigationBarTitleText": "用户协议"
+			}
+		},
+		{
+			"path": "pages/me/index",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/pagerouters/pagerouter1",
+			"style": {
+				"navigationBarTitleText": "经典推荐"
+			}
+		},
+		{
+			"path": "pages/pagerouters/pagerouter2",
+			"style": {
+				"navigationBarTitleText": "经典推荐"
+			}
+		},
+		{
+			"path": "pages/pagerouters/pagerouter3",
+			"style": {
+				"navigationBarTitleText": "经典推荐"
+			}
+		},
+		{
+			"path": "pages/pagerouters/pagerouter4",
+			"style": {
+				"navigationBarTitleText": "经典推荐"
+			}
+		},
+		{
+			"path": "pages/pagerouters/pagerouter5",
+			"style": {
+				"navigationBarTitleText": "经典推荐"
+			}
+		},
+		{
+			"path": "pages/pagerouters/pagerouter6",
+			"style": {
+				"navigationBarTitleText": "经典推荐"
+			}
+		},
+		{
+			"path": "pages/pagerouters/pagerouter7",
+			"style": {
+				"navigationBarTitleText": "经典推荐"
+			}
+		},
+		{
+			"path": "pages/pagerouters/GameWebview",
+			"style": {
+				"navigationBarTitleText": "游戏",
+				"navigationBarBackgroundColor": "#0d0d1a",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/me/setting",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/mine/collection",
+			"style": {
+				"navigationBarTitleText": "个人信息明示清单"
+			}
+		},
+		{
+			"path": "pages/mine/privacyPolicy",
+			"style": {
+				"navigationBarTitleText": "隐私政策"
+			}
+		},
+		{
+			"path": "pages/mine/sdk",
+			"style": {
+				"navigationBarTitleText": "第三方SDK使用清单"
+			}
+		},
+		{
+			"path": "pages/BraceletData/BraceletData",
+			"style": {
+				"navigationBarTitleText": "手环数据"
+			}
+		},
+		{
+			"path": "pages/BraceletData/HeartRateChart",
+			"style": {
+				"navigationBarTitleText": "心率历史记录"
+			}
+		},
+		{
+			"path": "pages/BraceletData/SleepChart",
+			"style": {
+				"navigationBarTitleText": "睡眠历史记录"
+			}
+		},
+		{
+			"path": "pages/BraceletData/DailyStepsChart",
+			"style": {
+				"navigationBarTitleText": " 每日步数历史记录"
+			}
+		},
+		{
+			"path": "pages/BraceletData/BodyEnergyChart",
+			"style": {
+				"navigationBarTitleText": " 身体能量历史记录"
+			}
+		},
+		{
+			"path": "pages/BraceletData/StressChart",
+			"style": {
+				"navigationBarTitleText": " 压力历史记录"
+			}
+		},
+		{
+			"path": "pages/BraceletData/Sp02Chart",
+			"style": {
+				"navigationBarTitleText": " 血氧历史记录"
+			}
+		},
+		{
+			"path": "pages/aiassess/aiassess",
+			"style": {
+				"navigationBarTitleText": "AI评估",
+				"navigationBarBackgroundColor": "#a1c4fd"
+			}
+		},
+		{
+			"path": "pages/Scale/SCL90",
+			"style": {
+				"navigationBarTitleText": "SCL-90症状自评量表"
+			}
+		},
+		{
+			"path": "pages/Scale/IPAQ",
+			"style": {
+				"navigationBarTitleText": "IPAQ国际体力活动量表"
+			}
+		},
+		{
+			"path": "pages/Scale/PARS3",
+			"style": {
+				"navigationBarTitleText": "PARS-3体育活动等级量表"
+			}
+		},
+		{
+			"path": "pages/Scale/MAIA2",
+			"style": {
+				"navigationBarTitleText": "MAIA-2内感受意识量表"
+			}
+		},
+		{
+			"path": "pages/Scale/CDRISC",
+			"style": {
+				"navigationBarTitleText": "CD-RISC心理弹性量表"
+			}
+		},
+		{
+			"path": "pages/Scale/OCEAN",
+			"style": {
+				"navigationBarTitleText": "OCEAN大五人格量表"
+			}
+		},
+		{
+			"path": "pages/Scale/PSQI",
+			"style": {
+				"navigationBarTitleText": "PSQI睡眠质量指数"
+			}
+		},
+		{
+			"path": "pages/Scale/HTP",
+			"style": {
+				"navigationBarTitleText": "房树人心理测验",
+				"navigationBarBackgroundColor": "#f7971e"
+			}
+		},
+		{
+			"path": "pages/mine/HealthReport",
+			"style": {
+				"navigationBarTitleText": "健康报告",
+				"navigationBarBackgroundColor": "#5b8dee"
+			}
+		}
+	],
+	"subPackages": [{
+		"root": "pages/public",
+		"pages": [{
+			"path": "404",
+			"name": "404",
+			"style": {
+				"navigationBarTitleText": "页面不存在"
+			}
+		}]
+	}],
+
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "健康关怀 ",
+		"navigationBarBackgroundColor": "#a1c4fd",
+		// "navigationBarBackgroundColor": "linear-gradient(#5E87C5, #84DFF7)"
+		"backgroundColor": "#F8F8F8"
+	},
+
+	"tabBar": {
+		"color": "#1b1b1b",
+		"selectedColor": "#a1c4fd",
+		"backgroundColor": "rgb(245,255,250)",
+		// "backgroundColor": "rgb(245,255,250, 0.6)",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/images/tabbar/tab_index_01.png",
+				"selectedIconPath": "static/images/tabbar/tab_index_02.png"
+			},
+			{
+				"pagePath": "pages/aiassess/aiassess",
+				"text": "AI评估",
+				"iconPath": "static/images/index/index11.png",
+				"selectedIconPath": "static/images/index/index22.png"
+			},
+			// {
+			// 	"pagePath": "pages/news/news",
+			// 	"text": "推荐",
+			// 	"iconPath": "static/images/index/news11.png",
+			// 	"selectedIconPath": "static/images/index/news22.png"
+			// },
+			{
+				"pagePath": "pages/heal/heal",
+				"text": "疗愈",
+				"iconPath": "static/images/index/news11.png",
+				"selectedIconPath": "static/images/index/news22.png"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"text": "我的",
+				"iconPath": "static/images/index/mine11.png",
+				"selectedIconPath": "static/images/index/mine22.png"
+			}
+		]
+	},
+
+	"condition": { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+				"name": "home", //模式名称
+				"path": "pages/home/home", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			},
+			{
+				"name": "index", //模式名称
+				"path": "pages/index/index", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			},
+			{
+				"name": "login", //模式名称
+				"path": "pages/login/login", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			}
+		]
+	}
+}

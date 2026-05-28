@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+
+<body>
+<div class="layui-card">
+    <div class="layui-card-header">病人压力值趋势分析</div>
+    <div class="layui-card-body">
+        <!-- 图表容器 -->
+        <div class="chart-wrapper">
+            <div class="chart-container" id="stressChart" style="width: 100%; height: 400px;"></div>
+            <div class="loading-mask" id="loadingMask">
+                <div class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 30px; color: #1890ff;"></div>
+            </div>
+        </div>
+
+        <!-- 筛选表单 -->
+        <form class="layui-form" lay-filter="patientFilter">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">选择病人</label>
+                    <div class="layui-input-inline">
+                        <select name="patientId" id="patientSelect" lay-filter="patientSelect">
+                            <!-- 病人选项将通过JS动态生成 -->
+                            <option value="">请选择病人...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- 错误提示 -->
+        <div id="errorMsg" class="layui-elem-quote layui-quote-nm" style="display: none; color: #f5222d;"></div>
+    </div>
+</div>
+
+<!-- 引入 jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    layui.use(['form', 'laydate', 'layer'], function() {
+        var form = layui.form;
+        form.render();  // 渲染表单
+
+        // 初始化图表
+        var stressChart = echarts.init(document.getElementById('stressChart'));
+        var loadingMask = document.getElementById('loadingMask');
+        var errorMsg = document.getElementById('errorMsg');
+        var patients = [];  // 存储病人的信息
+
+        function fetchPatients() {
+            showLoading();
+            errorMsg.style.display = 'none';
+
+            axios.get('/page/whole/scale/ps/getAlldata')
+                .then(response => {
+                    if (response.data) {
+                        let patientPromises = []; // 存储所有获取用户名的异步请求
+                        // let patients = [];
+
+                        // 获取所有病人的 userId
+                        Object.keys(response.data.result).forEach(key => {
+                            const data = response.data.result[key];
+                            // 确保 data 是一个数组
+                            if (Array.isArray(data)) {
+                                data.forEach(item => {
+                                    if (!patients.some(patient => patient.id === item.userId)) {
+                                        // 每次遇到一个新的 userId，就发起一个请求来获取用户名
+                                        let promise = axios.post(`/user/selectRealNameByUserId`, null, {
+                                            params: { userId: item.userId }
+                                        }).then(userResponse => {
+                                            if (userResponse.data.result && userResponse.status === 200) {
+                                                patients.push({
+                                                    id: item.userId,
+                                                    name: userResponse.data.result
+                                                });
+                                            }
+                                        }).catch(error => {
+                                            console.error(`请求用户 ${item.userId} 信息失败`, error);
+                                        });
+                                        patientPromises.push(promise); // 将该请求加入到 promises 数组
+                                    }
+                                });
+                            }
+                        });
+
+                        // 等待所有请求完成后填充下拉框
+                        Promise.all(patientPromises).then(() => {
+                            var patientSelect = document.getElementById('patientSelect');
+                            patientSelect.innerHTML = '<option value="">请选择病人...</option>';  // 清空已有选项
+
+                            patients.forEach(patient => {
+                                var option = document.createElement('option');
+                                option.value = patient.id;
+                                option.textContent = patient.name;
+                                patientSelect.appendChild(option);
+                            });
+
+                            form.render('select'); // 更新layui的下拉框样式
+                            hideLoading(); // 加载完成后隐藏加载状态
+                        });
+                    } else {
+                        showError('获取病人数据失败，数据格式不正确');
+                        hideLoading();
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showError('获取病人数据失败');
+                    console.error('Error fetching patients:', error);
+                });
+        }
+
+        // 获取病人压力值数据并绘制图表
+        function fetchPatientStressData(patientId) {
+            showLoading();
+            errorMsg.style.display = 'none';
+
+            if (!patientId) {
+                showError('请选择病人');
+                hideLoading();
+                return;
+            }
+
+            // 查找选中的病人
+            const selectedPatient = patients.find(p => p.id === Number(patientId));
+            if (!selectedPatient) {
+                showError('所选病人不存在');
+                hideLoading();
+                return;
+            }
+
+            // 构建请求参数
+            var params = { userId: patientId };
+
+            axios.get(`/page/whole/scale/ps/getAlldata`, { params: params })
+                .then(response => {
+                    hideLoading();
+                    // 提取病人数据
+                    console.log(response.data)
+
+                    const patientData = response.data.result['1'];
+                    const selectedData = patientData.find(patient => patient.userId === Number(patientId));
+
+                    const labels = ['开始节点', '中期节点', '结束节点'];  // X轴的标签
+                    const scores = [
+                        selectedData.score,   // 开始节点压力值
+                        selectedData.score2,  // 中期节点压力值
+                        selectedData.score3   // 结束节点压力值
+                    ];
+
+                    // 绘制折线图
+                    drawLineChart(labels, scores);
+
+                })
+                .catch(error => {
+                    hideLoading();
+                    showError('获取压力值数据失败');
+                    console.error('Error fetching stress data:', error);
+                });
+        }
+
+        // 绘制压力折线图
+        function drawLineChart(labels, scores) {
+            var option = {
+                title: {
+                    text: '病人压力值趋势',
+                    subtext: '开始节点、中期节点和结束节点的压力变化'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function (params) {
+                        return `${params[0].name}<br/>压力值: ${params[0].data}`;
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: labels
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '压力分数'
+                },
+                series: [{
+                    data: scores,
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: {
+                        color: '#FF5733'
+                    },
+                    lineStyle: {
+                        width: 2
+                    }
+                }]
+            };
+
+            stressChart.setOption(option);
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            loadingMask.style.display = 'flex';
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            loadingMask.style.display = 'none';
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+
+        fetchPatients();
+
+        // 修改事件监听为使用layui的表单事件
+        form.on('select(patientSelect)', function(data){
+            console.log('选择的病人ID：', data.value);
+            fetchPatientStressData(data.value);
+        });
+    });
+</script>
+</body>
+</html>

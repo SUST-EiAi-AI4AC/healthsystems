@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>日记分析</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户名/姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="keyword" autocomplete="off" class="layui-input" placeholder="输入用户名或真实姓名">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn">
+                                <i class="layui-icon"></i> 搜 索
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <!-- 统计卡片 -->
+        <div class="layui-row layui-col-space15" style="margin-bottom: 15px;">
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #5FB878;" id="stat-normal">0</div>
+                            <div style="color: #666; margin-top: 5px;" id="lbl-normal">正常 (1-2分)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FFB800;" id="stat-low">0</div>
+                            <div style="color: #666; margin-top: 5px;" id="lbl-low">轻度风险 (3分)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FF5722;" id="stat-medium">0</div>
+                            <div style="color: #666; margin-top: 5px;" id="lbl-medium">中度风险 (4分)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FF0000;" id="stat-high">0</div>
+                            <div style="color: #666; margin-top: 5px;" id="lbl-high">重度风险 (5分)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据表格 -->
+        <table class="layui-hide" id="diaryTable" lay-filter="diaryTable"></table>
+
+        <!-- 尾部工具栏 -->
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="detail">查看详情</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+        </script>
+
+        <!-- 情绪评分模板 -->
+        <script type="text/html" id="moodScoreTpl">
+            {{# if(d.mood_score <= 2) { }}
+                <span style="color: #5FB878;">{{d.mood_score}}分 (正常)</span>
+            {{# } else if(d.mood_score == 3) { }}
+                <span style="color: #FFB800;">{{d.mood_score}}分 (轻度)</span>
+            {{# } else if(d.mood_score == 4) { }}
+                <span style="color: #FF5722;">{{d.mood_score}}分 (中度)</span>
+            {{# } else { }}
+                <span style="color: #FF0000;">{{d.mood_score}}分 (重度)</span>
+            {{# } }}
+        </script>
+
+    </div>
+</div>
+
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use(['form', 'table', 'layer'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer;
+
+        let token = getToken();
+        if(null == token) {
+            reLoginForShiroExecption()
+        }
+
+        // 加载统计数据
+        function loadStatistics() {
+            $.ajax({
+                type: "GET",
+                url: "/diaryAnalysis/getMoodStatistics",
+                headers: {
+                    Authorization: token
+                },
+                success: function (res) {
+                    if(res.code == 200) {
+                        var data = res.result;
+                        $('#stat-normal').text(data.normal || 0);
+                        $('#stat-low').text(data.low_risk || 0);
+                        $('#stat-medium').text(data.medium_risk || 0);
+                        $('#stat-high').text(data.high_risk || 0);
+                        
+                        $('#lbl-normal').text('正常(1-2分) 有' + (data.normal || 0) + '个');
+                        $('#lbl-low').text('轻度风险(3分) 有' + (data.low_risk || 0) + '个');
+                        $('#lbl-medium').text('中度风险(4分) 有' + (data.medium_risk || 0) + '个');
+                        $('#lbl-high').text('重度风险(5分) 有' + (data.high_risk || 0) + '个');
+                    }
+                }
+            });
+        }
+
+        loadStatistics();
+
+        var tableIns = table.render({
+            elem: '#diaryTable',
+            url: '/diaryAnalysis/getDiaryList',
+            method: 'GET',
+            title: '日记数据',
+            limits: [10, 15, 20, 30, 40, 50],
+            limit: 15,
+            request: {
+                pageName: 'currentPage',
+                limitName: 'pageSize'
+            },
+            headers: {
+                Authorization: token
+            },
+            parseData: function(res){
+                if(res.code == 401) {
+                    return {
+                        "code": res.code,
+                        "msg": res.message,
+                    };
+                }
+                return {
+                    "code": res.code == 200 ? 0 : res.code,
+                    "msg": res.message,
+                    "count": res.result.pageInfo.totalNumber,
+                    "data": res.result.data
+                };
+            },
+            done: function(res){
+                if(res.code == 401) {
+                    reLoginForShiroExecption();
+                }
+            },
+            cols: [[
+                {field:'id', title:'日记ID', width:80, sort: true},
+                {field:'real_name', title:'用户姓名', width:100},
+                {field:'user_name', title:'用户名', width:120},
+                {field:'phone', title:'手机号', width:120},
+                {field:'mood_label', title:'情绪标签', width:100},
+                {field:'mood_score', title:'情绪评分', width:150, templet: '#moodScoreTpl', sort: true},
+                {field:'content', title:'日记内容', width:300},
+                {field:'add_timestamp_mils', title:'记录时间', width:160, sort: true},
+                {fixed: 'right', title:'操作', toolbar: '#barDemo', width: 180}
+            ]],
+            page: true
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            table.reload('diaryTable', {
+                page: {
+                    curr: 1
+                },
+                where: {
+                    keyword: data.field.keyword
+                }
+            });
+            return false;
+        });
+
+        // 监听工具条
+        table.on('tool(diaryTable)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                var riskLevel = '';
+                var riskColor = '';
+                if(data.mood_score <= 2) {
+                    riskLevel = '正常';
+                    riskColor = '#5FB878';
+                } else if(data.mood_score == 3) {
+                    riskLevel = '轻度风险';
+                    riskColor = '#FFB800';
+                } else if(data.mood_score == 4) {
+                    riskLevel = '中度风险';
+                    riskColor = '#FF5722';
+                } else {
+                    riskLevel = '重度风险';
+                    riskColor = '#FF0000';
+                }
+
+                var content = '<div style="padding: 15px;">';
+                content += '<div style="margin-bottom: 15px;"><strong>用户：</strong>' + data.real_name + ' (' + data.user_name + ')</div>';
+                content += '<div style="margin-bottom: 15px;"><strong>情绪标签：</strong>' + data.mood_label + '</div>';
+                content += '<div style="margin-bottom: 15px;"><strong>情绪评分：</strong><span style="color: ' + riskColor + '; font-weight: bold;">' + data.mood_score + '分 (' + riskLevel + ')</span></div>';
+                content += '<div style="margin-bottom: 15px;"><strong>记录时间：</strong>' + data.add_timestamp_mils + '</div>';
+                content += '<div style="margin-bottom: 15px;"><strong>日记内容：</strong></div>';
+                content += '<div style="background: #f8f8f8; padding: 15px; border-radius: 5px; line-height: 1.8;">' + data.content + '</div>';
+                
+                // 智能分析建议
+                content += '<div style="margin-top: 20px; padding: 15px; background: #e8f4ff; border-left: 4px solid #1E9FFF; border-radius: 5px;">';
+                content += '<div style="font-weight: bold; margin-bottom: 10px;">智能分析建议：</div>';
+                if(data.mood_score <= 2) {
+                    content += '<div>该用户情绪状态良好，建议继续保持积极的生活态度和健康的生活方式。</div>';
+                } else if(data.mood_score == 3) {
+                    content += '<div>该用户存在轻度情绪波动，建议关注其近期生活状态，适当提供心理支持和疏导。</div>';
+                } else if(data.mood_score == 4) {
+                    content += '<div style="color: #FF5722;">该用户存在中度情绪问题，建议加强关注，必要时进行专业心理咨询。</div>';
+                } else {
+                    content += '<div style="color: #FF0000;">该用户存在严重情绪问题，建议立即进行专业心理干预，密切关注其心理健康状况。</div>';
+                }
+                content += '</div>';
+                
+                content += '</div>';
+                
+                layer.open({
+                    type: 1,
+                    title: '日记详情',
+                    area: ['700px', '600px'],
+                    content: content
+                });
+            } else if(obj.event === 'delete') {
+                layer.confirm('真的删除这行记录吗？', function(index){
+                    $.ajax({
+                        url: '/diaryAnalysis/delete/' + data.id,
+                        type: 'POST',
+                        headers: { Authorization: token },
+                        success: function(res) {
+                            if(res.code === 200) {
+                                layer.msg('删除成功');
+                                table.reload('diaryTable');
+                                loadStatistics();
+                            } else {
+                                layer.msg(res.message || '删除失败');
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

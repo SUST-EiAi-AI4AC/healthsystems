@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.PerceivedStressMapper">
+    <insert id="insertPerceivedStressScale" >
+        insert into perceived_stress_scale
+        (user_id,pss_q1,pss_q2,pss_q3,pss_q4,pss_q5,pss_q6,pss_q7,pss_q8,pss_q9,pss_q10,pss_q11,pss_q12,pss_q13,pss_q14,score)
+        values
+        (#{userId},#{pssQ1},#{pssQ2},#{pssQ3},#{pssQ4},#{pssQ5},#{pssQ6},#{pssQ7},#{pssQ8},#{pssQ9},#{pssQ10}
+        ,#{pssQ11},#{pssQ12},#{pssQ13},#{pssQ14},#{score})
+    </insert>
+
+    <!--    这里可以选择是否返回分数字段-->
+    <select id="getPerceivedStressScaleListByPage" resultType="com.nwpu.healthsystem.backend.entity.scale.PerceivedStress">
+        select *
+        from perceived_stress_scale
+        where user_id=#{userId}
+        ORDER BY id DESC
+    </select>
+
+    <select id="getToday" resultType="int">
+        select count(0)
+        from perceived_stress_scale
+        where user_id=#{userId} and log_date=#{date}
+    </select>
+
+    <select id="getRecentInput" resultType="com.nwpu.healthsystem.backend.entity.scale.PerceivedStress">
+        select *
+        from perceived_stress_scale
+        where user_id=#{userId} and yearweek(log_date,1) between yearweek(now(),1) - 1 and yearweek(now(),1)
+        order by  log_date desc limit 1
+    </select>
+
+    <update id="updatePerceivedStressScale">
+        update perceived_stress_scale
+        set pss_q1=#{pssQ1},pss_q2=#{pssQ2},pss_q3=#{pssQ3},pss_q4=#{pssQ4},pss_q5=#{pssQ5},pss_q6=#{pssQ6},
+            pss_q7=#{pssQ7},pss_q8=#{pssQ8},pss_q9=#{pssQ9},pss_q10=#{pssQ10},pss_q11=#{pssQ11},pss_q12=#{pssQ12},
+            pss_q13=#{pssQ13},pss_q14=#{pssQ14},score=#{score}
+        where user_id = #{userId} and log_date=#{logDate}
+    </update>
+
+    <select id="getRecentInputs" resultType="com.nwpu.healthsystem.backend.entity.scale.PerceivedStress">
+        select *
+        from perceived_stress_scale
+        where yearweek(log_date,1) between yearweek(now(),1) - 1 and yearweek(now(),1)
+    </select>
+
+    <select id="getAllData" resultType="com.nwpu.healthsystem.backend.entity.scale.PerceivedStress">
+        select *,user_info.user_name as username
+        from perceived_stress_scale
+        left join user_info  on perceived_stress_scale.user_id = user_info.user_id
+    </select>
+</mapper>

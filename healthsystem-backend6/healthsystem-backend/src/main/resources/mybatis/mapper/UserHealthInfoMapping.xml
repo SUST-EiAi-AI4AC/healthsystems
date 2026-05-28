@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.UserHealthInfoMapper">
+
+    <select id="getUserHealthInfoByUserId" resultType="UserHealthInfo">
+        select *
+        from user_health_info
+        where user_id = #{userId}
+        ORDER BY id DESC
+    </select>
+
+<!--    下面的插入更新是面向用户的，  标注信息  不允许 -->
+
+    <insert id="insertUserHealthInfo">
+        insert into user_health_info
+        (user_id, sex, birth_date, height, weight, doctor_id)
+        values
+        (#{userId},#{sex},#{birthDate},#{height},#{weight},#{doctorId})
+    </insert>
+
+    <update id="updateUserHealthInfo">
+        update user_health_info
+        set sex=#{sex},birth_date=#{birthDate},height=#{height},
+            weight=#{weight}
+        where user_id = #{userId}
+    </update>
+
+<!--医生端接口：-->
+<!--    针对医生的添加标注信息，需要在下面单独加：-->
+    <select id="getDoctorIdofUser" resultType="long">
+        select doctor_id
+        from user_health_info
+        where user_id = #{userId}
+    </select>
+
+    <update id="updateUserHealthInfoByDoctor">
+        update user_health_info
+        set sex=#{sex},birth_date=#{birthDate},height=#{height},
+            weight=#{weight}, depressed=#{depressed}, remark=#{remark}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateDepressedInfoByDoctor">
+        update user_health_info
+        set depressed=#{depressed}, remark=#{remark}
+        where user_id = #{userId}
+    </update>
+
+</mapper>

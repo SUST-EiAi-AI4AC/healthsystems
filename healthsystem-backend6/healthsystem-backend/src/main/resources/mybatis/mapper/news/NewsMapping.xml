@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.news.NewsMapper">
+    <insert id="insertNews">
+        insert into news
+        (log_date, title, source, photo, content, user_id)
+        values
+            (#{logDate},#{title},#{source},#{photo},#{content},#{userId})
+    </insert>
+
+    <select id="getNewsList" resultType="com.nwpu.healthsystem.backend.entity.news.News">
+        select *,user_info.user_name as username
+        from news
+        left join user_info  on news.user_id = user_info.user_id
+    </select>
+
+    <select id="getContentById" resultType="com.nwpu.healthsystem.backend.entity.news.News">
+        select *, user_info.user_name as username
+        from news
+        left join user_info ON news.user_id = user_info.user_id
+        where news_id = #{newsId}
+        ORDER BY news_id DESC
+    </select>
+
+</mapper>

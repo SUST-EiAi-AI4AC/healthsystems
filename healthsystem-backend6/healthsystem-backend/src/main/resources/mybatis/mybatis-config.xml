@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <!--指定package，则可以避免在mapper xml里头写package-->
+        <package name="com.nwpu.healthsystem.backend.entity"/>
+    </typeAliases>
+
+    <plugins>
+        <plugin interceptor="com.nwpu.healthsystem.backend.common.interceptor.PageInterceptor">
+            <property name="type" value="mysql"></property>
+        </plugin>
+    </plugins>
+
+</configuration>

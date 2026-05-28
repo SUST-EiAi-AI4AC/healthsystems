@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.InvitionCodeMapper">
+<!--    根据邀请码获取邀请人id-->
+    <select id="getInviterByInvitionCode" resultType="long">
+        select user_id
+        from invition_code
+        where invition_code = #{invitionCode}
+    </select>
+
+    <!--    根据助理邀请码获取邀请人id-->
+    <select id="getInviterByAssistantCode" resultType="long">
+        select user_id
+        from invition_code
+        where assistant_code = #{assistantCode}
+    </select>
+
+<!--    新用户加入时，往表中插入 -->
+    <insert id="insertInvitionCode">
+        insert into invition_code
+            (user_id, invition_code, inviter, assistant_code, group_id)
+        values
+            (#{userId},#{invitionCode},#{inviter},#{assistantCode},#{groupId})
+    </insert>
+
+<!--    通过用户id 获取邀请码：包括医生邀请码和助理邀请码-->
+    <select id="getInvitionCodeById" resultType="com.nwpu.healthsystem.backend.common.dto.InvitionCodeDto">
+        select invition_code, assistant_code
+        from invition_code
+        where user_id = #{userId}
+    </select>
+
+<!--    根据用户id 查询用户归属于哪个小组 -->
+    <select id="getGroupIdByUserId" resultType="long">
+        select group_id
+        from invition_code
+        where user_id = #{userId}
+    </select>
+</mapper>

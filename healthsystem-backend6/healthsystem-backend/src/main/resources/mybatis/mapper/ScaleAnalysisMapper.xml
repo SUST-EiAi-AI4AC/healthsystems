@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.ScaleAnalysisMapper">
+
+    <!-- 统计量表记录总数 -->
+    <select id="countScaleRecords" resultType="int">
+        SELECT COUNT(*)
+        FROM ${tableName} s
+        LEFT JOIN user_info u ON s.user_id = u.user_id
+        <where>
+            <if test="username != null and username != ''">
+                AND u.user_name LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND s.log_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND s.log_date &lt;= #{endDate}
+            </if>
+            <if test="riskLevel != null and riskLevel != ''">
+                <choose>
+                    <when test="scaleType.toUpperCase().contains('CDRISC')">
+                        <choose>
+                            <when test="riskLevel == 'normal'">
+                                AND s.score &gt;= 75
+                            </when>
+                            <when test="riskLevel == 'mild'">
+                                AND s.score &gt;= 60 AND s.score &lt; 75
+                            </when>
+                            <when test="riskLevel == 'moderate'">
+                                AND s.score &gt;= 45 AND s.score &lt; 60
+                            </when>
+                            <when test="riskLevel == 'severe'">
+                                AND s.score &lt; 45
+                            </when>
+                        </choose>
+                    </when>
+                    <when test="scaleType.toUpperCase().contains('SCL90') or scaleType.toUpperCase().contains('PSQI')">
+                        <choose>
+                            <when test="riskLevel == 'normal'">
+                                AND s.score &lt;= 40
+                            </when>
+                            <when test="riskLevel == 'mild'">
+                                AND s.score &gt; 40 AND s.score &lt;= 55
+                            </when>
+                            <when test="riskLevel == 'moderate'">
+                                AND s.score &gt; 55 AND s.score &lt;= 70
+                            </when>
+                            <when test="riskLevel == 'severe'">
+                                AND s.score &gt; 70
+                            </when>
+                        </choose>
+                    </when>
+                    <when test="scaleType.toUpperCase().contains('PARS3') or scaleType.toUpperCase().contains('PARS-3')">
+                        <choose>
+                            <when test="riskLevel == 'normal'">
+                                AND s.score &gt;= 23
+                            </when>
+                            <when test="riskLevel == 'mild'">
+                                AND s.score &gt;= 18 AND s.score &lt; 23
+                            </when>
+                            <when test="riskLevel == 'moderate'">
+                                AND s.score &gt;= 12 AND s.score &lt; 18
+                            </when>
+                            <when test="riskLevel == 'severe'">
+                                AND s.score &lt; 12
+                            </when>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="riskLevel == 'normal'">
+                                AND s.score &gt;= 70
+                            </when>
+                            <when test="riskLevel == 'mild'">
+                                AND s.score &gt;= 55 AND s.score &lt; 70
+                            </when>
+                            <when test="riskLevel == 'moderate'">
+                                AND s.score &gt;= 40 AND s.score &lt; 55
+                            </when>
+                            <when test="riskLevel == 'severe'">
+                                AND s.score &lt; 40
+                            </when>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!-- 分页查询量表记录列表 -->
+    <select id="selectScaleList" resultType="map">
+        SELECT s.*, u.user_name AS username, u.real_name AS realName
+        FROM ${tableName} s
+        LEFT JOIN user_info u ON s.user_id = u.user_id
+        <where>
+            <if test="username != null and username != ''">
+                AND u.user_name LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND s.log_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND s.log_date &lt;= #{endDate}
+            </if>
+            <if test="riskLevel != null and riskLevel != ''">
+                <choose>
+                    <when test="scaleType.toUpperCase().contains('CDRISC')">
+                        <choose>
+                            <when test="riskLevel == 'normal'">
+                                AND s.score &gt;= 75
+                            </when>
+                            <when test="riskLevel == 'mild'">
+                                AND s.score &gt;= 60 AND s.score &lt; 75
+                            </when>
+                            <when test="riskLevel == 'moderate'">
+                                AND s.score &gt;= 45 AND s.score &lt; 60
+                            </when>
+                            <when test="riskLevel == 'severe'">
+                                AND s.score &lt; 45
+                            </when>
+                        </choose>
+                    </when>
+                    <when test="scaleType.toUpperCase().contains('SCL90') or scaleType.toUpperCase().contains('PSQI')">
+                        <choose>
+                            <when test="riskLevel == 'normal'">
+                                AND s.score &lt;= 40
+                            </when>
+                            <when test="riskLevel == 'mild'">
+                                AND s.score &gt; 40 AND s.score &lt;= 55
+                            </when>
+                            <when test="riskLevel == 'moderate'">
+                                AND s.score &gt; 55 AND s.score &lt;= 70
+                            </when>
+                            <when test="riskLevel == 'severe'">
+                                AND s.score &gt; 70
+                            </when>
+                        </choose>
+                    </when>
+                    <when test="scaleType.toUpperCase().contains('PARS3') or scaleType.toUpperCase().contains('PARS-3')">
+                        <choose>
+                            <when test="riskLevel == 'normal'">
+                                AND s.score &gt;= 23
+                            </when>
+                            <when test="riskLevel == 'mild'">
+                                AND s.score &gt;= 18 AND s.score &lt; 23
+                            </when>
+                            <when test="riskLevel == 'moderate'">
+                                AND s.score &gt;= 12 AND s.score &lt; 18
+                            </when>
+                            <when test="riskLevel == 'severe'">
+                                AND s.score &lt; 12
+                            </when>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="riskLevel == 'normal'">
+                                AND s.score &gt;= 70
+                            </when>
+                            <when test="riskLevel == 'mild'">
+                                AND s.score &gt;= 55 AND s.score &lt; 70
+                            </when>
+                            <when test="riskLevel == 'moderate'">
+                                AND s.score &gt;= 40 AND s.score &lt; 55
+                            </when>
+                            <when test="riskLevel == 'severe'">
+                                AND s.score &lt; 40
+                            </when>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        ORDER BY s.log_date DESC, s.id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 根据ID查询量表记录详情 -->
+    <select id="selectScaleById" resultType="map">
+        SELECT s.*, u.user_name AS username, u.real_name AS realName
+        FROM ${tableName} s
+        LEFT JOIN user_info u ON s.user_id = u.user_id
+        WHERE s.id = #{id}
+    </select>
+
+    <!-- 获取量表风险等级统计 -->
+    <select id="getScaleRiskStatistics" resultType="map">
+        SELECT
+            CASE
+                <choose>
+                    <when test="scaleType.toUpperCase().contains('CDRISC')">
+                        WHEN score &gt;= 75 THEN 'normal'
+                        WHEN score &gt;= 60 THEN 'mild'
+                        WHEN score &gt;= 45 THEN 'moderate'
+                        ELSE 'severe'
+                    </when>
+                    <when test="scaleType.toUpperCase().contains('SCL90') or scaleType.toUpperCase().contains('PSQI')">
+                        WHEN score &lt;= 40 THEN 'normal'
+                        WHEN score &lt;= 55 THEN 'mild'
+                        WHEN score &lt;= 70 THEN 'moderate'
+                        ELSE 'severe'
+                    </when>
+                    <when test="scaleType.toUpperCase().contains('PARS3') or scaleType.toUpperCase().contains('PARS-3')">
+                        WHEN score &gt;= 23 THEN 'normal'
+                        WHEN score &gt;= 18 THEN 'mild'
+                        WHEN score &gt;= 12 THEN 'moderate'
+                        ELSE 'severe'
+                    </when>
+                    <otherwise>
+                        WHEN score &gt;= 70 THEN 'normal'
+                        WHEN score &gt;= 55 THEN 'mild'
+                        WHEN score &gt;= 40 THEN 'moderate'
+                        ELSE 'severe'
+                    </otherwise>
+                </choose>
+            END AS riskLevel,
+            COUNT(*) AS count
+        FROM ${tableName}
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND log_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND log_date &lt;= #{endDate}
+            </if>
+        </where>
+        GROUP BY riskLevel
+        ORDER BY FIELD(riskLevel, 'severe', 'moderate', 'mild', 'normal')
+    </select>
+
+    <!-- 查询用户最新量表记录 -->
+    <select id="selectUserLatestScale" resultType="map">
+        SELECT s.*, u.user_name AS username, u.real_name AS realName
+        FROM ${tableName} s
+        LEFT JOIN user_info u ON s.user_id = u.user_id
+        WHERE s.user_id = #{userId}
+        ORDER BY s.log_date DESC, s.id DESC
+        LIMIT 1
+    </select>
+
+    <!-- 查询用户量表历史趋势 -->
+    <select id="selectUserScaleTrend" resultType="map">
+        SELECT s.*, u.user_name AS username, u.real_name AS realName
+        FROM ${tableName} s
+        LEFT JOIN user_info u ON s.user_id = u.user_id
+        WHERE s.user_id = #{userId}
+        ORDER BY s.log_date DESC, s.id DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 获取量表评分分布统计 -->
+    <select id="getScaleScoreDistribution" resultType="map">
+        SELECT
+            CASE
+                WHEN score &lt;= 20 THEN '0-20'
+                WHEN score &lt;= 40 THEN '21-40'
+                WHEN score &lt;= 60 THEN '41-60'
+                WHEN score &lt;= 80 THEN '61-80'
+                ELSE '81-100'
+            END AS scoreRange,
+            COUNT(*) AS count
+        FROM ${tableName}
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND log_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND log_date &lt;= #{endDate}
+            </if>
+        </where>
+        GROUP BY scoreRange
+        ORDER BY scoreRange
+    </select>
+
+</mapper>

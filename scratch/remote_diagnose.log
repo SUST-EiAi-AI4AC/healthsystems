@@ -1,0 +1,449 @@
+Connecting to root@47.109.49.174...
+Connected successfully!
+
+============================================================
+Executing: free -m && df -h (CPU_Memory_Info)
+============================================================
+              total        used        free      shared  buff/cache   available
+Mem:           1756         578         156           0        1021         994
+Swap:             0           0           0
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        869M     0  869M   0% /dev
+tmpfs           879M     0  879M   0% /dev/shm
+tmpfs           879M  500K  878M   1% /run
+tmpfs           879M     0  879M   0% /sys/fs/cgroup
+/dev/vda1        40G   20G   19G  52% /
+tmpfs           176M     0  176M   0% /run/user/0
+
+
+
+============================================================
+Executing: ps -ef | grep java | grep -v grep (Java_Processes)
+============================================================
+
+
+============================================================
+Executing: ss -lntp (Listening_Ports)
+============================================================
+State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              
+LISTEN     0      128          *:3306                     *:*                   users:(("mysqld",pid=8180,fd=22))
+LISTEN     0      128          *:8082                     *:*                   users:(("nginx",pid=27029,fd=6),("nginx",pid=27028,fd=6),("nginx",pid=12458,fd=6))
+LISTEN     0      128          *:22                       *:*                   users:(("sshd",pid=1071,fd=3))
+LISTEN     0      100    127.0.0.1:25                       *:*                   users:(("master",pid=1043,fd=13))
+LISTEN     0      128          *:443                      *:*                   users:(("nginx",pid=27029,fd=7),("nginx",pid=27028,fd=7),("nginx",pid=12458,fd=7))
+LISTEN     0      70        [::]:33060                 [::]:*                   users:(("mysqld",pid=8180,fd=20))
+LISTEN     0      100      [::1]:25                    [::]:*                   users:(("master",pid=1043,fd=14))
+
+
+
+============================================================
+Executing: systemctl status nginx --no-pager (Nginx_Status)
+============================================================
+● nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+   Active: active (running) since Mon 2024-06-10 19:36:50 CST; 1 years 11 months ago
+ Main PID: 12458 (nginx)
+   CGroup: /system.slice/nginx.service
+           ├─12458 nginx: master process /usr/sbin/ngin
+           ├─27028 nginx: worker proces
+           └─27029 nginx: worker proces
+
+Jun 10 19:36:50 iZ2vc3ieqpo1k12ti7kii5Z systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Jun 10 19:36:50 iZ2vc3ieqpo1k12ti7kii5Z nginx[12452]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Jun 10 19:36:50 iZ2vc3ieqpo1k12ti7kii5Z nginx[12452]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Jun 10 19:36:50 iZ2vc3ieqpo1k12ti7kii5Z systemd[1]: Started The nginx HTTP and reverse proxy server.
+
+
+
+============================================================
+Executing: nginx -T (Nginx_Config_Dump)
+============================================================
+# configuration file /etc/nginx/nginx.conf:
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+user root;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+# Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 4096;
+client_max_body_size 500m;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+
+    #server {
+    #    listen       80;
+    #    listen       [::]:80;
+    #    server_name  _;
+    #    root         /usr/share/nginx/html;
+
+    #    # Load configuration files for the default server block.
+    #    include /etc/nginx/default.d/*.conf;
+
+    #    error_page 404 /404.html;
+    #    location = /404.html {
+    #    }
+
+    #    error_page 500 502 503 504 /50x.html;
+    #    location = /50x.html {
+    #    }
+    #}
+
+# Settings for a TLS enabled server.
+#
+	server{
+		listen 8082;
+		#server_name www.nwpuhs.com;
+		#rewrite ^(.*)$ https://${server_name}$1 permanent; 
+
+#       location ~* (.*.apk) {
+#            add_header  Content-Type    "application/octet-stream";
+#            if ( $args ~ ^filename=(.*) ) {
+#                add_header  Content-Disposition "attachment; filename=$1";
+#            }
+#            root /opt/apk;
+#        }
+
+
+		location /resource {
+            		alias /opt/apk;
+	#		 autoindex on;
+            		default_type application/vnd.android.package-archive;
+        	}
+
+	}
+
+    server {
+        listen       443 ssl ;
+        server_name  www.nwpuhs.cn;
+        #root         /usr/share/nginx/html;
+        #location / {
+        #    root   html;
+        #    index  index.html index.htm;
+        #}
+
+ location /PrivacyPolicy/ {
+        alias   /root/PrivacyPolicy/;
+        index  index.html;
+    }
+
+        location / {
+            proxy_pass http://localhost:8081/;
+#            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST';
+			#proxy_set_header   Host             $host;
+            proxy_set_header   X-Real-IP        $remote_addr;
+            proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        }
+
+           #ssl_session_cache    shared:SSL:1m;
+           #ssl_session_timeout  5m;
+           #ssl_ciphers  HIGH:!aNULL:!MD5;
+           #ssl_prefer_server_ciphers  on;
+                
+          #д֤ļ·
+     	ssl_certificate /etc/pki/nginx/www.nwpuhs.cn_cert_chain.pem;
+     	#д֤˽Կļ·
+     	ssl_certificate_key /etc/pki/nginx/private/www.nwpuhs.cn_key.key;
+     	#ssl_ciphers HIGH:!aNULL:!MD5;  # ׼
+
+
+
+
+ssl_protocols SSLv2 SSLv3 TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+ssl_ciphers ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS;
+
+
+
+#     	ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+#	    ssl_protocols SSLv2 SSLv3 TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+  
+#  ssl_certificate "/root/server.crt";
+#    ssl_certificate_key "/root/server.key.unsecure";
+   
+        #ssl_session_cache shared:SSL:10m;
+	     #ssl_session_timeout 15m;
+
+		 
+	     #ԶʹõTLSЭԼ׼ΪʾǷҪã
+	     #TLSЭ汾ԽߣHTTPSͨŵİȫԽߣڵͰ汾TLSЭ飬߰汾TLSЭļԽϲ
+	     #ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+	    # ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
+	     #ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+		 #ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+	     #ʾʹ÷˼׼ĬϿ
+	     #ssl_prefer_server_ciphers on;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+    }
+
+}
+
+
+# configuration file /etc/nginx/mime.types:
+
+types {
+    text/html                                        html htm shtml;
+    text/css                                         css;
+    text/xml                                         xml;
+    image/gif                                        gif;
+    image/jpeg                                       jpeg jpg;
+    application/javascript                           js;
+    application/atom+xml                             atom;
+    application/rss+xml                              rss;
+
+    text/mathml                                      mml;
+    text/plain                                       txt;
+    text/vnd.sun.j2me.app-descriptor                 jad;
+    text/vnd.wap.wml                                 wml;
+    text/x-component                                 htc;
+
+    image/png                                        png;
+    image/svg+xml                                    svg svgz;
+    image/tiff                                       tif tiff;
+    image/vnd.wap.wbmp                               wbmp;
+    image/webp                                       webp;
+    image/x-icon                                     ico;
+    image/x-jng                                      jng;
+    image/x-ms-bmp                                   bmp;
+
+    font/woff                                        woff;
+    font/woff2                                       woff2;
+
+    application/java-archive                         jar war ear;
+    application/json                                 json;
+    application/mac-binhex40                         hqx;
+    application/msword                               doc;
+    application/pdf                                  pdf;
+    application/postscript                           ps eps ai;
+    application/rtf                                  rtf;
+    application/vnd.apple.mpegurl                    m3u8;
+    application/vnd.google-earth.kml+xml             kml;
+    application/vnd.google-earth.kmz                 kmz;
+    application/vnd.ms-excel                         xls;
+    application/vnd.ms-fontobject                    eot;
+    application/vnd.ms-powerpoint                    ppt;
+    application/vnd.oasis.opendocument.graphics      odg;
+    application/vnd.oasis.opendocument.presentation  odp;
+    application/vnd.oasis.opendocument.spreadsheet   ods;
+    application/vnd.oasis.opendocument.text          odt;
+    application/vnd.openxmlformats-officedocument.presentationml.presentation
+                                                     pptx;
+    application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+                                                     xlsx;
+    application/vnd.openxmlformats-officedocument.wordprocessingml.document
+                                                     docx;
+    application/vnd.wap.wmlc                         wmlc;
+    application/x-7z-compressed                      7z;
+    application/x-cocoa                              cco;
+    application/x-java-archive-diff                  jardiff;
+    application/x-java-jnlp-file                     jnlp;
+    application/x-makeself                           run;
+    application/x-perl                               pl pm;
+    application/x-pilot                              prc pdb;
+    application/x-rar-compressed                     rar;
+    application/x-redhat-package-manager             rpm;
+    application/x-sea                                sea;
+    application/x-shockwave-flash                    swf;
+    application/x-stuffit                            sit;
+    application/x-tcl                                tcl tk;
+    application/x-x509-ca-cert                       der pem crt;
+    application/x-xpinstall                          xpi;
+    application/xhtml+xml                            xhtml;
+    application/xspf+xml                             xspf;
+    application/zip                                  zip;
+
+    application/octet-stream                         bin exe dll;
+    application/octet-stream                         deb;
+    application/octet-stream                         dmg;
+    application/octet-stream                         iso img;
+    application/octet-stream                         msi msp msm;
+
+    audio/midi                                       mid midi kar;
+    audio/mpeg                                       mp3;
+    audio/ogg                                        ogg;
+    audio/x-m4a                                      m4a;
+    audio/x-realaudio                                ra;
+
+    video/3gpp                                       3gpp 3gp;
+    video/mp2t                                       ts;
+    video/mp4                                        mp4;
+    video/mpeg                                       mpeg mpg;
+    video/quicktime                                  mov;
+    video/webm                                       webm;
+    video/x-flv                                      flv;
+    video/x-m4v                                      m4v;
+    video/x-mng                                      mng;
+    video/x-ms-asf                                   asx asf;
+    video/x-ms-wmv                                   wmv;
+    video/x-msvideo                                  avi;
+	application/vnd.android.package-archive apk;
+
+}
+
+
+STDERR:
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+
+
+============================================================
+Executing: tail -n 100 /var/log/nginx/error.log (Nginx_Error_Log)
+============================================================
+2026/05/22 03:40:58 [error] 27028#27028: *544297 connect() failed (111: Connection refused) while connecting to upstream, client: 136.0.213.47, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 03:40:58 [error] 27028#27028: *544297 connect() failed (111: Connection refused) while connecting to upstream, client: 136.0.213.47, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 04:07:54 [error] 27028#27028: *544308 connect() failed (111: Connection refused) while connecting to upstream, client: 46.151.178.13, server: www.nwpuhs.cn, request: "PROPFIND / HTTP/1.1", upstream: "http://[::1]:8081/", host: "47.109.49.174:443", referrer: "http://47.109.49.174:443/"
+2026/05/22 04:07:54 [error] 27028#27028: *544308 connect() failed (111: Connection refused) while connecting to upstream, client: 46.151.178.13, server: www.nwpuhs.cn, request: "PROPFIND / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "47.109.49.174:443", referrer: "http://47.109.49.174:443/"
+2026/05/22 04:19:43 [error] 27029#27029: *544313 connect() failed (111: Connection refused) while connecting to upstream, client: 59.82.135.192, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 04:19:43 [error] 27029#27029: *544313 connect() failed (111: Connection refused) while connecting to upstream, client: 59.82.135.192, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 04:19:45 [error] 27029#27029: *544313 no live upstreams while connecting to upstream, client: 59.82.135.192, server: www.nwpuhs.cn, request: "GET /nginx-logo.png HTTP/1.1", upstream: "http://localhost/nginx-logo.png", host: "www.nwpuhs.cn"
+2026/05/22 04:19:46 [error] 27029#27029: *544313 no live upstreams while connecting to upstream, client: 59.82.135.192, server: www.nwpuhs.cn, request: "GET /poweredby.png HTTP/1.1", upstream: "http://localhost/poweredby.png", host: "www.nwpuhs.cn"
+2026/05/22 04:32:14 [error] 27028#27028: *544317 connect() failed (111: Connection refused) while connecting to upstream, client: 164.90.163.252, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "47.109.49.174"
+2026/05/22 04:32:14 [error] 27028#27028: *544317 connect() failed (111: Connection refused) while connecting to upstream, client: 164.90.163.252, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "47.109.49.174"
+2026/05/22 04:34:25 [error] 27029#27029: *544320 connect() failed (111: Connection refused) while connecting to upstream, client: 70.39.198.112, server: www.nwpuhs.cn, request: "POST / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 04:34:25 [error] 27029#27029: *544320 connect() failed (111: Connection refused) while connecting to upstream, client: 70.39.198.112, server: www.nwpuhs.cn, request: "POST / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 04:52:39 [error] 27029#27029: *544323 connect() failed (111: Connection refused) while connecting to upstream, client: 110.249.202.132, server: www.nwpuhs.cn, request: "GET /robots.txt HTTP/1.1", upstream: "http://[::1]:8081/robots.txt", host: "www.nwpuhs.cn"
+2026/05/22 04:52:39 [error] 27029#27029: *544323 connect() failed (111: Connection refused) while connecting to upstream, client: 110.249.202.132, server: www.nwpuhs.cn, request: "GET /robots.txt HTTP/1.1", upstream: "http://127.0.0.1:8081/robots.txt", host: "www.nwpuhs.cn"
+2026/05/22 05:15:48 [error] 27028#27028: *544330 connect() failed (111: Connection refused) while connecting to upstream, client: 109.166.52.181, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 05:15:48 [error] 27028#27028: *544330 connect() failed (111: Connection refused) while connecting to upstream, client: 109.166.52.181, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 05:15:51 [error] 27028#27028: *544334 no live upstreams while connecting to upstream, client: 23.234.138.232, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://localhost/", host: "www.nwpuhs.cn"
+2026/05/22 05:15:53 [error] 27029#27029: *544336 connect() failed (111: Connection refused) while connecting to upstream, client: 45.80.97.156, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 05:15:53 [error] 27029#27029: *544336 connect() failed (111: Connection refused) while connecting to upstream, client: 45.80.97.156, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 05:15:55 [error] 27028#27028: *544340 no live upstreams while connecting to upstream, client: 216.73.174.3, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://localhost/", host: "www.nwpuhs.cn"
+2026/05/22 05:17:08 [error] 27028#27028: *544341 connect() failed (111: Connection refused) while connecting to upstream, client: 223.244.8.17, server: www.nwpuhs.cn, request: "GET /manage/default.aspx HTTP/1.1", upstream: "http://[::1]:8081/manage/default.aspx", host: "www.nwpuhs.cn"
+2026/05/22 05:17:08 [error] 27028#27028: *544341 connect() failed (111: Connection refused) while connecting to upstream, client: 223.244.8.17, server: www.nwpuhs.cn, request: "GET /manage/default.aspx HTTP/1.1", upstream: "http://127.0.0.1:8081/manage/default.aspx", host: "www.nwpuhs.cn"
+2026/05/22 05:24:29 [error] 27028#27028: *544344 open() "/usr/share/nginx/html/SDK/webLanguage" failed (2: No such file or directory), client: 93.123.72.166, server: , request: "GET /SDK/webLanguage HTTP/1.1", host: "47.109.49.174:8082"
+2026/05/22 05:44:00 [error] 27029#27029: *544359 connect() failed (111: Connection refused) while connecting to upstream, client: 46.151.178.13, server: www.nwpuhs.cn, request: "PROPFIND / HTTP/1.1", upstream: "http://[::1]:8081/", host: "47.109.49.174:443", referrer: "http://47.109.49.174:443/"
+2026/05/22 05:44:00 [error] 27029#27029: *544359 connect() failed (111: Connection refused) while connecting to upstream, client: 46.151.178.13, server: www.nwpuhs.cn, request: "PROPFIND / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "47.109.49.174:443", referrer: "http://47.109.49.174:443/"
+2026/05/22 05:56:53 [error] 27029#27029: *544362 connect() failed (111: Connection refused) while connecting to upstream, client: 45.148.10.67, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "47.109.49.174:443"
+2026/05/22 05:56:53 [error] 27029#27029: *544362 connect() failed (111: Connection refused) while connecting to upstream, client: 45.148.10.67, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "47.109.49.174:443"
+2026/05/22 06:05:04 [error] 27029#27029: *544365 connect() failed (111: Connection refused) while connecting to upstream, client: 93.152.208.38, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "47.109.49.174:443"
+2026/05/22 06:05:04 [error] 27029#27029: *544365 connect() failed (111: Connection refused) while connecting to upstream, client: 93.152.208.38, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "47.109.49.174:443"
+2026/05/22 06:11:17 [error] 27028#27028: *544369 connect() failed (111: Connection refused) while connecting to upstream, client: 103.116.121.24, server: www.nwpuhs.cn, request: "GET /robots.txt HTTP/1.1", upstream: "http://[::1]:8081/robots.txt", host: "www.nwpuhs.cn"
+2026/05/22 06:11:17 [error] 27028#27028: *544369 connect() failed (111: Connection refused) while connecting to upstream, client: 103.116.121.24, server: www.nwpuhs.cn, request: "GET /robots.txt HTTP/1.1", upstream: "http://127.0.0.1:8081/robots.txt", host: "www.nwpuhs.cn"
+2026/05/22 06:16:55 [error] 27028#27028: *544372 connect() failed (111: Connection refused) while connecting to upstream, client: 223.244.8.17, server: www.nwpuhs.cn, request: "GET /sys/login.aspx HTTP/1.1", upstream: "http://[::1]:8081/sys/login.aspx", host: "www.nwpuhs.cn"
+2026/05/22 06:16:55 [error] 27028#27028: *544372 connect() failed (111: Connection refused) while connecting to upstream, client: 223.244.8.17, server: www.nwpuhs.cn, request: "GET /sys/login.aspx HTTP/1.1", upstream: "http://127.0.0.1:8081/sys/login.aspx", host: "www.nwpuhs.cn"
+2026/05/22 06:20:18 [error] 27029#27029: *544375 connect() failed (111: Connection refused) while connecting to upstream, client: 113.215.188.252, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 06:20:18 [error] 27029#27029: *544375 connect() failed (111: Connection refused) while connecting to upstream, client: 113.215.188.252, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 06:21:47 [error] 27029#27029: *544378 connect() failed (111: Connection refused) while connecting to upstream, client: 223.244.8.41, server: www.nwpuhs.cn, request: "GET /manage/default.aspx HTTP/1.1", upstream: "http://[::1]:8081/manage/default.aspx", host: "www.nwpuhs.cn"
+2026/05/22 06:21:47 [error] 27029#27029: *544378 connect() failed (111: Connection refused) while connecting to upstream, client: 223.244.8.41, server: www.nwpuhs.cn, request: "GET /manage/default.aspx HTTP/1.1", upstream: "http://127.0.0.1:8081/manage/default.aspx", host: "www.nwpuhs.cn"
+2026/05/22 06:26:29 [error] 27029#27029: *544381 connect() failed (111: Connection refused) while connecting to upstream, client: 176.65.149.253, server: www.nwpuhs.cn, request: "GET /.streamlit/secrets.toml HTTP/1.0", upstream: "http://[::1]:8081/.streamlit/secrets.toml"
+2026/05/22 06:26:29 [error] 27029#27029: *544381 connect() failed (111: Connection refused) while connecting to upstream, client: 176.65.149.253, server: www.nwpuhs.cn, request: "GET /.streamlit/secrets.toml HTTP/1.0", upstream: "http://127.0.0.1:8081/.streamlit/secrets.toml"
+2026/05/22 06:36:08 [error] 27029#27029: *544384 connect() failed (111: Connection refused) while connecting to upstream, client: 45.148.10.67, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "47.109.49.174:443"
+2026/05/22 06:36:08 [error] 27029#27029: *544384 connect() failed (111: Connection refused) while connecting to upstream, client: 45.148.10.67, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "47.109.49.174:443"
+2026/05/22 06:44:10 [error] 27029#27029: *544387 connect() failed (111: Connection refused) while connecting to upstream, client: 93.152.208.26, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "47.109.49.174:443"
+2026/05/22 06:44:10 [error] 27029#27029: *544387 connect() failed (111: Connection refused) while connecting to upstream, client: 93.152.208.26, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "47.109.49.174:443"
+2026/05/22 06:46:01 [error] 27028#27028: *544391 connect() failed (111: Connection refused) while connecting to upstream, client: 59.82.21.248, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 06:46:01 [error] 27028#27028: *544391 connect() failed (111: Connection refused) while connecting to upstream, client: 59.82.21.248, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 07:08:43 [error] 27029#27029: *544395 connect() failed (111: Connection refused) while connecting to upstream, client: 112.82.218.136, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 07:08:43 [error] 27029#27029: *544395 connect() failed (111: Connection refused) while connecting to upstream, client: 112.82.218.136, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 07:11:17 [error] 27028#27028: *544400 connect() failed (111: Connection refused) while connecting to upstream, client: 103.151.173.209, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://[::1]:8081/", host: "www.nwpuhs.cn"
+2026/05/22 07:11:17 [error] 27028#27028: *544400 connect() failed (111: Connection refused) while connecting to upstream, client: 103.151.173.209, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8081/", host: "www.nwpuhs.cn"
+2026/05/22 07:11:18 [error] 27028#27028: *544400 no live upstreams while connecting to upstream, client: 103.151.173.209, server: www.nwpuhs.cn, request: "GET /nginx-logo.png HTTP/1.1", upstream: "http://localhost/nginx-logo.png", host: "www.nwpuhs.cn", referrer: "https://www.nwpuhs.cn/"
+2026/05/22 07:11:18 [error] 27028#27028: *544400 no live upstreams while connecting to upstream, client: 103.151.173.209, server: www.nwpuhs.cn, request: "GET /poweredby.png HTTP/1.1", upstream: "http://localhost/poweredby.png", host: "www.nwpuhs.cn", referrer: "https://www.nwpuhs.cn/"
+2026/05/22 07:11:22 [error] 27028#27028: *544400 no live upstreams while connecting to upstream, client: 103.151.173.209, server: www.nwpuhs.cn, request: "GET / HTTP/1.1", upstream: "http://localhost/", host: "www.nwpuhs.cn"
+2026/05/22 07:11:22 [error] 27028#27028: *544400 no live upstreams while connecting to upstream, client: 103.151.173.209, server: www.nwpuhs.cn, request: "GET /nginx-logo.png HTTP/1.1", upstream: "http://localhost/nginx-logo.png", host: "www.nwpuhs.cn", referrer: "https://www.nwpuhs.cn/"
+2026/05/22 07:11:22 [error] 27028#27028: *544400 no live upstreams while connecting to upstream, client: 103.151.173.209, server: www.nwpuhs.cn, request: "GET /poweredby.png HTTP/1.1", upstream: "http://localhost/poweredby.png", host: "www.nwpuhs.cn", referrer: "https://www.nwpuhs.cn/"
+
+
+
+============================================================
+Executing: tail -n 200 /healthsystem-test/backend.log (Backend_Log)
+============================================================
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.3.4.RELEASE)
+
+2026-05-22 00:44:56.681  INFO 8529 --- [           main] c.n.h.backend.BackendApplication         : Starting BackendApplication v0.0.1-SNAPSHOT on iZ2vc3ieqpo1k12ti7kii5Z with PID 8529 (/healthsystem-test/backend-0.0.1-SNAPSHOT.jar started by root in /root)
+2026-05-22 00:44:56.685  INFO 8529 --- [           main] c.n.h.backend.BackendApplication         : The following profiles are active: deploy
+2026-05-22 00:44:58.699  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'shiroConfig' of type [com.nwpu.healthsystem.backend.config.ShiroConfig$$EnhancerBySpringCGLIB$$617eb6cf] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:58.833  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'mybatis-org.mybatis.spring.boot.autoconfigure.MybatisProperties' of type [org.mybatis.spring.boot.autoconfigure.MybatisProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:58.845  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration' of type [org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration$$EnhancerBySpringCGLIB$$946422e9] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:58.848  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'druidConfig' of type [com.nwpu.healthsystem.backend.config.DruidConfig$$EnhancerBySpringCGLIB$$b6251a40] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:58.990  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'druid' of type [com.alibaba.druid.pool.DruidDataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:59.743  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'sqlSessionFactory' of type [org.apache.ibatis.session.defaults.DefaultSqlSessionFactory] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:59.811  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'sqlSessionTemplate' of type [org.mybatis.spring.SqlSessionTemplate] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:59.812  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'userInfoMapper' of type [org.mybatis.spring.mapper.MapperFactoryBean] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:59.815  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'userInfoMapper' of type [com.sun.proxy.$Proxy66] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:59.819  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'customRealm' of type [com.nwpu.healthsystem.backend.shiro.CustomRealm] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:44:59.922  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'securityManager' of type [org.apache.shiro.web.mgt.DefaultWebSecurityManager] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:45:00.055  INFO 8529 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'authorizationAttributeSourceAdvisor' of type [org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:45:00.424  INFO 8529 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 1443 (https) 8081 (http)
+2026-05-22 00:45:00.451  INFO 8529 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-22 00:45:00.451  INFO 8529 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.38]
+2026-05-22 00:45:00.524  INFO 8529 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-22 00:45:00.524  INFO 8529 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3728 ms
+2026-05-22 00:45:01.381  INFO 8529 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService
+2026-05-22 00:45:01.383  INFO 8529 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'taskExecutor'
+2026-05-22 00:45:01.898  INFO 8529 --- [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [templates/index.html]
+2026-05-22 00:45:02.247  INFO 8529 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2026-05-22 00:45:02.643  INFO 8529 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 1443 (https) 8081 (http) with context path ''
+2026-05-22 00:45:02.668  INFO 8529 --- [           main] c.n.h.backend.BackendApplication         : Started BackendApplication in 6.611 seconds (JVM running for 7.192)
+2026-05-22 00:45:25.343  INFO 8529 --- [nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-22 00:45:25.343  INFO 8529 --- [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-22 00:45:25.355  INFO 8529 --- [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 11 ms
+2026-05-22 00:47:18.481  INFO 8529 --- [nio-8081-exec-2] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2026-05-22 01:01:00.000  INFO 8529 --- [   scheduling-1] c.n.h.b.service.answer.AnswerService     : 日常状态提醒任务：开始执行
+2026-05-22 01:01:00.001  INFO 8529 --- [   scheduling-1] c.n.h.b.service.answer.AnswerService     : 日常状态提醒任务：未到晚上9点，无需提醒
+2026-05-22 01:01:00.001  INFO 8529 --- [   scheduling-1] c.n.h.b.service.answer.EMAAnswerService  : 情绪提醒任务：开始执行
+2026-05-22 01:01:00.001  INFO 8529 --- [   scheduling-1] c.n.h.b.service.answer.EMAAnswerService  : 情绪提醒任务：未到早上10点，无需提醒
+2026-05-22 01:01:00.002  INFO 8529 --- [   scheduling-1] c.n.h.backend.service.scale.SdsService   : SDS提醒任务：开始执行
+2026-05-22 01:01:00.002  INFO 8529 --- [   scheduling-1] c.n.h.backend.service.scale.SdsService   : SDS提醒任务：未到周日12点以后，无需提醒
+2026-05-22 01:01:00.002  INFO 8529 --- [   scheduling-1] c.n.h.b.s.scale.PerceivedStressService   : PSS提醒任务：开始执行
+2026-05-22 01:01:00.002  INFO 8529 --- [   scheduling-1] c.n.h.b.s.scale.PerceivedStressService   : PSS提醒任务：未到周日12点以后，无需提醒
+2026-05-22 01:01:00.003  INFO 8529 --- [   scheduling-1] c.n.h.backend.service.scale.SASService   : SAS提醒任务：开始执行
+2026-05-22 01:01:00.003  INFO 8529 --- [   scheduling-1] c.n.h.backend.service.scale.SASService   : SAS提醒任务：未到周日12点以后，无需提醒
+Exception in thread "SpringContextShutdownHook" java.lang.NoClassDefFoundError: ch/qos/logback/classic/spi/ThrowableProxy
+	at ch.qos.logback.classic.spi.LoggingEvent.<init>(LoggingEvent.java:119)
+	at ch.qos.logback.classic.Logger.buildLoggingEventAndAppend(Logger.java:419)
+	at ch.qos.logback.classic.Logger.filterAndLog_0_Or3Plus(Logger.java:383)
+	at ch.qos.logback.classic.Logger.log(Logger.java:765)
+	at org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog.warn(LogAdapter.java:447)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1025)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:170)
+	at org.springframework.context.support.AbstractApplicationContext$1.run(AbstractApplicationContext.java:949)
+
+
+

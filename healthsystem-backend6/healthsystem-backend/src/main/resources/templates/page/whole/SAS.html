@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>焦虑（SAS）饼状图</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .chart-container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .chart {
+            width: 30%;
+            height: 350px;
+        }
+        .form-container input, .form-container button {
+            margin: 5px;
+        }
+        .box-card {
+            width: auto;
+            height: 40px;
+            background: #3366CC;
+            border-radius: 10px;
+            p {
+                font-size: 1.2em;
+                color: rgb(255,255,255);
+                padding: 6px 10px 0 10px;
+            }
+        }
+        .btn-container {
+            width: auto;
+            height: 50px;
+        }
+        .form{
+            background-color: #0099FF;
+            color: rgb(255,255,255);
+            font-size: 1.0em;
+            padding: 6px 10px 6px 10px;
+            text-align: center;
+            border: none;
+        }
+
+        .form:hover{
+            background-color: #3366CC;
+            color: rgb(255,255,255);
+            font-size: 1.0em;
+            padding: 6px 10px 6px 10px;
+            text-align: center;
+            border: none;
+            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+        }
+
+        .modal {
+            display: none; /* 默认隐藏 */
+            position: fixed; /* 固定定位 */
+            z-index: 1; /* 置于顶层 */
+            left: 0;
+            top: 0;
+            width: 100%; /* 宽度占满屏幕 */
+            height: 100%; /* 高度占满屏幕 */
+            overflow: auto; /* 如果需要滚动条 */
+            background-color: rgb(0,0,0); /* 背景色 */
+            background-color: rgba(0,0,0,0.4); /* 黑色背景且有透明度 */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 1% auto;
+            padding: 40px;
+            border: 1px solid #888;
+            width: 1000px; /* 宽度 */
+            height: 700px; /* 高度 */
+            overflow: hidden; /* 防止内部内容溢出 */
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chart-container">
+    <div id="pie1" class="chart"></div>
+    <div id="pie2" class="chart"></div>
+    <div id="pie3" class="chart"></div>
+
+</div>
+
+<div id="detail">
+    <div class="btn-container">
+        <button onclick="openModal('DSasform.html')" class="form">轻度焦虑</button>
+        <button onclick="openModal('ZSasform.html')" class="form">中度焦虑</button>
+        <button onclick="openModal('GSasform.html')" class="form">重度焦虑</button>
+    </div>
+    <!-- 模态窗口的HTML结构 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <iframe id="modalIframe" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div class="box-card">
+    <p>评判标准是：分界值为50分&nbsp;&nbsp;&nbsp;其中50-59分为轻度焦虑&nbsp;&nbsp;&nbsp;60-69分为中度焦虑&nbsp;&nbsp;&nbsp;73分以上为重度焦虑
+    </p>
+</div>
+
+<div id="app">
+    <el-table :data="tableData" style="width: 100%">
+        <el-table-column type="index" label="序号"></el-table-column>
+        <el-table-column prop="username" label="用户名"></el-table-column>
+        <el-table-column prop="logDate" label="开始节点填报时间"></el-table-column>
+        <el-table-column prop="score" label="开始节点评估结果"></el-table-column>
+        <el-table-column prop="logDate2" label="中期节点填报时间"></el-table-column>
+        <el-table-column prop="score2" label="中期节点评估结果"></el-table-column>
+        <el-table-column prop="logDate3" label="结束节点填报时间"></el-table-column>
+        <el-table-column prop="score3" label="结束节点评估结果"></el-table-column>
+    </el-table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<script>
+    function getOption(title, data) {
+        return {
+            title: {
+                text: title,
+                subtext: '填写',
+                x: 'left'
+            },
+            legend: {
+                top: 'top'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            series: [
+                {
+                    name: '半径模式',
+                    type: 'pie',
+                    radius: [30, 100],
+                    center: ['50%', '50%'],
+                    roseType: 'area',
+                    itemStyle: {
+                        borderRadius: 8
+                    },
+                    data: data
+                }
+            ]
+        };
+    }
+
+    function renderChart(containerId, title, data) {
+        var chartDom = document.getElementById(containerId);
+        var myChart = echarts.init(chartDom);
+        myChart.setOption(getOption(title, data));
+    }
+
+    function openModal(url) {
+        var modal = document.getElementById("myModal");
+        var iframe = document.getElementById("modalIframe");
+
+        iframe.style.width = '1000px'; // 与.modal-content的宽度相同
+        iframe.style.height = '700px'; // 与.modal-content的高度相同
+
+        // 设置新的 iframe 源
+        iframe.src = 'mind/' + url;
+
+        // 显示模态窗口
+        modal.style.display = "block";
+
+        // 点击关闭按钮时关闭模态窗口
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // 点击模态窗口外部时关闭模态窗口
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    }
+
+    axios.get('scale/sas/getAlldata')
+        .then(response => {
+            let arr0=[];
+            let arr1=[];
+            let arr2=[];
+            for (let i = 1; i <=3; i++) {
+                response.data.result[i].forEach( item => {
+                    let obj={};
+                    if (0<=item.score && item.score<=49){
+                        obj.name="无焦虑";
+                        obj.value=item.score;
+                    }else if (50<=item.score && item.score<=59){
+                        obj.name="轻度焦虑";
+                        obj.value=item.score;
+                    }else if (60<=item.score && item.score<=69){
+                        obj.name="中度焦虑";
+                        obj.value=item.score;
+                    }else if (70<=item.score){
+                        obj.name="重度焦虑";
+                        obj.value=item.score;
+                    }
+                    if (i==1){
+                        arr0.push(obj);
+                    }else if (i==2){
+                        arr1.push(obj);
+                    }else if (i==3){
+                        arr2.push(obj);
+                    }
+                });
+
+            }
+            let nameCounts1 = new Map();
+            arr0.forEach(obj => {
+                let name = obj.name;
+                nameCounts1.set(name, (nameCounts1.get(name) || 0) + 1);
+            });
+           let arrWithCounts1 = Array.from(nameCounts1.entries()).map(([name, count]) => ({ name, value:count }));
+            let nameCounts2 = new Map();
+            arr1.forEach(obj => {
+                let name = obj.name;
+                nameCounts2.set(name, (nameCounts2.get(name) || 0) + 1);
+            });
+            let arrWithCounts2 = Array.from(nameCounts2.entries()).map(([name, count]) => ({ name, value:count }));
+            let nameCounts3 = new Map();
+            arr2.forEach(obj => {
+                let name = obj.name;
+                nameCounts3.set(name, (nameCounts3.get(name) || 0) + 1);
+            });
+           let  arrWithCounts3 = Array.from(nameCounts3.entries()).map(([name, count]) => ({ name, value:count }));
+            renderChart('pie1', '开始节点', arrWithCounts1);
+            renderChart('pie2', '中期节点', arrWithCounts2);
+            renderChart('pie3', '结束节点', arrWithCounts3);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+</script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            tableHeaders: [],
+            tableData: []
+        },
+        mounted() {
+            this.fetchTableData();
+        },
+        methods: {
+            fetchTableData() {
+                axios.get('/page/whole/scale/sas/getAllFormdata')
+                    .then(response => {
+                        this.tableData = response.data.result.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching table data:', error);
+                    });
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

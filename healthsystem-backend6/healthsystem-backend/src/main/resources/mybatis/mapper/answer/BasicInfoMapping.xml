@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.answer.BasicInfoMapper">
+    <insert id="insertBasicInfo" >
+        insert into basic_info
+        (user_id, sex, phone, birth_date, culture, is_single_parent, is_abandon, residential, marital, trauma, trauma_time, relative_suicide,mental_illness,
+         family_mental_history, close_rel, resident, neighbor_rel, colleague_rel, favour, comfort, share, seek_help, group_activity, dating_engaged,
+        dating_lose, parents_conflict, family_finance_dif, debt, family_ser_inj, family_die, ser_inj, unemployed, work_pressure, poor_mark, roommates_dis, life_law_change,
+        friend_ser_inj, friend_die, misunderstood, stolen, accidental_shock,log_date)
+        values
+            (#{userId},#{sex},#{phone},#{birthDate},#{culture},#{isSingleParent},#{isAbandon},#{residential},#{marital},#{trauma},#{traumaTime},#{relativeSuicide},#{mentalIllness},
+             #{familyMentalHistory},#{closeRel},#{resident},#{neighborRel},#{colleagueRel},#{favour},#{comfort},#{share},#{seekHelp},#{groupActivity},#{datingEngaged},
+             #{datingLose},#{parentsConflict},#{familyFinanceDif},#{debt},#{familySerInj},#{familyDie},#{serInj},#{unemployed},#{workPressure},#{poorMark},
+             #{roommatesDis},#{lifeLawChange},#{friendSerInj},#{friendDie},#{misunderstood},#{stolen},#{accidentalShock},#{logDate})
+    </insert>
+
+    <update id="updateBasicInfo">
+        update basic_info
+        set sex=#{sex},phone=#{phone},birth_date=#{birthDate},culture=#{culture},is_single_parent=#{isSingleParent},is_abandon=#{isAbandon},residential=#{residential},
+            marital=#{marital},trauma=#{trauma},trauma_time=#{traumaTime},relative_suicide=#{relativeSuicide},mental_illness=#{mentalIllness},family_mental_history=#{familyMentalHistory},
+            close_rel=#{closeRel},resident=#{resident},neighbor_rel=#{neighborRel},colleague_rel=#{colleagueRel},favour=#{favour},comfort=#{comfort},share=#{share},
+            seek_help=#{seekHelp},group_activity=#{groupActivity},dating_engaged=#{datingEngaged},dating_lose=#{datingLose},parents_conflict=#{parentsConflict},
+            debt=#{debt},family_ser_inj=#{familySerInj},family_die=#{familyDie},ser_inj=#{serInj},unemployed=#{unemployed},
+            work_pressure=#{workPressure},poor_mark=#{poorMark},roommates_dis=#{roommatesDis},life_law_change=#{lifeLawChange},friend_ser_inj=#{friendSerInj},
+            friend_die=#{friendDie}, misunderstood=#{misunderstood}, stolen=#{stolen}, accidental_shock=#{accidentalShock},log_date=#{logDate},family_finance_dif=#{familyFinanceDif}
+        where user_id = #{userId}
+    </update>
+
+    <select id="getRecord" resultType="int">
+        select count(0)
+        from basic_info
+        where user_id=#{userId}
+    </select>
+
+    <select id="getRecordDetail" resultType="com.nwpu.healthsystem.backend.entity.answer.BasicInfo">
+        select *
+        from basic_info
+        where user_id=#{userId}
+    </select>
+</mapper>

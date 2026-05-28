@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息数据表</title>
+    <script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+    <script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <style>
+        /* 保持原有样式不变 */
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        }
+        .table-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .data-table th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 500;
+            width: 20%;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .data-table tr:hover {
+            background-color: #eef7ff;
+        }
+        .field-desc {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 4px;
+            font-style: italic;
+        }
+        .status提示 {
+            text-align: center;
+            padding: 50px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .loading {
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
+        .error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .auth-error {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+        }
+        .retry-btn {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .retry-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="table-title">用户信息详情表</h2>
+    <div class="status提示 loading">正在从服务器加载数据...</div>
+    <table class="data-table" style="display: none;">
+        <tbody id="userDataBody">
+        <!-- 数据将通过接口动态填充 -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    layui.use(['jquery', 'layer'], function() {
+        const $ = layui.jquery;
+        const layer = layui.layer;
+
+        // 配置信息
+        const config = {
+            userId : parent.userInfo.userId,
+            token: getToken(),
+            apiUrl: '/basicInfo/getRecordDetail'
+        };
+
+        // 字段配置
+        const fieldConfig = {
+            log_date: { field: "记录日期"},
+            birth_date: { field: "出生日期"},
+            culture: { field: "受教育程度"},
+            is_single_parent: { field: "是否单亲家庭"},
+            is_abandon: { field: "是否被遗弃"},
+            residential: { field: "居住情况"},
+            marital: { field: "婚姻状况"},
+            trauma: { field: "经历的创伤事件"},
+            trauma_time: { field: "创伤事件发生时期"},
+            relative_suicide: { field: "亲属自杀情况"},
+            mental_illness: { field: "精神疾病史"},
+            family_mental_history: { field: "家族精神疾病史"},
+            close_rel: { field: "有多少关系密切的朋友"},
+            resident: { field: "近一年居住情况"},
+            neighbor_rel: { field: "邻里关系"},
+            colleague_rel: { field: "同事/同学关系"},
+            favour: { field: "主要帮助来源"},
+            comfort: { field: "主要安慰来源"},
+            share: { field: "倾诉情况"},
+            seek_help: { field: "求助行为"},
+            group_activity: { field: "群体活动参与频率"},
+            dating_engaged: { field: "恋爱/订婚事件"},
+            dating_lose: { field: "失恋事件"},
+            parents_conflict: { field: "父母冲突事件"},
+            family_finance_dif: { field: "家庭经济困难事件"},
+            debt: { field: "负债事件"},
+            family_ser_inj: { field: "家人重伤事件"},
+            family_die: { field: "家人去世事件"},
+            ser_inj: { field: "自身重伤事件"},
+            unemployed: { field: "失业事件"},
+            work_pressure: { field: "工作/学业压力事件"},
+            poor_mark: { field: "成绩不佳事件"},
+            roommates_dis: { field: "室友冲突事件"},
+            life_law_change: { field: "生活规律改变事件"},
+            friend_ser_inj: { field: "朋友重伤事件"},
+            friend_die: { field: "朋友去世事件"},
+            misunderstood: { field: "被误解事件"},
+            stolen: { field: "被盗事件"},
+            accidental_shock: { field: "意外惊吓事件"}
+        };
+
+        // 初始化
+        init();
+
+        // 初始化函数
+        function init() {
+            if (!config.userId) {
+                showErrorAll('用户信息获取失败，请刷新页面重试');
+                return;
+            }
+            fetchData();
+        }
+
+        // 加载用户数据
+        function fetchData() {
+            // 构建请求参数
+            const params = {
+                userId: config.userId // 传递用户ID参数
+            };
+
+            // 请求头
+            const headers = {
+                'Authorization': getToken() || '',
+                'Content-Type': 'application/json'
+            };
+
+            // 发起axios请求
+            axios.get(config.apiUrl, { params, headers })
+                .then(response => {
+                    const res = response.data;
+                    if (res.code === 200) {
+                        // 处理数据，即使结果为空
+                        processData(res.result || {});
+                    } else if (res.code === 400 && res.result && res.result.includes('未查询到')) {
+                        // 没有数据但请求成功
+                        processData({});
+                    } else {
+                        // 其他业务错误处理
+                        showErrorAll(`数据获取失败: ${res.result || res.message || '未知错误'}`);
+                    }
+                })
+                .catch(error => {
+                    // 捕获请求错误（网络错误、服务器错误等）
+                    let errorMsg = '网络错误，请检查网络连接';
+                    if (error.response) {
+                        // 服务器返回错误状态码
+                        errorMsg = `请求失败: ${error.response.statusText || '服务器错误'}`;
+                    } else if (error.request) {
+                        // 请求发出但无响应
+                        errorMsg = '请求超时，未收到服务器响应';
+                    }
+                    showErrorAll(errorMsg);
+                    console.error('请求错误详情:', error);
+                });
+        }
+
+        function getToken() {
+            try {
+                const healthSystem = JSON.parse(localStorage.getItem('HealthSystem') || '{}');
+                return healthSystem.Authorization || '';
+            } catch (e) {
+                console.error('解析 Token 失败:', e);
+                return '';
+            }
+        }
+
+        // 处理返回的数据
+        function processData(data) {
+            const tableBody = document.getElementById('userDataBody');
+            const statusDiv = document.querySelector('.status提示');
+            const dataTable = document.querySelector('.data-table');
+
+            // 清空表格
+            tableBody.innerHTML = '';
+
+            // 处理空数据情况
+            const isEmpty = Object.keys(data).length === 0;
+            if (isEmpty) {
+                statusDiv.className = 'status提示 loading';
+                statusDiv.innerHTML = '未查询到相关用户信息';
+                dataTable.style.display = 'none';
+                return;
+            }
+
+            // 渲染数据到表格
+            Object.entries(data).forEach(([key, value]) => {
+                if (!fieldConfig[key]) return; // 跳过未配置的字段
+
+                const { field } = fieldConfig[key];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <th>${field}</th>
+                <td>${value !== null ? value : '无数据'}</td>
+            `;
+                tableBody.appendChild(row);
+            });
+
+            // 显示表格，隐藏状态提示
+            statusDiv.style.display = 'none';
+            dataTable.style.display = 'table';
+        }
+
+        // 显示错误信息
+        function showErrorAll(message) {
+            const statusDiv = document.querySelector('.status提示');
+            statusDiv.className = 'status提示 error';
+            statusDiv.innerHTML = `
+            ${message}<br>
+            <button class="retry-btn" onclick="loadUserData()">重试</button>
+        `;
+            document.querySelector('.data-table').style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+
+==================================================
+Executing: mysql -u root -pnwpuhs@ABC123\!@# -e "USE healthsystem_test2; SELECT COUNT(*) FROM user_info;" || true
+==================================================
+STDOUT:
+COUNT(*)
+17
+STDERR:
+mysql: [Warning] Using a password on the command line interface can be insecure.
+
+==================================================
+Executing: mysql -u root -pnwpuhs@ABC123\!@# -e "USE healthsystem_test2; SELECT COUNT(*) FROM nwpu_user_info;" || true
+==================================================
+STDOUT:
+COUNT(*)
+0
+STDERR:
+mysql: [Warning] Using a password on the command line interface can be insecure.
+
+==================================================
+Executing: mysql -u root -pnwpuhs@ABC123\!@# -e "USE healthsystem_test2; SELECT COUNT(*) FROM activity;" || true
+==================================================
+STDOUT:
+COUNT(*)
+203
+STDERR:
+mysql: [Warning] Using a password on the command line interface can be insecure.

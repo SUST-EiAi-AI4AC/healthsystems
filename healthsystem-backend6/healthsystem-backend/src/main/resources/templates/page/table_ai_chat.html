@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AI聊天分析</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户名/姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="keyword" autocomplete="off" class="layui-input" placeholder="输入用户名或真实姓名">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn">
+                                <i class="layui-icon"></i> 搜 索
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <!-- 统计卡片 -->
+        <div class="layui-row layui-col-space15" style="margin-bottom: 15px;">
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #5FB878;" id="stat-normal">0</div>
+                            <div style="color: #666; margin-top: 5px;">正常</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FFB800;" id="stat-low">0</div>
+                            <div style="color: #666; margin-top: 5px;">轻度风险</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FF5722;" id="stat-medium">0</div>
+                            <div style="color: #666; margin-top: 5px;">中度风险</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FF0000;" id="stat-high">0</div>
+                            <div style="color: #666; margin-top: 5px;">重度风险</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据表格 -->
+        <table class="layui-hide" id="chatTable" lay-filter="chatTable"></table>
+
+        <!-- 尾部工具栏 -->
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="detail">查看对话</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use(['form', 'table', 'layer'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer;
+
+        let token = getToken();
+        if(null == token) {
+            reLoginForShiroExecption()
+        }
+
+        // 加载统计数据
+        function loadStatistics() {
+            $.ajax({
+                type: "GET",
+                url: "/aiChatAnalysis/getEmotionStatistics",
+                headers: {
+                    Authorization: token
+                },
+                success: function (res) {
+                    if(res.code == 200) {
+                        var data = res.result;
+                        var totalUsers = data.total_users || 0;
+                        var highRisk = data.high_risk || 0;
+                        var mediumRisk = data.medium_risk || 0;
+                        var lowRisk = data.low_risk || 0;
+                        var normal = totalUsers - highRisk - mediumRisk - lowRisk;
+                        
+                        $('#stat-normal').text(normal);
+                        $('#stat-low').text(lowRisk);
+                        $('#stat-medium').text(mediumRisk);
+                        $('#stat-high').text(highRisk);
+                    }
+                }
+            });
+        }
+
+        loadStatistics();
+
+        var tableIns = table.render({
+            elem: '#chatTable',
+            url: '/aiChatAnalysis/getSessionList',
+            method: 'GET',
+            title: 'AI聊天会话数据',
+            limits: [10, 15, 20, 30, 40, 50],
+            limit: 15,
+            request: {
+                pageName: 'currentPage',
+                limitName: 'pageSize'
+            },
+            headers: {
+                Authorization: token
+            },
+            parseData: function(res){
+                if(res.code == 401) {
+                    return {
+                        "code": res.code,
+                        "msg": res.message,
+                    };
+                }
+                return {
+                    "code": res.code == 200 ? 0 : res.code,
+                    "msg": res.message,
+                    "count": res.result.pageInfo.totalNumber,
+                    "data": res.result.data
+                };
+            },
+            done: function(res){
+                if(res.code == 401) {
+                    reLoginForShiroExecption();
+                }
+            },
+            cols: [[
+                {field:'id', title:'会话ID', width:80, sort: true},
+                {field:'real_name', title:'用户姓名', width:100},
+                {field:'user_name', title:'用户名', width:120},
+                {field:'phone', title:'手机号', width:120},
+                {field:'title', title:'对话标题', width:200},
+                {field:'message_count', title:'消息数量', width:100, sort: true},
+                {field:'created_at', title:'创建时间', width:160, sort: true},
+                {field:'updated_at', title:'最后更新', width:160, sort: true},
+                {fixed: 'right', title:'操作', toolbar: '#barDemo', width: 180}
+            ]],
+            page: true
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            table.reload('chatTable', {
+                page: {
+                    curr: 1
+                },
+                where: {
+                    keyword: data.field.keyword
+                }
+            });
+            return false;
+        });
+
+        // 监听工具条
+        table.on('tool(chatTable)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                // 查看对话详情
+                $.ajax({
+                    type: "GET",
+                    url: "/aiChatAnalysis/getSessionMessages",
+                    data: {sessionId: data.id},
+                    headers: {
+                        Authorization: token
+                    },
+                    success: function (res) {
+                        if(res.code == 200) {
+                            var messages = res.result;
+                            var content = '<div style="max-height: 500px; overflow-y: auto; padding: 10px;">';
+                            
+                            messages.forEach(function(msg) {
+                                var roleText = msg.role === 'user' ? '用户' : 'AI助手';
+                                var roleColor = msg.role === 'user' ? '#1E9FFF' : '#5FB878';
+                                content += '<div style="margin-bottom: 15px;">';
+                                content += '<div style="color: ' + roleColor + '; font-weight: bold; margin-bottom: 5px;">' + roleText + '：</div>';
+                                content += '<div style="background: #f8f8f8; padding: 10px; border-radius: 5px;">' + msg.content + '</div>';
+                                content += '<div style="color: #999; font-size: 12px; margin-top: 5px;">' + msg.created_at + '</div>';
+                                content += '</div>';
+                            });
+                            
+                            content += '</div>';
+                            
+                            layer.open({
+                                type: 1,
+                                title: '对话详情 - ' + data.title,
+                                area: ['700px', '600px'],
+                                content: content
+                            });
+                        } else if(res.code == 401) {
+                            reLoginForShiroExecption();
+                        } else {
+                            layer.msg('获取对话详情失败');
+                        }
+                    }
+                });
+            } else if(obj.event === 'delete') {
+                layer.confirm('真的删除这个会话及其消息记录吗？', function(index){
+                    $.ajax({
+                        url: '/aiChatAnalysis/delete/' + data.id,
+                        type: 'POST',
+                        headers: { Authorization: token },
+                        success: function(res) {
+                            if(res.code === 200) {
+                                layer.msg('删除成功');
+                                table.reload('chatTable');
+                                loadStatistics();
+                            } else {
+                                layer.msg(res.message || '删除失败');
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

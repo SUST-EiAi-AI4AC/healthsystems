@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.answer.AnswerMapper">
+    <insert id="insertAnswer" >
+        insert into answer
+        (user_id,log_date,diet_info,statement_url,time_management,social_expression,study_or_work_time,study_or_work_state,free,free_symptom,yesterday_night,yesterday_end_feel,
+         communicate_time,phone_play_time,weakup_status)
+        values
+            (#{userId},#{logDate},#{dietInfo},#{statementUrl},#{timeManagement},#{socialExpression},#{studyOrWorkTime},#{studyOrWorkState},#{free},#{freeSymptom},#{yesterdayNight},#{yesterdayEndFeel}
+            ,#{communicateTime},#{phonePlayTime},#{weakupStatus})
+    </insert>
+
+    <update id="updateAnswer">
+        update answer
+        set diet_info=#{dietInfo},
+            statement_url=#{statementUrl},
+            time_management=#{timeManagement},
+            social_expression=#{socialExpression},
+            study_or_work_time=#{studyOrWorkTime},
+            study_or_work_state=#{studyOrWorkState},
+            free=#{free},
+            free_symptom=#{freeSymptom},
+            yesterday_night=#{yesterdayNight},
+            yesterday_end_feel=#{yesterdayEndFeel},
+            communicate_time=#{communicateTime},
+            phone_play_time=#{phonePlayTime},
+            weakup_status=#{weakupStatus}
+        where user_id = #{userId} and log_date=#{logDate}
+    </update>
+
+    <select id="getAnswerListByPage" resultType="com.nwpu.healthsystem.backend.entity.answer.Answer">
+        select *
+        from answer
+        where user_id=#{userId}
+        ORDER BY id DESC
+    </select>
+
+    <select id="getToday" resultType="int">
+        select count(0)
+        from answer
+        where user_id=#{userId}
+          and log_date=#{date}
+    </select>
+
+    <select id="getTodayDetail" resultType="com.nwpu.healthsystem.backend.entity.answer.Answer">
+        select *
+        from answer
+        where user_id=#{userId}
+          and log_date=#{date}
+        limit 1
+    </select>
+
+    <select id="getSleepAndSportsTimeBySelectTime" resultType="com.nwpu.healthsystem.backend.common.dto.echarts.SleepAndSportsTimeResponseDto">
+        select log_date, study_or_work_time, communicate_time, phone_play_time
+        from answer
+        where user_id=#{userId} and DATEDIFF(NOW(), log_date) &lt; #{period}
+    </select>
+
+    <select id="getTodayAnswered" resultType="com.nwpu.healthsystem.backend.entity.answer.Answer">
+        select *
+        from answer
+        where log_date=#{date}
+    </select>
+
+    <select id="getAnswerListByUserId" resultType="com.nwpu.healthsystem.backend.entity.answer.Answer">
+        select *
+        from answer
+        where user_id=#{userId}
+        order by log_date DESC;
+    </select>
+
+    <!-- 统计用户在指定时间范围内的填报记录数 -->
+    <select id="countByUserIdAndTimeRange" resultType="int">
+        select count(0)
+        from answer
+        where user_id = #{userId}
+        and log_date >= #{startTime}
+        and log_date &lt; #{endTime}  <!-- 将 < 替换为 &lt; -->
+    </select>
+</mapper>

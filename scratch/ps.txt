@@ -1,0 +1,57 @@
+=== RUNNING PROCESSES ===
+root      8245  8240  0 00:43 ?        00:00:00 bash -c ps -ef | grep java
+root      8269  8245  0 00:43 ?        00:00:00 grep java
+
+=== LOG TAIL ===
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.3.4.RELEASE)
+
+2026-05-22 00:15:00.958  INFO 6376 --- [           main] c.n.h.backend.BackendApplication         : Starting BackendApplication v0.0.1-SNAPSHOT on iZ2vc3ieqpo1k12ti7kii5Z with PID 6376 (/healthsystem-test/backend-0.0.1-SNAPSHOT.jar started by root in /root)
+2026-05-22 00:15:00.961  INFO 6376 --- [           main] c.n.h.backend.BackendApplication         : The following profiles are active: deploy
+2026-05-22 00:15:02.977  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'shiroConfig' of type [com.nwpu.healthsystem.backend.config.ShiroConfig$$EnhancerBySpringCGLIB$$983d310e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.093  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'mybatis-org.mybatis.spring.boot.autoconfigure.MybatisProperties' of type [org.mybatis.spring.boot.autoconfigure.MybatisProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.105  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration' of type [org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration$$EnhancerBySpringCGLIB$$cb229d28] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.108  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'druidConfig' of type [com.nwpu.healthsystem.backend.config.DruidConfig$$EnhancerBySpringCGLIB$$ece3947f] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.245  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'druid' of type [com.alibaba.druid.pool.DruidDataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.954  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'sqlSessionFactory' of type [org.apache.ibatis.session.defaults.DefaultSqlSessionFactory] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.961  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'sqlSessionTemplate' of type [org.mybatis.spring.SqlSessionTemplate] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.962  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'userInfoMapper' of type [org.mybatis.spring.mapper.MapperFactoryBean] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.965  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'userInfoMapper' of type [com.sun.proxy.$Proxy66] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:03.969  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'customRealm' of type [com.nwpu.healthsystem.backend.shiro.CustomRealm] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:04.123  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'securityManager' of type [org.apache.shiro.web.mgt.DefaultWebSecurityManager] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:04.226  INFO 6376 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'authorizationAttributeSourceAdvisor' of type [org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-22 00:15:04.592  INFO 6376 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 1443 (https) 8081 (http)
+2026-05-22 00:15:04.612  INFO 6376 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-22 00:15:04.612  INFO 6376 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.38]
+2026-05-22 00:15:04.685  INFO 6376 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-22 00:15:04.685  INFO 6376 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3540 ms
+2026-05-22 00:15:05.486  INFO 6376 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService
+2026-05-22 00:15:05.487  INFO 6376 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'taskExecutor'
+2026-05-22 00:15:06.091  INFO 6376 --- [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [templates/index.html]
+2026-05-22 00:15:06.472  INFO 6376 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2026-05-22 00:15:07.057  INFO 6376 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 1443 (https) 8081 (http) with context path ''
+2026-05-22 00:15:07.082  INFO 6376 --- [           main] c.n.h.backend.BackendApplication         : Started BackendApplication in 6.792 seconds (JVM running for 7.525)
+2026-05-22 00:16:04.742  INFO 6376 --- [nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-22 00:16:04.742  INFO 6376 --- [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-22 00:16:04.750  INFO 6376 --- [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 8 ms
+2026-05-22 00:16:15.306  WARN 6376 --- [nio-8081-exec-4] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' not supported]
+2026-05-22 00:19:31.313  INFO 6376 --- [nio-8081-exec-4] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2026-05-22 00:31:00.000  INFO 6376 --- [   scheduling-1] c.n.h.b.service.answer.AnswerService     : 日常状态提醒任务：开始执行
+2026-05-22 00:31:00.001  INFO 6376 --- [   scheduling-1] c.n.h.b.service.answer.AnswerService     : 日常状态提醒任务：未到晚上9点，无需提醒
+2026-05-22 00:31:00.001  INFO 6376 --- [   scheduling-1] c.n.h.b.service.answer.EMAAnswerService  : 情绪提醒任务：开始执行
+2026-05-22 00:31:00.001  INFO 6376 --- [   scheduling-1] c.n.h.b.service.answer.EMAAnswerService  : 情绪提醒任务：未到早上10点，无需提醒
+Exception in thread "SpringContextShutdownHook" java.lang.NoClassDefFoundError: ch/qos/logback/classic/spi/ThrowableProxy
+	at ch.qos.logback.classic.spi.LoggingEvent.<init>(LoggingEvent.java:119)
+	at ch.qos.logback.classic.Logger.buildLoggingEventAndAppend(Logger.java:419)
+	at ch.qos.logback.classic.Logger.filterAndLog_0_Or3Plus(Logger.java:383)
+	at ch.qos.logback.classic.Logger.log(Logger.java:765)
+	at org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog.warn(LogAdapter.java:447)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1025)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:170)
+	at org.springframework.context.support.AbstractApplicationContext$1.run(AbstractApplicationContext.java:949)

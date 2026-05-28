@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>健康信息界面</title>
+  <script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+  <script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+  <style>
+    /* 头部样式 */
+    .head {
+      height: 25vh;
+      width: 100%;
+      z-index: 1;
+      position: relative;
+      background: #007AFF;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 20px;
+    }
+
+    .head .greet {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: white;
+      margin-right: 10px;
+    }
+
+    .head img {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 60%;
+      height: 72%;
+    }
+
+    /* 标题样式 */
+    .title {
+      padding: 2px 0 2px 10px;
+      margin: 8px auto;
+      border-left: 8px solid #3478F6;
+      font-size: 1.2em;
+      color: #696969;
+    }
+
+    /* 内容容器样式 */
+    .content {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+
+    /* 健康数据卡片样式 */
+    .health-card {
+      width: calc(33.33% - 20px);
+      margin: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      background-color: white;
+    }
+
+    .health-card:hover {
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+      background-color: #f2f2f2;
+      padding: 10px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .card-body {
+      padding: 15px;
+      text-align: center;
+      font-size: 1.3em;
+      color: #333;
+    }
+
+    /* 心率卡片特殊样式 */
+    .heart-rate-box {
+      font-size: 0.9em;
+      text-align: left;
+      padding: 15px 20px;
+    }
+
+    .heart-rate-item {
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+
+    .heart-rate-value {
+      color: #007AFF;
+      font-weight: 600;
+    }
+
+    /* 步数卡片样式 */
+    .steps-box {
+      font-size: 0.9em;
+      text-align: left;
+      padding: 15px 20px;
+    }
+    .steps-item {
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+    .steps-value {
+      color: #007AFF;
+      font-weight: 600;
+    }
+
+    /* 压力卡片样式 */
+    .stress-box {
+      font-size: 0.9em;
+      text-align: left;
+      padding: 15px 20px;
+    }
+    .stress-item {
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+    .stress-value {
+      color: #007AFF;
+      font-weight: 600;
+    }
+
+    /* 睡眠卡片样式 */
+    .sleep-box {
+      font-size: 0.85em;
+      text-align: left;
+      padding: 15px 20px;
+    }
+    .sleep-item {
+      margin: 5px 0;
+      line-height: 1.3;
+    }
+    .sleep-value {
+      color: #007AFF;
+      font-weight: 600;
+    }
+
+    /* 身体电量卡片样式 */
+    .battery-box {
+      font-size: 0.9em;
+      text-align: left;
+      padding: 15px 20px;
+    }
+    .battery-item {
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+    .battery-charged {
+      color: #2ecc71; /* 绿色表示充能 */
+      font-weight: 600;
+    }
+    .battery-drained {
+      color: #e74c3c; /* 红色表示耗能 */
+      font-weight: 600;
+    }
+
+    /* 血氧卡片样式 */
+    .spo2-box {
+      font-size: 0.9em;
+      text-align: left;
+      padding: 15px 20px;
+    }
+    .spo2-item {
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+    .spo2-value {
+      color: #007AFF;
+      font-weight: 600;
+    }
+
+    .update-info {
+      font-size: 0.8em;
+      color: #999;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    /* 睡眠图表容器样式 */
+    .sleep-charts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 图表容器样式 */
+    #heartRateChart, #stepsChart, #stressChart, #sleepScoreChart, #sleepDurationChart, #batteryChart, #spo2Chart {
+      width: 100% !important;
+      height: 450px !important;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+      .health-card {
+        width: calc(50% - 20px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .health-card {
+        width: 100%;
+      }
+
+      #heartRateChart, #stepsChart, #stressChart, #batteryChart, #spo2Chart {
+        height: 350px !important;
+      }
+
+      #sleepScoreChart, #sleepDurationChart {
+        height: 300px !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div>
+  <!-- 头部区域 -->
+  <div class="head">
+    <div class="greet" id="userName"></div>
+    <div class="greet">健康信息</div>
+    <img src="/images/chartmain.svg" alt="健康数据图表装饰" />
+  </div>
+
+  <div class="title">基础健康数据</div>
+
+  <div class="content">
+    <!-- 心率卡片 -->
+    <div class="health-card" onclick="showDetail('心率')">
+      <div class="card-header">心率</div>
+      <div class="card-body heart-rate-box">
+        <p class="heart-rate-item">最大心率 <span class="heart-rate-value" id="maxHeartRate">无数据</span></p>
+        <p class="heart-rate-item">最小心率 <span class="heart-rate-value" id="minHeartRate">无数据</span></p>
+        <p class="heart-rate-item">静息心率 <span class="heart-rate-value" id="restingHeartRate">无数据</span></p>
+        <div class="update-info" id="heartRateUpdate">--</div>
+      </div>
+    </div>
+
+    <!-- 睡眠卡片 -->
+    <div class="health-card" onclick="showDetail('睡眠')">
+      <div class="card-header">睡眠</div>
+      <div class="card-body sleep-box">
+        <p class="sleep-item">睡眠得分 <span class="sleep-value" id="sleepScore">无数据</span></p>
+        <p class="sleep-item">睡眠压力 <span class="sleep-value" id="sleepStress">无数据</span></p>
+        <p class="sleep-item">深睡时长 <span class="sleep-value" id="deepSleep">无数据</span></p>
+        <p class="sleep-item">浅睡时长 <span class="sleep-value" id="lightSleep">无数据</span></p>
+        <p class="sleep-item">快速眼动 <span class="sleep-value" id="remSleep">无数据</span></p>
+        <p class="sleep-item">清醒时长 <span class="sleep-value" id="awakeSleep">无数据</span></p>
+        <div class="update-info" id="sleepUpdate">--</div>
+      </div>
+    </div>
+
+    <!-- 运动（步数）卡片 -->
+    <div class="health-card" onclick="showDetail('运动')">
+      <div class="card-header">运动</div>
+      <div class="card-body steps-box">
+        <p class="steps-item">总步数 <span class="steps-value" id="totalSteps">无数据</span></p>
+        <p class="steps-item">总距离 <span class="steps-value" id="totalDistance">无数据</span></p>
+        <p class="steps-item">目标步数 <span class="steps-value" id="stepGoal">无数据</span></p>
+        <div class="update-info" id="stepsUpdate">--</div>
+      </div>
+    </div>
+
+    <!-- 身体电量卡片 -->
+    <div class="health-card" onclick="showDetail('身体电量')">
+      <div class="card-header">身体电量</div>
+      <div class="card-body battery-box">
+        <p class="battery-item">充能 <span class="battery-charged" id="batteryCharged">无数据</span></p>
+        <p class="battery-item">耗能 <span class="battery-drained" id="batteryDrained">无数据</span></p>
+        <div class="update-info" id="batteryUpdate">--</div>
+      </div>
+    </div>
+
+    <!-- 压力卡片 -->
+    <div class="health-card" onclick="showDetail('压力')">
+      <div class="card-header">压力</div>
+      <div class="card-body stress-box">
+        <p class="stress-item">最大压力 <span class="stress-value" id="maxStressLevel">无数据</span></p>
+        <p class="stress-item">平均压力 <span class="stress-value" id="avgStressLevel">无数据</span></p>
+        <div class="update-info" id="stressUpdate">--</div>
+      </div>
+    </div>
+
+    <!-- 血氧卡片（替换原HRV卡片） -->
+    <div class="health-card" onclick="showDetail('血氧')">
+      <div class="card-header">血氧</div>
+      <div class="card-body spo2-box">
+        <p class="spo2-item">平均血氧 <span class="spo2-value" id="averageSpO2">无数据</span></p>
+        <p class="spo2-item">最低血氧 <span class="spo2-value" id="lowestSpO2">无数据</span></p>
+        <p class="spo2-item">睡眠平均血氧 <span class="spo2-value" id="avgSleepSpO2">无数据</span></p>
+        <div class="update-info" id="spo2Update">--</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="heartRateDetail" style="display: none; padding: 20px;">
+    <div id="heartRateChart"></div>
+  </div>
+
+  <div id="stepsDetail" style="display: none; padding: 20px;">
+    <div id="stepsChart"></div>
+  </div>
+
+  <div id="stressDetail" style="display: none; padding: 20px;">
+    <div id="stressChart"></div>
+  </div>
+
+  <div id="sleepDetail" style="display: none; padding: 20px;">
+    <div class="sleep-charts-container">
+      <div id="sleepScoreChart"></div>
+      <div id="sleepDurationChart"></div>
+    </div>
+  </div>
+
+  <div id="batteryDetail" style="display: none; padding: 20px;">
+    <div id="batteryChart"></div>
+  </div>
+
+  <div id="spo2Detail" style="display: none; padding: 20px;">
+    <div id="spo2Chart"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  layui.use(['jquery', 'layer'], function () {
+    const $ = layui.jquery;
+    const layer = layui.layer;
+
+    // 全局配置
+    const config = {
+      period: 7,
+      email: parent.userInfo?.email || '',
+      token: getToken(),
+      heartRateUrl: '/healthInfo/getHeartrateHistorybyEmail',
+      stepsUrl: '/healthInfo/getStepsHistorybyEmail',
+      stressUrl: '/healthInfo/getStressHistorybyEmail',
+      sleepUrl: '/healthInfo/getSleepHistorybyEmail',
+      batteryUrl: '/healthInfo/getBodyBatteryHistorybyEmail',
+      spo2Url: '/healthInfo/getSpO2HistorybyEmail',
+    };
+
+    const charts = {};
+
+    // 存储健康数据
+    const healthData = {
+      heartRate: {
+        history: [],
+        latest: {
+          max: null,
+          min: null,
+          resting: null,
+          updateDate: null
+        }
+      },
+      steps: {
+        history: [],
+        latest: {
+          total: null,
+          distance: null,
+          goal: null,
+          updateDate: null
+        }
+      },
+      stress: {
+        history: [],
+        latest: {
+          max: null,
+          avg: null,
+          updateDate: null
+        }
+      },
+      sleep: {
+        history: [],
+        latest: {
+          score: null,
+          stress: null,
+          deep: null,
+          light: null,
+          rem: null,
+          awake: null,
+          updateDate: null
+        }
+      },
+      battery: {
+        history: [],
+        latest: {
+          charged: null,
+          drained: null,
+          updateDate: null
+        }
+      },
+      spo2: {
+        history: [],
+        latest: {
+          average: null,
+          lowest: null,
+          sleepAvg: null,
+          updateDate: null
+        }
+      }
+    };
+
+    init();
+
+    // 初始化函数
+    function init() {
+      if (!config.email) {
+        showErrorAll('用户邮箱获取失败，请刷新页面重试');
+        return;
+      }
+      fetchHeartRateData();
+      fetchStepsData();
+      fetchStressData();
+      fetchSleepData();
+      fetchBatteryData();
+      fetchSpo2Data();
+    }
+
+    // 新增：获取血氧数据
+    function fetchSpo2Data() {
+      const params = {
+        email: config.email
+      };
+
+      const headers = {
+        'Authorization': getToken() || '',
+        'Content-Type': 'application/json'
+      };
+
+      axios.get(config.spo2Url, { params, headers })
+              .then(response => {
+                if (response.data && response.data.code === 200) {
+                  processSpo2Data(response.data.result);
+                } else {
+                  showError('spo2', '血氧数据获取失败');
+                }
+              })
+              .catch(error => {
+                console.error('获取血氧数据出错:', error);
+                showError('spo2', '获取血氧数据时发生错误');
+              });
+    }
+
+    // 新增：处理血氧数据
+    function processSpo2Data(rawData) {
+      if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+        healthData.spo2.history = [];
+        healthData.spo2.latest = {
+          average: null,
+          lowest: null,
+          sleepAvg: null,
+          updateDate: null
+        };
+        updateSpo2Display();
+        return;
+      }
+
+      // 1. 按日期排序（从旧到新）
+      const sortedData = [...rawData].sort((a, b) => {
+        return new Date(a.calendarDate) - new Date(b.calendarDate);
+      });
+
+      // 2. 生成近7天日期范围（包含今天）
+      const today = new Date();
+      const dateRange = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        dateRange.push(formatDate(d));
+      }
+
+      // 3. 构建带日期填充的历史数据（缺失日期补空）
+      const filledData = dateRange.map(targetDate => {
+        const found = sortedData.find(item => {
+          const itemDate = new Date(item.calendarDate);
+          return formatDate(itemDate) === targetDate;
+        });
+        return found || {
+          calendarDate: targetDate,
+          averageSpO2: null,
+          lowestSpO2: null,
+          avgSleepSpO2: null
+        };
+      });
+
+      healthData.spo2.history = filledData;
+
+      // 4. 获取最新有数据的日期
+      const latestValid = sortedData[sortedData.length - 1];
+      if (latestValid) {
+        const latestDate = new Date(latestValid.calendarDate);
+        healthData.spo2.latest = {
+          average: latestValid.averageSpO2,
+          lowest: latestValid.lowestSpO2,
+          sleepAvg: latestValid.avgSleepSpO2,
+          updateDate: formatDate(latestDate)
+        };
+      } else {
+        healthData.spo2.latest = {
+          average: null,
+          lowest: null,
+          sleepAvg: null,
+          updateDate: null
+        };
+      }
+
+      updateSpo2Display();
+    }
+
+    // 新增：更新血氧卡片显示
+    function updateSpo2Display() {
+      const { latest } = healthData.spo2;
+
+      // 血氧值添加百分号显示
+      $('#averageSpO2').text(latest.average ? `${latest.average}%` : '未填报');
+      $('#lowestSpO2').text(latest.lowest ? `${latest.lowest}%` : '未填报');
+      $('#avgSleepSpO2').text(latest.sleepAvg ? `${latest.sleepAvg}%` : '未填报');
+      $('#spo2Update').text(latest.updateDate ? `${latest.updateDate}更新` : '--');
+    }
+
+    // 显示详情弹窗
+    window.showDetail = function (type) {
+      if (type === '心率') {
+        if (!charts.heartRate) {
+          initHeartRateChart();
+        } else {
+          updateHeartRateChart();
+        }
+
+        layer.open({
+          type: 1,
+          title: '近7天心率趋势',
+          area: ['95%', '85%'],
+          content: $('#heartRateDetail'),
+          success: function () {
+            setTimeout(() => {
+              charts.heartRate && charts.heartRate.resize();
+            }, 100);
+          }
+        });
+      } else if (type === '运动') {
+        if (!charts.steps) {
+          initStepsChart();
+        } else {
+          updateStepsChart();
+        }
+
+        layer.open({
+          type: 1,
+          title: '近7天运动数据趋势',
+          area: ['95%', '85%'],
+          content: $('#stepsDetail'),
+          success: function () {
+            setTimeout(() => {
+              charts.steps && charts.steps.resize();
+            }, 100);
+          }
+        });
+      } else if (type === '压力') {
+        if (!charts.stress) {
+          initStressChart();
+        } else {
+          updateStressChart();
+        }
+
+        layer.open({
+          type: 1,
+          title: '近7天压力趋势',
+          area: ['95%', '85%'],
+          content: $('#stressDetail'),
+          success: function () {
+            setTimeout(() => {
+              charts.stress && charts.stress.resize();
+            }, 100);
+          }
+        });
+      } else if (type === '睡眠') {
+        if (!charts.sleepScore || !charts.sleepDuration) {
+          initSleepCharts();
+        } else {
+          updateSleepCharts();
+        }
+
+        layer.open({
+          type: 1,
+          title: '近7天睡眠数据分析',
+          area: ['95%', '90%'],
+          content: $('#sleepDetail'),
+          success: function () {
+            setTimeout(() => {
+              charts.sleepScore && charts.sleepScore.resize();
+              charts.sleepDuration && charts.sleepDuration.resize();
+            }, 100);
+          }
+        });
+      } else if (type === '身体电量') {
+        if (!charts.battery) {
+          initBatteryChart();
+        } else {
+          updateBatteryChart();
+        }
+
+        layer.open({
+          type: 1,
+          title: '近7天身体电量趋势',
+          area: ['95%', '85%'],
+          content: $('#batteryDetail'),
+          success: function () {
+            setTimeout(() => {
+              charts.battery && charts.battery.resize();
+            }, 100);
+          }
+        });
+      } else if (type === '血氧') { // 新增：血氧弹窗
+        if (!charts.spo2) {
+          initSpo2Chart();
+        } else {
+          updateSpo2Chart();
+        }
+
+        layer.open({
+          type: 1,
+          title: '近7天血氧趋势',
+          area: ['95%', '85%'],
+          content: $('#spo2Detail'),
+          success: function () {
+            setTimeout(() => {
+              charts.spo2 && charts.spo2.resize();
+            }, 100);
+          }
+        });
+      } else {
+        layer.msg(`${type}详情功能待实现`);
+      }
+    };
+
+    // 新增：初始化血氧图表
+    function initSpo2Chart() {
+      const chartDom = document.getElementById('spo2Chart');
+      charts.spo2 = echarts.init(chartDom);
+      updateSpo2Chart();
+
+      window.addEventListener('resize', function () {
+        charts.spo2 && charts.spo2.resize();
+      });
+    }
+
+    // 新增：更新血氧图表数据
+    function updateSpo2Chart() {
+      const historyData = healthData.spo2.history;
+      if (!charts.spo2) return;
+
+      // 准备图表数据
+      const dates = historyData.map(item => {
+        return formatDate(new Date(item.calendarDate));
+      });
+      const averageSpO2 = historyData.map(item => {
+        return item.averageSpO2 !== null ? Number(item.averageSpO2) : '无数据';
+      });
+      const lowestSpO2 = historyData.map(item => {
+        return item.lowestSpO2 !== null ? Number(item.lowestSpO2) : '无数据';
+      });
+      const avgSleepSpO2 = historyData.map(item => {
+        return item.avgSleepSpO2 !== null ? Number(item.avgSleepSpO2) : '无数据';
+      });
+
+      // 图表配置（血氧正常范围95%-100%，设置Y轴范围85-100）
+      const option = {
+        title: {
+          text: '近7天血氧趋势',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'axis',
+          formatter: function (params) {
+            let tooltip = `${params[0].name}<br/>`;
+            params.forEach(param => {
+              const value = param.value === '无数据' ? '无数据' : `${param.value}%`;
+              tooltip += `${param.seriesName}: ${value}<br/>`;
+            });
+            return tooltip;
+          }
+        },
+        legend: {
+          data: ['平均血氧', '最低血氧', '睡眠平均血氧'],
+          bottom: 0
+        },
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '15%',
+          top: '15%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: dates,
+          axisLabel: {
+            interval: 0,
+            rotate: 30
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: '血氧饱和度(%)',
+          min: 85,  // 血氧低于90%为异常，设置较低值便于观察
+          max: 100, // 血氧最大值为100%
+          axisLabel: {
+            formatter: '{value}%'
+          }
+        },
+        series: [
+          {
+            name: '平均血氧',
+            type: 'line',
+            data: averageSpO2,
+            lineStyle: { color: '#3498db' },
+            itemStyle: { color: '#3498db' },
+            emphasis: { focus: 'series' }
+          },
+          {
+            name: '最低血氧',
+            type: 'line',
+            data: lowestSpO2,
+            lineStyle: { color: '#e74c3c' },
+            itemStyle: { color: '#e74c3c' },
+            emphasis: { focus: 'series' }
+          },
+          {
+            name: '睡眠平均血氧',
+            type: 'line',
+            data: avgSleepSpO2,
+            lineStyle: { color: '#2ecc71' },
+            itemStyle: { color: '#2ecc71' },
+            emphasis: { focus: 'series' }
+          }
+        ],
+        noDataLoadingOption: {
+          text: '未填报数据',
+          textStyle: { fontSize: 16 },
+          effect: 'bubble',
+          effectOption: {
+            effect: { symbolSize: 15 }
+          }
+        }
+      };
+
+      charts.spo2.setOption(option);
+    }
+
+    // 心率相关函数
+    function fetchHeartRateData() {
+      const params = { email: config.email };
+      const headers = { 'Authorization': getToken() || '', 'Content-Type': 'application/json' };
+
+      axios.get(config.heartRateUrl, { params, headers })
+              .then(response => {
+                if (response.data && response.data.code === 200) {
+                  processHeartRateData(response.data.result);
+                } else {
+                  showError('heartRate', '心率数据获取失败');
+                }
+              })
+              .catch(error => {
+                console.error('获取心率数据出错:', error);
+                showError('heartRate', '获取心率数据时发生错误');
+              });
+    }
+
+    function processHeartRateData(rawData) {
+      if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+        healthData.heartRate.history = [];
+        healthData.heartRate.latest = { max: null, min: null, resting: null, updateDate: null };
+        updateHeartRateDisplay();
+        return;
+      }
+
+      const sortedData = [...rawData].sort((a, b) => new Date(a.calendarDate) - new Date(b.calendarDate));
+      const today = new Date();
+      const dateRange = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        dateRange.push(formatDate(d));
+      }
+
+      const filledData = dateRange.map(targetDate => {
+        const found = sortedData.find(item => formatDate(new Date(item.calendarDate)) === targetDate);
+        return found || { calendarDate: targetDate, maxHeartRate: null, minHeartRate: null, restingHeartRate: null };
+      });
+
+      healthData.heartRate.history = filledData;
+      const latestValid = sortedData[sortedData.length - 1];
+
+      if (latestValid) {
+        healthData.heartRate.latest = {
+          max: latestValid.maxHeartRate,
+          min: latestValid.minHeartRate,
+          resting: latestValid.restingHeartRate,
+          updateDate: formatDate(new Date(latestValid.calendarDate))
+        };
+      } else {
+        healthData.heartRate.latest = { max: null, min: null, resting: null, updateDate: null };
+      }
+
+      updateHeartRateDisplay();
+    }
+
+    function updateHeartRateDisplay() {
+      const { latest } = healthData.heartRate;
+      $('#maxHeartRate').text(latest.max || '未填报');
+      $('#minHeartRate').text(latest.min || '未填报');
+      $('#restingHeartRate').text(latest.resting || '未填报');
+      $('#heartRateUpdate').text(latest.updateDate ? `${latest.updateDate}更新` : '--');
+    }
+
+    function initHeartRateChart() {
+      const chartDom = document.getElementById('heartRateChart');
+      charts.heartRate = echarts.init(chartDom);
+      updateHeartRateChart();
+      window.addEventListener('resize', () => charts.heartRate && charts.heartRate.resize());
+    }
+
+    function updateHeartRateChart() {
+      const historyData = healthData.heartRate.history;
+      if (!charts.heartRate) return;
+
+      const dates = historyData.map(item => formatDate(new Date(item.calendarDate)));
+      const maxRates = historyData.map(item => item.maxHeartRate != null ? Number(item.maxHeartRate) : '无数据');
+      const minRates = historyData.map(item => item.minHeartRate != null ? Number(item.minHeartRate) : '无数据');
+      const restingRates = historyData.map(item => item.restingHeartRate != null ? Number(item.restingHeartRate) : '无数据');
+
+      const option = {
+        title: { text: '近7天心率趋势', left: 'center' },
+        tooltip: {
+          trigger: 'axis',
+          formatter: params => {
+            let tooltip = `${params[0].name}<br/>`;
+            params.forEach(param => {
+              const value = param.value === '无数据' ? '无数据' : param.value;
+              tooltip += `${param.seriesName}: ${value}<br/>`;
+            });
+            return tooltip;
+          }
+        },
+        legend: { data: ['最大心率', '最小心率', '静息心率'], bottom: 0 },
+        grid: { left: '5%', right: '5%', bottom: '15%', top: '15%', containLabel: true },
+        xAxis: { type: 'category', boundaryGap: false, data: dates, axisLabel: { interval: 0, rotate: 30 } },
+        yAxis: { type: 'value', name: '心率(次/分)', min: 40, max: 180 },
+        series: [
+          { name: '最大心率', type: 'line', data: maxRates, lineStyle: { color: '#e74c3c' }, itemStyle: { color: '#e74c3c' } },
+          { name: '最小心率', type: 'line', data: minRates, lineStyle: { color: '#3498db' }, itemStyle: { color: '#3498db' } },
+          { name: '静息心率', type: 'line', data: restingRates, lineStyle: { color: '#2ecc71' }, itemStyle: { color: '#2ecc71' } }
+        ]
+      };
+
+      charts.heartRate.setOption(option);
+    }
+
+    // 运动相关函数（保持不变）
+    function fetchStepsData() {
+      const params = { email: config.email };
+      const headers = { 'Authorization': getToken() || '', 'Content-Type': 'application/json' };
+
+      axios.get(config.stepsUrl, { params, headers })
+              .then(response => {
+                if (response.data && response.data.code === 200) {
+                  processStepsData(response.data.result);
+                } else {
+                  showError('steps', '步数数据获取失败');
+                }
+              })
+              .catch(error => {
+                console.error('获取步数数据出错:', error);
+                showError('steps', '获取步数数据时发生错误');
+              });
+    }
+
+    function processStepsData(rawData) {
+      if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+        healthData.steps.history = [];
+        healthData.steps.latest = { total: null, distance: null, goal: null, updateDate: null };
+        updateStepsDisplay();
+        return;
+      }
+
+      const sortedData = [...rawData].sort((a, b) => new Date(a.calendarDate) - new Date(b.calendarDate));
+      const today = new Date();
+      const dateRange = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        dateRange.push(formatDate(d));
+      }
+
+      const filledData = dateRange.map(targetDate => {
+        const found = sortedData.find(item => formatDate(new Date(item.calendarDate)) === targetDate);
+        return found || { calendarDate: targetDate, totalSteps: null, totalDistance: null, stepGoal: null };
+      });
+
+      healthData.steps.history = filledData;
+      const latestValid = sortedData[sortedData.length - 1];
+
+      if (latestValid) {
+        healthData.steps.latest = {
+          total: latestValid.totalSteps,
+          distance: latestValid.totalDistance,
+          goal: latestValid.stepGoal,
+          updateDate: formatDate(new Date(latestValid.calendarDate))
+        };
+      } else {
+        healthData.steps.latest = { total: null, distance: null, goal: null, updateDate: null };
+      }
+
+      updateStepsDisplay();
+    }
+
+    function updateStepsDisplay() {
+      const { latest } = healthData.steps;
+      $('#totalSteps').text(latest.total ?? '未填报');
+      $('#totalDistance').text(latest.distance != null ? (latest.distance + ' 米') : '未填报');
+      $('#stepGoal').text(latest.goal ?? '未填报');
+      $('#stepsUpdate').text(latest.updateDate ? `${latest.updateDate}更新` : '--');
+    }
+
+    function initStepsChart() {
+      const chartDom = document.getElementById('stepsChart');
+      charts.steps = echarts.init(chartDom);
+      updateStepsChart();
+      window.addEventListener('resize', () => charts.steps && charts.steps.resize());
+    }
+
+    function updateStepsChart() {
+      const historyData = healthData.steps.history;
+      if (!charts.steps) return;
+
+      const dates = historyData.map(item => formatDate(new Date(item.calendarDate)));
+      const totalSteps = historyData.map(item => item.totalSteps != null ? Number(item.totalSteps) : '无数据');
+      const totalDistance = historyData.map(item => item.totalDistance != null ? Number(item.totalDistance) : '无数据');
+      const stepGoal = historyData.map(item => item.stepGoal != null ? Number(item.stepGoal) : '无数据');
+
+      const option = {
+        title: { text: '近7天运动数据趋势', left: 'center' },
+        tooltip: {
+          trigger: 'axis',
+          formatter: params => {
+            let tooltip = `${params[0].name}<br/>`;
+            params.forEach(param => {
+              const value = param.value === '无数据' ? '无数据' :
+                      (param.seriesName === '总距离' ? param.value + ' 米' : param.value);
+              tooltip += `${param.seriesName}: ${value}<br/>`;
+            });
+            return tooltip;
+          }
+        },
+        legend: { data: ['总步数', '总距离', '目标步数'], bottom: 0 },
+        grid: { left: '5%', right: '5%', bottom: '15%', top: '15%', containLabel: true },
+        xAxis: { type: 'category', boundaryGap: false, data: dates, axisLabel: { interval: 0, rotate: 30 } },
+        yAxis: { type: 'value', name: '数值', min: 0 },
+        series: [
+          { name: '总步数', type: 'line', data: totalSteps, lineStyle: { color: '#e67e22' }, itemStyle: { color: '#e67e22' } },
+          { name: '总距离', type: 'line', data: totalDistance, lineStyle: { color: '#9b59b6' }, itemStyle: { color: '#9b59b6' } },
+          { name: '目标步数', type: 'line', data: stepGoal, lineStyle: { color: '#34495e' }, itemStyle: { color: '#34495e' } }
+        ]
+      };
+
+      charts.steps.setOption(option);
+    }
+
+    // 压力相关函数（保持不变）
+    function fetchStressData() {
+      const params = { email: config.email };
+      const headers = { 'Authorization': getToken() || '', 'Content-Type': 'application/json' };
+
+      axios.get(config.stressUrl, { params, headers })
+              .then(response => {
+                if (response.data && response.data.code === 200) {
+                  processStressData(response.data.result);
+                } else {
+                  showError('stress', '压力数据获取失败');
+                }
+              })
+              .catch(error => {
+                console.error('获取压力数据出错:', error);
+                showError('stress', '获取压力数据时发生错误');
+              });
+    }
+
+    function processStressData(rawData) {
+      if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+        healthData.stress.history = [];
+        healthData.stress.latest = { max: null, avg: null, updateDate: null };
+        updateStressDisplay();
+        return;
+      }
+
+      const sortedData = [...rawData].sort((a, b) => new Date(a.calendarDate) - new Date(b.calendarDate));
+      const today = new Date();
+      const dateRange = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        dateRange.push(formatDate(d));
+      }
+
+      const filledData = dateRange.map(targetDate => {
+        const found = sortedData.find(item => {
+          const itemDate = new Date(item.calendarDate);
+          return formatDate(itemDate) === targetDate;
+        });
+        return found || { calendarDate: targetDate, maxStressLevel: null, avgStressLevel: null };
+      });
+
+      healthData.stress.history = filledData;
+      const latestValid = sortedData[sortedData.length - 1];
+
+      if (latestValid) {
+        const latestDate = new Date(latestValid.calendarDate);
+        healthData.stress.latest = {
+          max: latestValid.maxStressLevel,
+          avg: latestValid.avgStressLevel,
+          updateDate: formatDate(latestDate)
+        };
+      } else {
+        healthData.stress.latest = { max: null, avg: null, updateDate: null };
+      }
+
+      updateStressDisplay();
+    }
+
+    function updateStressDisplay() {
+      const { latest } = healthData.stress;
+      $('#maxStressLevel').text(latest.max || '未填报');
+      $('#avgStressLevel').text(latest.avg || '未填报');
+      $('#stressUpdate').text(latest.updateDate ? `${latest.updateDate}更新` : '--');
+    }
+
+    function initStressChart() {
+      const chartDom = document.getElementById('stressChart');
+      charts.stress = echarts.init(chartDom);
+      updateStressChart();
+      window.addEventListener('resize', () => charts.stress && charts.stress.resize());
+    }
+
+    function updateStressChart() {
+      const historyData = healthData.stress.history;
+      if (!charts.stress) return;
+
+      const dates = historyData.map(item => formatDate(new Date(item.calendarDate)));
+      const maxStress = historyData.map(item => item.maxStressLevel != null ? Number(item.maxStressLevel) : '无数据');
+      const avgStress = historyData.map(item => item.avgStressLevel != null ? Number(item.avgStressLevel) : '无数据');
+
+      const option = {
+        title: { text: '近7天压力趋势', left: 'center' },
+        tooltip: {
+          trigger: 'axis',
+          formatter: params => {
+            let tooltip = `${params[0].name}<br/>`;
+            params.forEach(param => {
+              const value = param.value === '无数据' ? '无数据' : param.value;
+              tooltip += `${param.seriesName}: ${value}<br/>`;
+            });
+            return tooltip;
+          }
+        },
+        legend: { data: ['最大压力', '平均压力'], bottom: 0 },
+        grid: { left: '5%', right: '5%', bottom: '15%', top: '15%', containLabel: true },
+        xAxis: { type: 'category', boundaryGap: false, data: dates, axisLabel: { interval: 0, rotate: 30 } },
+        yAxis: { type: 'value', name: '压力值', min: 0, max: 100 },
+        series: [
+          { name: '最大压力', type: 'line', data: maxStress, lineStyle: { color: '#e74c3c' }, itemStyle: { color: '#e74c3c' } },
+          { name: '平均压力', type: 'line', data: avgStress, lineStyle: { color: '#f39c12' }, itemStyle: { color: '#f39c12' } }
+        ]
+      };
+
+      charts.stress.setOption(option);
+    }
+
+    // 睡眠相关函数（保持不变）
+    function fetchSleepData() {
+      const params = { email: config.email };
+      const headers = { 'Authorization': getToken() || '', 'Content-Type': 'application/json' };
+
+      axios.get(config.sleepUrl, { params, headers })
+              .then(response => {
+                if (response.data && response.data.code === 200) {
+                  processSleepData(response.data.result);
+                } else {
+                  showError('sleep', '睡眠数据获取失败');
+                }
+              })
+              .catch(error => {
+                console.error('获取睡眠数据出错:', error);
+                showError('sleep', '获取睡眠数据时发生错误');
+              });
+    }
+
+    function processSleepData(rawData) {
+      if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+        healthData.sleep.history = [];
+        healthData.sleep.latest = {
+          score: null,
+          stress: null,
+          deep: null,
+          light: null,
+          rem: null,
+          awake: null,
+          updateDate: null
+        };
+        updateSleepDisplay();
+        return;
+      }
+
+      const sortedData = [...rawData].sort((a, b) => new Date(a.calendarDate) - new Date(b.calendarDate));
+      const today = new Date();
+      const dateRange = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        dateRange.push(formatDate(d));
+      }
+
+      const filledData = dateRange.map(targetDate => {
+        const found = sortedData.find(item => formatDate(new Date(item.calendarDate)) === targetDate);
+        return found || {
+          calendarDate: targetDate,
+          sleepScoreOverall: null,
+          avgSleepStress: null,
+          deepSleepSeconds: null,
+          lightSleepSeconds: null,
+          remSleepSeconds: null,
+          awakeSleepSeconds: null
+        };
+      });
+
+      healthData.sleep.history = filledData;
+      const latestValid = sortedData[sortedData.length - 1];
+
+      if (latestValid) {
+        healthData.sleep.latest = {
+          score: latestValid.sleepScoreOverall || latestValid.sleep_score_overall,
+          stress: latestValid.avgSleepStress,
+          deep: latestValid.deepSleepSeconds,
+          light: latestValid.lightSleepSeconds,
+          rem: latestValid.remSleepSeconds,
+          awake: latestValid.awakeSleepSeconds,
+          updateDate: formatDate(new Date(latestValid.calendarDate))
+        };
+      } else {
+        healthData.sleep.latest = {
+          score: null,
+          stress: null,
+          deep: null,
+          light: null,
+          rem: null,
+          awake: null,
+          updateDate: null
+        };
+      }
+
+      updateSleepDisplay();
+    }
+
+    function updateSleepDisplay() {
+      const { latest } = healthData.sleep;
+      $('#sleepScore').text(latest.score || '未填报');
+      $('#sleepStress').text(latest.stress || '未填报');
+      $('#deepSleep').text(latest.deep || '未填报');
+      $('#lightSleep').text(latest.light || '未填报');
+      $('#remSleep').text(latest.rem || '未填报');
+      $('#awakeSleep').text(latest.awake || '未填报');
+      $('#sleepUpdate').text(latest.updateDate ? `${latest.updateDate}更新` : '--');
+    }
+
+    function initSleepCharts() {
+      const scoreChartDom = document.getElementById('sleepScoreChart');
+      charts.sleepScore = echarts.init(scoreChartDom);
+
+      const durationChartDom = document.getElementById('sleepDurationChart');
+      charts.sleepDuration = echarts.init(durationChartDom);
+
+      updateSleepCharts();
+
+      window.addEventListener('resize', function () {
+        charts.sleepScore && charts.sleepScore.resize();
+        charts.sleepDuration && charts.sleepDuration.resize();
+      });
+    }
+
+    function updateSleepCharts() {
+      updateSleepScoreChart();
+      updateSleepDurationChart();
+    }
+
+    function updateSleepScoreChart() {
+      const historyData = healthData.sleep.history;
+      if (!charts.sleepScore) return;
+
+      const dates = historyData.map(item => formatDate(new Date(item.calendarDate)));
+      const sleepScores = historyData.map(item => {
+        const score = item.sleepScoreOverall || item.sleep_score_overall;
+        return score !== null ? Number(score) : '无数据';
+      });
+      const sleepStress = historyData.map(item => {
+        return item.avgSleepStress !== null ? Number(item.avgSleepStress) : '无数据';
+      });
+
+      const option = {
+        title: { text: '近7天睡眠得分与压力趋势', left: 'center' },
+        tooltip: {
+          trigger: 'axis',
+          formatter: params => {
+            let tooltip = `${params[0].name}<br/>`;
+            params.forEach(param => {
+              const value = param.value === '无数据' ? '无数据' :
+                      (param.seriesName === '睡眠得分' ? param.value + '分' : param.value);
+              tooltip += `${param.seriesName}: ${value}<br/>`;
+            });
+            return tooltip;
+          }
+        },
+        legend: { data: ['睡眠得分', '睡眠压力'], bottom: 0 },
+        grid: { left: '5%', right: '5%', bottom: '15%', top: '15%', containLabel: true },
+        xAxis: { type: 'category', boundaryGap: false, data: dates, axisLabel: { interval: 0, rotate: 30 } },
+        yAxis: [
+          { type: 'value', name: '睡眠得分', min: 0, max: 100, position: 'left', axisLine: { lineStyle: { color: '#3498db' } }, axisLabel: { formatter: '{value}分' } },
+          { type: 'value', name: '睡眠压力', min: 0, max: 100, position: 'right', axisLine: { lineStyle: { color: '#e74c3c' } } }
+        ],
+        series: [
+          { name: '睡眠得分', type: 'line', data: sleepScores, yAxisIndex: 0, lineStyle: { color: '#3498db' }, itemStyle: { color: '#3498db' } },
+          { name: '睡眠压力', type: 'line', data: sleepStress, yAxisIndex: 1, lineStyle: { color: '#e74c3c' }, itemStyle: { color: '#e74c3c' } }
+        ]
+      };
+
+      charts.sleepScore.setOption(option);
+    }
+
+    function updateSleepDurationChart() {
+      const historyData = healthData.sleep.history;
+      if (!charts.sleepDuration) return;
+
+      const dates = historyData.map(item => formatDate(new Date(item.calendarDate)));
+
+      const parseTimeToMinutes = (timeStr) => {
+        if (!timeStr) return null;
+        let minutes = 0;
+        if (timeStr.includes('h')) {
+          const parts = timeStr.split('h');
+          minutes += parseInt(parts[0]) * 60;
+          if (parts[1] && parts[1].includes('min')) {
+            minutes += parseInt(parts[1].replace('min', ''));
+          }
+        } else if (timeStr.includes('min')) {
+          minutes += parseInt(timeStr.replace('min', ''));
+        }
+        return minutes;
+      };
+
+      const deepSleep = historyData.map(item => {
+        const minutes = parseTimeToMinutes(item.deepSleepSeconds);
+        return minutes !== null ? minutes : '无数据';
+      });
+      const lightSleep = historyData.map(item => {
+        const minutes = parseTimeToMinutes(item.lightSleepSeconds);
+        return minutes !== null ? minutes : '无数据';
+      });
+      const remSleep = historyData.map(item => {
+        const minutes = parseTimeToMinutes(item.remSleepSeconds);
+        return minutes !== null ? minutes : '无数据';
+      });
+      const awakeSleep = historyData.map(item => {
+        const minutes = parseTimeToMinutes(item.awakeSleepSeconds);
+        return minutes !== null ? minutes : '无数据';
+      });
+
+      const option = {
+        title: { text: '近7天睡眠时长分布（分钟）', left: 'center' },
+        tooltip: {
+          trigger: 'axis',
+          formatter: params => {
+            let tooltip = `${params[0].name}<br/>`;
+            params.forEach(param => {
+              const value = param.value === '无数据' ? '无数据' :
+                      `${Math.floor(param.value / 60)}h${param.value % 60}min`;
+              tooltip += `${param.seriesName}: ${value}<br/>`;
+            });
+            return tooltip;
+          }
+        },
+        legend: { data: ['深睡时长', '浅睡时长', '快速眼动', '清醒时长'], bottom: 0 },
+        grid: { left: '5%', right: '5%', bottom: '15%', top: '15%', containLabel: true },
+        xAxis: { type: 'category', boundaryGap: false, data: dates, axisLabel: { interval: 0, rotate: 30 } },
+        yAxis: { type: 'value', name: '时长（分钟）', min: 0 },
+        series: [
+          { name: '深睡时长', type: 'line', data: deepSleep, lineStyle: { color: '#2c3e50' }, itemStyle: { color: '#2c3e50' } },
+          { name: '浅睡时长', type: 'line', data: lightSleep, lineStyle: { color: '#3498db' }, itemStyle: { color: '#3498db' } },
+          { name: '快速眼动', type: 'line', data: remSleep, lineStyle: { color: '#9b59b6' }, itemStyle: { color: '#9b59b6' } },
+          { name: '清醒时长', type: 'line', data: awakeSleep, lineStyle: { color: '#e74c3c' }, itemStyle: { color: '#e74c3c' } }
+        ]
+      };
+
+      charts.sleepDuration.setOption(option);
+    }
+
+    // 身体电量相关函数（保持不变）
+    function fetchBatteryData() {
+      const params = { email: config.email };
+      const headers = { 'Authorization': getToken() || '', 'Content-Type': 'application/json' };
+
+      axios.get(config.batteryUrl, { params, headers })
+              .then(response => {
+                if (response.data && response.data.code === 200) {
+                  processBatteryData(response.data.result);
+                } else {
+                  showError('battery', '身体电量数据获取失败');
+                }
+              })
+              .catch(error => {
+                console.error('获取身体电量数据出错:', error);
+                showError('battery', '获取身体电量数据时发生错误');
+              });
+    }
+
+    function processBatteryData(rawData) {
+      if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+        healthData.battery.history = [];
+        healthData.battery.latest = {
+          charged: null,
+          drained: null,
+          updateDate: null
+        };
+        updateBatteryDisplay();
+        return;
+      }
+
+      const sortedData = [...rawData].sort((a, b) => new Date(a.date) - new Date(b.date));
+      const today = new Date();
+      const dateRange = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        dateRange.push(formatDate(d));
+      }
+
+      const filledData = dateRange.map(targetDate => {
+        const found = sortedData.find(item => {
+          const itemDate = new Date(item.date);
+          return formatDate(itemDate) === targetDate;
+        });
+        return found || {
+          date: targetDate,
+          charged: null,
+          drained: null
+        };
+      });
+
+      healthData.battery.history = filledData;
+      const latestValid = sortedData[sortedData.length - 1];
+
+      if (latestValid) {
+        const latestDate = new Date(latestValid.date);
+        healthData.battery.latest = {
+          charged: latestValid.charged,
+          drained: latestValid.drained,
+          updateDate: formatDate(latestDate)
+        };
+      } else {
+        healthData.battery.latest = {
+          charged: null,
+          drained: null,
+          updateDate: null
+        };
+      }
+
+      updateBatteryDisplay();
+    }
+
+    function updateBatteryDisplay() {
+      const { latest } = healthData.battery;
+      $('#batteryCharged').text(latest.charged ? `+${latest.charged}` : '未填报');
+      $('#batteryDrained').text(latest.drained ? `-${latest.drained}` : '未填报');
+      $('#batteryUpdate').text(latest.updateDate ? `${latest.updateDate}更新` : '--');
+    }
+
+    function initBatteryChart() {
+      const chartDom = document.getElementById('batteryChart');
+      charts.battery = echarts.init(chartDom);
+      updateBatteryChart();
+      window.addEventListener('resize', () => charts.battery && charts.battery.resize());
+    }
+
+    function updateBatteryChartChart() {
+      const historyData = healthData.battery.history;
+      if (!charts.battery) return;
+
+      const dates = historyData.map(item => formatDate(new Date(item.date)));
+      const chargedData = historyData.map(item => item.charged !== null ? Number(item.charged) : '无数据');
+      const drainedData = historyData.map(item => item.drained !== null ? Number(item.drained) : '无数据');
+
+      const option = {
+        title: { text: '近7天身体电量趋势', left: 'center' },
+        tooltip: {
+          trigger: 'axis',
+          formatter: params => {
+            let tooltip = `${params[0].name}<br/>`;
+            params.forEach(param => {
+              const value = param.value === '无数据' ? '无数据' :
+                      (param.seriesName === '充能' ? `+${param.value}` : `-${param.value}`);
+              tooltip += `${param.seriesName}: ${value}<br/>`;
+            });
+            return tooltip;
+          }
+        },
+        legend: { data: ['充能', '耗能'], bottom: 0 },
+        grid: { left: '5%', right: '5%', bottom: '15%', top: '15%', containLabel: true },
+        xAxis: { type: 'category', boundaryGap: false, data: dates, axisLabel: { interval: 0, rotate: 30 } },
+        yAxis: { type: 'value', name: '电量值', min: 0 },
+        series: [
+          { name: '充能', type: 'line', data: chargedData, lineStyle: { color: '#2ecc71' }, itemStyle: { color: '#2ecc71' } },
+          { name: '耗能', type: 'line', data: drainedData, lineStyle: { color: '#e74c3c' }, itemStyle: { color: '#e74c3c' } }
+        ]
+      };
+
+      charts.battery.setOption(option);
+    }
+
+    // 错误处理函数（补充血氧错误处理）
+    function showError(elementId, message) {
+      if (elementId === 'heartRate') {
+        $('#maxHeartRate').text('未填报');
+        $('#minHeartRate').text('未填报');
+        $('#restingHeartRate').text('未填报');
+        $('#heartRateUpdate').text('--');
+      } else if (elementId === 'steps') {
+        $('#totalSteps').text('未填报');
+        $('#totalDistance').text('未填报');
+        $('#stepGoal').text('未填报');
+        $('#stepsUpdate').text('--');
+      } else if (elementId === 'stress') {
+        $('#maxStressLevel').text('未填报');
+        $('#avgStressLevel').text('未填报');
+        $('#stressUpdate').text('--');
+      } else if (elementId === 'sleep') {
+        $('#sleepScore').text('未填报');
+        $('#sleepStress').text('未填报');
+        $('#deepSleep').text('未填报');
+        $('#lightSleep').text('未填报');
+        $('#remSleep').text('未填报');
+        $('#awakeSleep').text('未填报');
+        $('#sleepUpdate').text('--');
+      } else if (elementId === 'battery') {
+        $('#batteryCharged').text('未填报');
+        $('#batteryDrained').text('未填报');
+        $('#batteryUpdate').text('--');
+      } else if (elementId === 'spo2') { // 新增：血氧错误处理
+        $('#averageSpO2').text('未填报');
+        $('#lowestSpO2').text('未填报');
+        $('#avgSleepSpO2').text('未填报');
+        $('#spo2Update').text('--');
+      } else {
+        $(`#${elementId}`).text('未填报');
+      }
+      layer.msg(message);
+    }
+
+    function showErrorAll(message) {
+      $('#maxHeartRate, #minHeartRate, #restingHeartRate').text('未填报');
+      $('#totalSteps, #totalDistance, #stepGoal').text('未填报');
+      $('#maxStressLevel, #avgStressLevel').text('未填报');
+      $('#sleepScore, #sleepStress, #deepSleep, #lightSleep, #remSleep, #awakeSleep').text('未填报');
+      $('#batteryCharged, #batteryDrained').text('未填报');
+      $('#averageSpO2, #lowestSpO2, #avgSleepSpO2').text('未填报');
+      $('#heartRateUpdate, #stepsUpdate, #stressUpdate, #sleepUpdate, #batteryUpdate, #spo2Update').text('--');
+      layer.msg(message);
+    }
+
+    // 工具函数
+    function formatDate(date) {
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    }
+
+    function getToken() {
+      try {
+        const healthSystem = JSON.parse(localStorage.getItem('HealthSystem') || '{}');
+        return healthSystem.Authorization || '';
+      } catch (e) {
+        console.error('解析Token失败:', e);
+        return '';
+      }
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.HtpAnalysisMapper">
+
+    <!-- ResultMap -->
+    <resultMap id="HtpDrawingRecordMap" type="com.nwpu.healthsystem.backend.entity.scale.HtpDrawingRecord">
+        <id     column="id"             property="id"/>
+        <result column="user_id"        property="userId"/>
+        <result column="log_date"       property="logDate"/>
+        <result column="score"          property="score"/>
+        <result column="report_content" property="reportContent"/>
+        <result column="drawing_img_url" property="drawingImgUrl"/>
+        <result column="username"       property="username"/>
+    </resultMap>
+
+    <!-- 统计HTP记录总数 -->
+    <select id="countHtpRecords" resultType="int">
+        SELECT COUNT(*)
+        FROM htp_drawing_record h
+        LEFT JOIN user_info u ON h.user_id = u.user_id
+        <where>
+            <if test="username != null and username != ''">
+                AND u.user_name LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND h.log_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND h.log_date &lt;= #{endDate}
+            </if>
+            <if test="riskLevel != null and riskLevel != ''">
+                <choose>
+                    <when test="riskLevel == 'severe'">
+                        AND h.score &gt; 80
+                    </when>
+                    <when test="riskLevel == 'moderate'">
+                        AND h.score &gt; 70 AND h.score &lt;= 80
+                    </when>
+                    <when test="riskLevel == 'mild'">
+                        AND h.score &gt; 56 AND h.score &lt;= 70
+                    </when>
+                    <when test="riskLevel == 'normal'">
+                        AND h.score &lt;= 56
+                    </when>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!-- 分页查询HTP记录列表 -->
+    <select id="selectHtpList" resultMap="HtpDrawingRecordMap">
+        SELECT h.*, u.user_name AS username
+        FROM htp_drawing_record h
+        LEFT JOIN user_info u ON h.user_id = u.user_id
+        <where>
+            <if test="username != null and username != ''">
+                AND u.user_name LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND h.log_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND h.log_date &lt;= #{endDate}
+            </if>
+            <if test="riskLevel != null and riskLevel != ''">
+                <choose>
+                    <when test="riskLevel == 'severe'">
+                        AND h.score &gt; 80
+                    </when>
+                    <when test="riskLevel == 'moderate'">
+                        AND h.score &gt; 70 AND h.score &lt;= 80
+                    </when>
+                    <when test="riskLevel == 'mild'">
+                        AND h.score &gt; 56 AND h.score &lt;= 70
+                    </when>
+                    <when test="riskLevel == 'normal'">
+                        AND h.score &lt;= 56
+                    </when>
+                </choose>
+            </if>
+        </where>
+        ORDER BY h.log_date DESC, h.id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 根据ID查询HTP记录详情 -->
+    <select id="selectHtpById" resultMap="HtpDrawingRecordMap">
+        SELECT h.*, u.user_name AS username
+        FROM htp_drawing_record h
+        LEFT JOIN user_info u ON h.user_id = u.user_id
+        WHERE h.id = #{id}
+    </select>
+
+    <!-- 获取风险等级统计 -->
+    <select id="getRiskLevelStatistics" resultType="map">
+        SELECT
+            CASE
+                WHEN score &lt;= 56 THEN 'normal'
+                WHEN score &lt;= 70 THEN 'mild'
+                WHEN score &lt;= 80 THEN 'moderate'
+                ELSE 'severe'
+            END AS riskLevel,
+            COUNT(*) AS count
+        FROM htp_drawing_record
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND log_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND log_date &lt;= #{endDate}
+            </if>
+        </where>
+        GROUP BY riskLevel
+        ORDER BY FIELD(riskLevel, 'severe', 'moderate', 'mild', 'normal')
+    </select>
+
+    <!-- 获取评分分布统计 -->
+    <select id="getScoreDistribution" resultType="map">
+        SELECT
+            CASE
+                WHEN score &lt;= 20 THEN '0-20'
+                WHEN score &lt;= 40 THEN '21-40'
+                WHEN score &lt;= 60 THEN '41-60'
+                WHEN score &lt;= 80 THEN '61-80'
+                ELSE '81-100'
+            END AS scoreRange,
+            COUNT(*) AS count
+        FROM htp_drawing_record
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND log_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND log_date &lt;= #{endDate}
+            </if>
+        </where>
+        GROUP BY scoreRange
+        ORDER BY scoreRange
+    </select>
+
+    <!-- 查询用户HTP历史趋势 -->
+    <select id="selectUserHtpTrend" resultMap="HtpDrawingRecordMap">
+        SELECT h.*, u.user_name AS username
+        FROM htp_drawing_record h
+        LEFT JOIN user_info u ON h.user_id = u.user_id
+        WHERE h.user_id = #{userId}
+        ORDER BY h.log_date DESC, h.id DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.PsqiMapper">
+    <insert id="insert">
+        insert into psqi
+        (user_id,q1,q2,q3,q4,
+         q5a,q5b,q5c,q5d,q5e,q5f,q5g,q5h,q5i,q5j,q5j_desc,
+         q6,q7,q8,q9,score,status,log_date)
+        values
+        (#{userId},#{q1},#{q2},#{q3},#{q4},
+         #{q5a},#{q5b},#{q5c},#{q5d},#{q5e},#{q5f},#{q5g},#{q5h},#{q5i},#{q5j},#{q5jDesc},
+         #{q6},#{q7},#{q8},#{q9},#{score},#{status},#{logDate})
+    </insert>
+
+    <update id="update">
+        update psqi
+        set q1=#{q1},q2=#{q2},q3=#{q3},q4=#{q4},
+            q5a=#{q5a},q5b=#{q5b},q5c=#{q5c},q5d=#{q5d},q5e=#{q5e},q5f=#{q5f},q5g=#{q5g},q5h=#{q5h},q5i=#{q5i},q5j=#{q5j},q5j_desc=#{q5jDesc},
+            q6=#{q6},q7=#{q7},q8=#{q8},q9=#{q9},
+            score=#{score},status=#{status}
+        where user_id=#{userId} and log_date=#{logDate}
+    </update>
+
+    <select id="getListByPage" resultType="com.nwpu.healthsystem.backend.entity.scale.Psqi">
+        select * from psqi where user_id=#{userId} order by id desc
+    </select>
+
+    <select id="getToday" resultType="int">
+        select count(0) from psqi where user_id=#{userId} and log_date=#{date}
+    </select>
+</mapper>

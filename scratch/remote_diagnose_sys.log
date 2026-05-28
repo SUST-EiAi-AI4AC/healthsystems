@@ -1,0 +1,40 @@
+Connecting to root@47.109.49.174...
+Connected successfully!
+
+============================================================
+Executing: which java && java -version (Java_Path)
+============================================================
+/usr/bin/java
+
+STDERR:
+openjdk version "1.8.0_412"
+OpenJDK Runtime Environment (build 1.8.0_412-b08)
+OpenJDK 64-Bit Server VM (build 25.412-b08, mixed mode)
+
+
+
+============================================================
+Executing: systemd --version (Systemd_Version)
+============================================================
+STDERR:
+bash: systemd: command not found
+
+
+
+============================================================
+Executing: grep -i 'KillUserProcesses' /etc/systemd/logind.conf || cat /etc/systemd/logind.conf (Logind_Config)
+============================================================
+#KillUserProcesses=no
+
+
+
+============================================================
+Executing: ls -la /var/lib/systemd/linger/ || echo 'No linger directory' (Linger_Status)
+============================================================
+No linger directory
+
+STDERR:
+ls: cannot access /var/lib/systemd/linger/: No such file or directory
+
+
+

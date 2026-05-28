@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <style>
+        /* 确保iframe填充其父容器，并允许内容滚动 */
+        .layui-tab-content .layui-tab-item {
+            position: relative;
+            height: 100%; /* 假设我们想要iframe填充整个Tab内容区域的高度 */
+        }
+        .layui-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            border: none; /* 移除iframe的边框 */
+        }
+
+        /* 如果需要，可以为整个页面设置样式 */
+        html, body, .layui-tab {
+            height: 100%; /* 使得整个页面和Tab容器都填充浏览器窗口 */
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-tab" lay-filter="test1" style="height: 100%;">
+    <ul class="layui-tab-title">
+        <li class="layui-this">压力（PSS）</li>
+        <li class="layui-this">焦虑（SAS）</li>
+        <li class="layui-this">抑郁（SDS）</li>
+    </ul>
+    <div class="layui-tab-content" style="height: calc(100% - 42px);"> <!-- 减去标题栏的高度 -->
+        <div class="layui-tab-item layui-show">
+            <iframe src="./whole/PSS.html" class="layui-iframe"></iframe>
+        </div>
+        <div class="layui-tab-item layui-show">
+            <iframe src="./whole/SAS.html" class="layui-iframe"></iframe>
+        </div>
+        <div class="layui-tab-item layui-show">
+            <iframe src="./whole/SDS.html" class="layui-iframe"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- 引入LayUI JS -->
+<script src="/lib/layui-v2.5.5/layui.js"></script>
+<script>
+    layui.use(['element'], function(){
+      var element = layui.element;
+
+      // 监听Tab切换
+      element.on('tab(test1)', function(data){
+        console.log(data.elem); // 得到当前的Tab标签的DOM对象
+        console.log(data.index); // 得到当前Tab的索引
+        console.log(data.other); // 得到其他Tab的DOM对象集合
+      });
+    });
+</script>
+
+</body>
+</html>

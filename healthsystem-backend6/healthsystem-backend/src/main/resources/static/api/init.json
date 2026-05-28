@@ -1,0 +1,73 @@
+{
+  "homeInfo": {
+    "title": "用户填报详情",
+    "href": "page/table_detail.html"
+  },
+  "logoInfo": {
+    "title": "HealthSystem",
+    "image": "../images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+      {
+        "title": "用户管理",
+        "href": "page/table_user.html",
+        "icon": "fa fa-user",
+        "target": "_self"
+      },
+      {
+        "title": "用户填报详情",
+        "href": "page/table_detail.html",
+        "icon": "fa fa-bar-chart",
+        "target": "_self"
+      },
+      {
+        "title": "整体情况分析",
+        "href": "page/table_whole.html",
+        "icon": "fa fa-bar-chart",
+        "target": "_self"
+      },
+      {
+        "title": "压力情况分析",
+        "href": "page/table_pss.html",
+        "icon": "fa fa-bar-chart",
+        "target": "_self"
+      },
+    {
+      "title": "健康情况分析",
+      "href": "page/table_health.html?v=1.0.2",
+      "icon": "fa fa-bar-chart",
+      "target": "_self"
+    },
+    {
+      "title": "HTP房树人分析",
+      "href": "page/table_htp.html?v=1.0.2",
+      "icon": "fa fa-picture-o",
+      "target": "_self"
+    },
+    {
+      "title": "7维量表分析",
+      "href": "page/table_scale.html?v=1.0.2",
+      "icon": "fa fa-list-alt",
+      "target": "_self"
+    },
+    {
+      "title": "AI聊天分析",
+      "href": "page/table_ai_chat.html?v=1.0.2",
+      "icon": "fa fa-comments",
+      "target": "_self"
+    },
+    {
+      "title": "日记分析",
+      "href": "page/table_diary.html?v=1.0.2",
+      "icon": "fa fa-book",
+      "target": "_self"
+    },
+    {
+      "title": "健康报告",
+      "href": "page/table_health_report.html?v=1.0.2",
+      "icon": "fa fa-heartbeat",
+      "target": "_self"
+    }
+  ]
+}

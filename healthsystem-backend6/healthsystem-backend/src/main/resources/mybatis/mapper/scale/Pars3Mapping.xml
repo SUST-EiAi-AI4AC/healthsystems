@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.Pars3Mapper">
+    <insert id="insert">
+        insert into pars3
+        (user_id,q1,q2,q3,q4_types,q5,score,status,log_date)
+        values
+        (#{userId},#{q1},#{q2},#{q3},#{q4Types},#{q5},#{score},#{status},#{logDate})
+    </insert>
+
+    <update id="update">
+        update pars3
+        set q1=#{q1},q2=#{q2},q3=#{q3},q4_types=#{q4Types},q5=#{q5},score=#{score},status=#{status}
+        where user_id=#{userId} and log_date=#{logDate}
+    </update>
+
+    <select id="getListByPage" resultType="com.nwpu.healthsystem.backend.entity.scale.Pars3">
+        select * from pars3 where user_id=#{userId} order by id desc
+    </select>
+
+    <select id="getToday" resultType="int">
+        select count(0) from pars3 where user_id=#{userId} and log_date=#{date}
+    </select>
+</mapper>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HTP房树人分析</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+    <style>
+        .risk-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            color: white;
+            font-size: 12px;
+        }
+        .risk-normal { background-color: #5FB878; }
+        .risk-mild { background-color: #FFB800; }
+        .risk-moderate { background-color: #FF5722; }
+        .risk-severe { background-color: #FF0000; }
+        .stat-card {
+            padding: 15px;
+            margin: 10px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <!-- 统计卡片 -->
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md3">
+                <div class="stat-card">
+                    <h3 style="color: #5FB878; margin: 0;">正常</h3>
+                    <p id="stat-normal" style="font-size: 24px; margin: 10px 0;">-</p>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="stat-card">
+                    <h3 style="color: #FFB800; margin: 0;">轻度风险</h3>
+                    <p id="stat-mild" style="font-size: 24px; margin: 10px 0;">-</p>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="stat-card">
+                    <h3 style="color: #FF5722; margin: 0;">中度风险</h3>
+                    <p id="stat-moderate" style="font-size: 24px; margin: 10px 0;">-</p>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="stat-card">
+                    <h3 style="color: #FF0000; margin: 0;">重度风险</h3>
+                    <p id="stat-severe" style="font-size: 24px; margin: 10px 0;">-</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <fieldset class="table-search-fieldset" style="margin-top: 20px;">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="username" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">开始日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="startDate" id="startDate" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">结束日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="endDate" id="endDate" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">风险等级</label>
+                            <div class="layui-input-inline">
+                                <select name="riskLevel">
+                                    <option value="">全部</option>
+                                    <option value="normal">正常</option>
+                                    <option value="mild">轻度风险</option>
+                                    <option value="moderate">中度风险</option>
+                                    <option value="severe">重度风险</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn">
+                                <i class="layui-icon"></i> 搜 索
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <!-- 数据表格 -->
+        <table class="layui-hide" id="htpTable" lay-filter="htpTable"></table>
+
+        <!-- 行工具栏 -->
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="detail">查看详情</a>
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="viewImage">查看图片</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+        </script>
+
+        <!-- 风险等级模板 -->
+        <script type="text/html" id="riskLevelTpl">
+            {{# if(d.riskLevel === 'normal'){ }}
+                <span class="risk-badge risk-normal">正常</span>
+            {{# } else if(d.riskLevel === 'mild'){ }}
+                <span class="risk-badge risk-mild">轻度风险</span>
+            {{# } else if(d.riskLevel === 'moderate'){ }}
+                <span class="risk-badge risk-moderate">中度风险</span>
+            {{# } else if(d.riskLevel === 'severe'){ }}
+                <span class="risk-badge risk-severe">重度风险</span>
+            {{# } }}
+        </script>
+
+    </div>
+</div>
+
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate;
+
+        // 检查登录
+        let token = getToken();
+        if(null == token) {
+            reLoginForShiroExecption();
+        }
+
+        // 日期选择器
+        laydate.render({
+            elem: '#startDate',
+            type: 'date'
+        });
+        laydate.render({
+            elem: '#endDate',
+            type: 'date'
+        });
+
+        // 加载统计数据
+        function loadStatistics() {
+            $.ajax({
+                url: '/htp/statistics/riskLevel',
+                type: 'GET',
+                headers: { Authorization: token },
+                success: function(res) {
+                    if(res.code === 200) {
+                        var stats = { normal: 0, mild: 0, moderate: 0, severe: 0 };
+                        res.result.forEach(function(item) {
+                            stats[item.riskLevel] = item.count + ' (' + item.percentage + '%)';
+                        });
+                        $('#stat-normal').text(stats.normal);
+                        $('#stat-mild').text(stats.mild);
+                        $('#stat-moderate').text(stats.moderate);
+                        $('#stat-severe').text(stats.severe);
+                    }
+                }
+            });
+        }
+        loadStatistics();
+
+        // 渲染表格
+        var tableIns = table.render({
+            elem: '#htpTable',
+            url: '/htp/list',
+            method: 'GET',
+            title: 'HTP房树人分析数据',
+            limits: [10, 15, 20, 30, 40, 50],
+            limit: 15,
+            request: {
+                pageName: 'currentPage',
+                limitName: 'pageSize'
+            },
+            headers: {
+                Authorization: token
+            },
+            parseData: function(res) {
+                if(res.code == 401) {
+                    return { "code": res.code, "msg": res.message };
+                }
+                return {
+                    "code": res.code == 200 ? 0 : res.code,
+                    "msg": res.message,
+                    "count": res.result.pageInfo.totalNumber,
+                    "data": res.result.data
+                };
+            },
+            done: function(res) {
+                if(res.code == 401) {
+                    reLoginForShiroExecption();
+                }
+            },
+            cols: [[
+                {field:'id', title:'ID', width:80, sort: true},
+                {field:'username', title:'用户名', width:120},
+                {field:'logDate', title:'绘画日期', width:120, sort: true},
+                {field:'score', title:'综合评分', width:100, sort: true},
+                {field:'riskLevel', title:'风险等级', width:120, templet: '#riskLevelTpl'},
+                {field:'drawingImgUrl', title:'图片', width:100, templet: function(d) {
+                    return d.drawingImgUrl ? '有图片' : '无图片';
+                }},
+                {fixed: 'right', title:'操作', toolbar: '#barDemo', width: 240}
+            ]],
+            page: true
+        });
+
+        // 监听搜索
+        form.on('submit(data-search-btn)', function (data) {
+            table.reload('htpTable', {
+                page: { curr: 1 },
+                where: {
+                    username: data.field.username,
+                    startDate: data.field.startDate,
+                    endDate: data.field.endDate,
+                    riskLevel: data.field.riskLevel
+                }
+            });
+            return false;
+        });
+
+        // 监听工具条
+        table.on('tool(htpTable)', function(obj) {
+            var data = obj.data;
+            if(obj.event === 'detail') {
+                // 查看详情
+                $.ajax({
+                    url: '/htp/detail/' + data.id,
+                    type: 'GET',
+                    headers: { Authorization: token },
+                    success: function(res) {
+                        if(res.code === 200) {
+                            var record = res.result.record;
+                            var reportJson = res.result.reportJson;
+                            
+                            var content = '<div style="padding: 20px;">';
+                            content += '<p><strong>用户：</strong>' + (record.username || '-') + '</p>';
+                            content += '<p><strong>日期：</strong>' + record.logDate + '</p>';
+                            content += '<p><strong>评分：</strong>' + record.score + '</p>';
+                            content += '<p><strong>风险等级：</strong>' + getRiskLevelText(record.riskLevel) + '</p>';
+                            
+                            if(reportJson) {
+                                content += '<hr><h3>AI分析报告</h3>';
+                                content += '<p><strong>心理状态：</strong>' + (reportJson.level || '-') + '</p>';
+                                content += '<p><strong>描述：</strong>' + (reportJson.desc || '-') + '</p>';
+                                
+                                if(reportJson.advice && reportJson.advice.length > 0) {
+                                    content += '<p><strong>建议：</strong></p><ul>';
+                                    reportJson.advice.forEach(function(item) {
+                                        content += '<li>' + item + '</li>';
+                                    });
+                                    content += '</ul>';
+                                }
+                            }
+                            content += '</div>';
+                            
+                            layer.open({
+                                type: 1,
+                                title: 'HTP详情',
+                                area: ['700px', '600px'],
+                                content: content
+                            });
+                        } else {
+                            layer.msg(res.message || '查询失败');
+                        }
+                    }
+                });
+            } else if(obj.event === 'viewImage') {
+                // 查看图片
+                if(data.drawingImgUrl) {
+                    layer.open({
+                        type: 1,
+                        title: '绘画作品',
+                        area: ['800px', '600px'],
+                        content: '<div style="text-align:center;padding:20px;"><img src="/download?filePath=' + data.drawingImgUrl + '" style="max-width:100%;max-height:500px;"></div>'
+                    });
+                } else {
+                    layer.msg('该记录没有图片');
+                }
+            } else if(obj.event === 'delete') {
+                layer.confirm('真的删除这行记录吗？', function(index){
+                    $.ajax({
+                        url: '/htp/delete/' + data.id,
+                        type: 'POST',
+                        headers: { Authorization: token },
+                        success: function(res) {
+                            if(res.code === 200) {
+                                layer.msg('删除成功');
+                                table.reload('htpTable');
+                                loadStatistics();
+                            } else {
+                                layer.msg(res.message || '删除失败');
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+
+        function getRiskLevelText(level) {
+            var map = {
+                'normal': '<span class="risk-badge risk-normal">正常</span>',
+                'mild': '<span class="risk-badge risk-mild">轻度风险</span>',
+                'moderate': '<span class="risk-badge risk-moderate">中度风险</span>',
+                'severe': '<span class="risk-badge risk-severe">重度风险</span>'
+            };
+            return map[level] || level;
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+################################################
+################### 开发环境 #####################
+################################################
+
+spring:
+  #  进一步解决时间戳不准 改时区
+  jackson:
+    time-zone: Asia/Shanghai
+  datasource:
+    #   数据源基本配置
+    username: root
+    password: 123456
+    url: jdbc:mysql://127.0.0.1:3306/healthsystem_test2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    #    password: 1234
+    #    url: jdbc:mysql://localhost:3306/healthsystem-test2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    #   数据源其他配置
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+
+    #   配置监控统计拦截的filters，去掉后监控界面sql无法统计，wall用于防火墙
+    filters: stat,wall
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+  #   设置上传文件最大大小
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  devtools:
+    restart:
+      enabled: false #设置开启热部署
+      additional-paths: src/main/java #重启目录
+  #      exclude: WEB-INF/**
+
+  thymeleaf:
+    cache: false
+
+  resources:
+    static-locations: classpath:/static/,classpath:/templates/
+
+# HTTP端口（用于前端API请求，需与前端开发配置baseUrl端口一致）
+http:
+  port: 8081
+
+# 是否打开 swagger-ui
+swagger:
+  enabled: true
+
+# 设置文件保存路径
+file:
+  # Linux 服务器路径
+  # filePath: /root/HealthSystemFiles
+  # Windows 开发环境路径（请根据实际路径修改）
+  filePath: E:/HealthSystemFiles
+
+# 前端服务器的IP地址，用于二维码生成
+frontend:
+  #  IP: http://10.69.32.205:8080
+  #  IP: http://127.0.0.1:8080
+  #  IP: http://10.61.127.105:8080
+  #  ls
+  IP: https://10.68.7.234:8080

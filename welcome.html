@@ -1,0 +1,3030 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心晴AI-智能心理检测助手</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Swiper CSS (For 3D Coverflow Carousel) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+    <!-- ECharts JS (For Radar Chart) -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070b19;
+            --bg-card: rgba(15, 23, 42, 0.45);
+            --bg-card-hover: rgba(30, 41, 59, 0.7);
+            --border-glow: rgba(99, 102, 241, 0.15);
+            --border-glow-hover: rgba(168, 85, 247, 0.4);
+
+            --primary: #3b82f6;
+            /* Electric Blue */
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --secondary: #8b5cf6;
+            /* Purple */
+            --secondary-glow: rgba(139, 92, 246, 0.5);
+            --accent: #06b6d4;
+            /* Cyan */
+            --accent-glow: rgba(6, 182, 212, 0.5);
+            --pink: #d946ef;
+            /* Pink */
+
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-family: 'Outfit', 'Noto Sans SC', sans-serif;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+            /* Theme Specific variables */
+            --bg-header: rgba(7, 11, 25, 0.6);
+            --bg-header-scrolled: rgba(7, 11, 25, 0.85);
+            --border-header: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Light Theme variables */
+        body.light-theme {
+            --bg-dark: #f3f4f6;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-hover: rgba(255, 255, 255, 0.95);
+            --border-glow: rgba(99, 102, 241, 0.12);
+            --border-glow-hover: rgba(168, 85, 247, 0.35);
+
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --secondary-glow: rgba(139, 92, 246, 0.15);
+            --accent-glow: rgba(6, 182, 212, 0.15);
+
+            --text-main: #111827;
+            --text-muted: #4b5563;
+
+            --bg-header: rgba(243, 244, 246, 0.65);
+            --bg-header-scrolled: rgba(243, 244, 246, 0.95);
+            --border-header: rgba(0, 0, 0, 0.06);
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 3D Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .text-gradient-primary {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-cyan {
+            background: linear-gradient(135deg, #22d3ee 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .glass-panel:hover {
+            border-color: var(--border-glow-hover);
+            box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.15);
+            transform: translateY(-5px);
+        }
+
+        /* Navbar */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            z-index: 100;
+            background: var(--bg-header);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-header);
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            height: 70px;
+            background: var(--bg-header-scrolled);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Theme Toggle Button Styling */
+        .theme-toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        body.light-theme .theme-toggle-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.08);
+            color: var(--text-main);
+        }
+
+        body.light-theme .theme-toggle-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .nav-container {
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            font-size: 26px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-main);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn-use {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-use:hover {
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.7);
+            transform: translateY(-2px) scale(1.03);
+            background: linear-gradient(135deg, #4f46e5, var(--pink));
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        /* Hero Section */
+        #hero {
+            position: relative;
+            padding: 180px 0 100px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            color: #60a5fa;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .hero-tag i {
+            animation: rotate-cog 4s infinite linear;
+        }
+
+        .hero-title {
+            font-size: 54px;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 540px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 8px 30px var(--primary-glow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px var(--secondary-glow);
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        }
+
+        .btn-outline {
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* 3D Floating Dashboard Graphic */
+        .hero-graphic {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard-mockup {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1.1;
+            perspective: 1200px;
+        }
+
+        .mockup-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateY(-20deg) rotateX(15deg);
+            animation: float-3d 6s infinite ease-in-out alternate;
+        }
+
+        .mockup-layer {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transition: var(--transition);
+        }
+
+        .layer-base {
+            width: 100%;
+            height: 85%;
+            top: 10%;
+            left: 0;
+            background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, rgba(15, 23, 42, 0.9) 80%);
+            transform: translateZ(0);
+        }
+
+        .layer-ui-1 {
+            width: 55%;
+            height: 40%;
+            bottom: 0%;
+            right: -5%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(15, 23, 42, 0.95));
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateZ(40px);
+        }
+
+        .layer-ui-2 {
+            width: 45%;
+            height: 35%;
+            top: 0%;
+            left: -5%;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(15, 23, 42, 0.95));
+            border-color: rgba(6, 182, 212, 0.3);
+            transform: translateZ(70px);
+        }
+
+        .layer-ui-3 {
+            width: 40%;
+            height: 30%;
+            top: 40%;
+            left: 30%;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(15, 23, 42, 0.95));
+            border-color: rgba(236, 72, 153, 0.3);
+            transform: translateZ(100px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Mockup Contents */
+        .mockup-header {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .mockup-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+
+        .mockup-dot:nth-child(2) {
+            background: #f59e0b;
+        }
+
+        .mockup-dot:nth-child(3) {
+            background: #10b981;
+        }
+
+        .mockup-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .mockup-bar.w-70 {
+            width: 70%;
+        }
+
+        .mockup-bar.w-40 {
+            width: 40%;
+        }
+
+        .mockup-bar.w-90 {
+            width: 90%;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+        }
+
+        .mockup-chart-lines {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            height: 100px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+            margin-top: 15px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 4px 4px 0 0;
+            transition: var(--transition);
+            animation: bar-grow 2s infinite alternate ease-in-out;
+        }
+
+        .chart-bar:nth-child(2) {
+            animation-delay: 0.3s;
+            background: rgba(139, 92, 246, 0.3);
+        }
+
+        .chart-bar:nth-child(3) {
+            animation-delay: 0.6s;
+            background: rgba(6, 182, 212, 0.3);
+        }
+
+        .chart-bar:nth-child(4) {
+            animation-delay: 0.9s;
+            background: rgba(236, 72, 153, 0.3);
+        }
+
+        .pulse-icon {
+            font-size: 32px;
+            color: #ec4899;
+            margin-bottom: 8px;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        /* Section Global Settings */
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px auto;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .section-title {
+            font-size: 40px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        /* Project Intro */
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .intro-card {
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .intro-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 24px auto;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: var(--transition);
+        }
+
+        .intro-card:hover .intro-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .intro-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .intro-card p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* User Persona */
+        .persona-tabs-nav {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 40px;
+            list-style: none;
+        }
+
+        .persona-tab-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 12px 28px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .persona-tab-btn.active,
+        .persona-tab-btn:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text-main);
+            border-color: transparent;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .persona-content-wrapper {
+            position: relative;
+            min-height: 520px;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .persona-panel {
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.5s ease-in-out;
+            width: 100%;
+        }
+
+        .persona-panel.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .persona-header h3 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .persona-role {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .persona-divider {
+            border: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin: 0 0 20px 0;
+        }
+
+        body.light-theme .persona-divider {
+            border-top-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .persona-quote-box {
+            font-style: italic;
+            font-size: 15px;
+            color: var(--text-muted);
+            border-left: 3px solid var(--secondary);
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        body.light-theme .persona-quote-box {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .persona-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .persona-meta-item h4 {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .persona-meta-item p.pain-points-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .modules-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .modules-list li {
+            font-size: 14px;
+            color: var(--accent);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modules-list li i {
+            font-size: 12px;
+        }
+
+        /* Bottom dashboard mockup panel */
+        .persona-dashboard-mockup {
+            background: rgba(10, 15, 30, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
+        }
+
+        body.light-theme .persona-dashboard-mockup {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,0.02);
+        }
+
+        .mockup-item {
+            margin-bottom: 16px;
+        }
+
+        .mockup-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .mockup-label-flex {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .mockup-progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        body.light-theme .mockup-progress-bar {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .mockup-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        /* Features Section (3D Coverflow Swiper) */
+        #features {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(15, 23, 42, 0.6) 50%, var(--bg-dark) 100%);
+            overflow: hidden;
+        }
+
+        .features-swiper {
+            width: 100%;
+            padding: 50px 0;
+        }
+
+        .feature-slide-card {
+            width: 320px;
+            height: 430px;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            transition: var(--transition);
+        }
+
+        .feature-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .feature-slide-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .feature-slide-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .feature-learn-more {
+            text-decoration: none;
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 24px;
+            transition: var(--transition);
+        }
+
+        .feature-learn-more:hover {
+            color: var(--text-main);
+        }
+
+        .feature-learn-more i {
+            transition: var(--transition);
+        }
+
+        .feature-learn-more:hover i {
+            transform: translateX(4px);
+        }
+
+        .features-swiper .swiper-slide {
+            opacity: 0.35;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .features-swiper .swiper-slide-active {
+            opacity: 1;
+        }
+
+        /* Responsive Swiper Adjustment */
+        @media (max-width: 480px) {
+            .feature-slide-card {
+                width: 280px;
+                height: 390px;
+                padding: 30px 20px;
+            }
+            .hero-actions {
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                justify-content: center;
+                gap: 6px !important;
+                width: 100%;
+            }
+            .hero-actions a, .hero-actions button {
+                width: auto !important;
+                flex: 1;
+                min-width: 0;
+                padding: 10px 4px !important;
+                font-size: 11px !important;
+                gap: 3px !important;
+                justify-content: center;
+                white-space: nowrap;
+            }
+            .hero-actions a i, .hero-actions button i {
+                font-size: 10px !important;
+            }
+            .dashboard-mockup {
+                height: 250px !important;
+                aspect-ratio: auto !important;
+                transform: scale(0.65) !important;
+                transform-origin: center center;
+                margin-top: -50px !important;
+                margin-bottom: -30px !important;
+            }
+        }
+
+        .swiper-pagination-bullet {
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 1;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            width: 24px;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Competitive Analysis (Radar Chart) */
+        .comp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .radar-container {
+            width: 100%;
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .comp-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .comp-table th,
+        .comp-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .comp-table th {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .comp-table td {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .comp-table tr:hover td {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .comp-table .feature-name {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .status-yes {
+            color: #10b981;
+            font-size: 18px;
+        }
+
+        .status-no {
+            color: #ef4444;
+            font-size: 18px;
+        }
+
+        .status-partial {
+            color: #f59e0b;
+            font-size: 18px;
+        }
+
+        /* User Testimonials */
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .review-card {
+            padding: 36px;
+            position: relative;
+        }
+
+        .review-rating {
+            color: #f59e0b;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .review-text {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        .review-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .review-avatar-text {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .user-title {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .quote-icon {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Membership Plans */
+        .billing-toggle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .billing-toggle-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .billing-toggle-label.active {
+            color: var(--text-main);
+        }
+
+        .toggle-switch {
+            width: 60px;
+            height: 32px;
+            background: #1e293b;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-knob {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 4px;
+            transition: var(--transition);
+        }
+
+        .toggle-switch.yearly .toggle-knob {
+            left: 30px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            align-items: stretch;
+        }
+
+        .pricing-card {
+            padding: 48px 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card.popular {
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.1);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 30px;
+            transform: rotate(45deg);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .plan-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .plan-price-container {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 24px;
+        }
+
+        .plan-price {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -1px;
+            transition: var(--transition);
+        }
+
+        .plan-price-unit {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .plan-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            height: 48px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex-grow: 1;
+        }
+
+        .plan-features li {
+            font-size: 14px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-features i {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .btn-pricing {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 14px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .pricing-card.popular .btn-pricing {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .pricing-card.popular .btn-pricing:hover {
+            box-shadow: 0 6px 20px var(--secondary-glow);
+            transform: translateY(-2px);
+        }
+
+        .pricing-card:not(.popular) .btn-pricing {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pricing-card:not(.popular) .btn-pricing:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Call To Action */
+        #pricing {
+            padding-bottom: 40px;
+        }
+
+        #cta {
+            padding: 20px 0;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(59, 130, 246, 0.12) 0%, rgba(7, 11, 25, 1) 70%);
+        }
+
+        .cta-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .cta-bottom-spacer {
+            display: none;
+        }
+
+        .cta-hero-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 20px 48px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--pink) 100%);
+            background-size: 200% auto;
+            border-radius: 50px;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation: gradient-shimmer 4s infinite linear;
+        }
+
+        @keyframes gradient-shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .cta-hero-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--pink) 100%);
+            background-size: 200% auto;
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.7;
+            transition: all 0.5s ease;
+            border-radius: 50px;
+        }
+
+        .cta-hero-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
+            letter-spacing: 1px;
+        }
+
+        .cta-hero-btn:hover::before {
+            filter: blur(25px);
+            opacity: 1;
+        }
+
+        .cta-hero-btn i {
+            font-size: 20px;
+            transition: transform 0.4s ease;
+        }
+
+        .cta-hero-btn:hover i {
+            transform: translateX(6px) scale(1.1);
+        }
+
+        /* Footer */
+        footer {
+            background: #020617;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 60px 0 30px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-desc {
+            max-width: 280px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-links a {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            color: var(--text-main);
+            background: var(--primary);
+            border-color: transparent;
+            box-shadow: 0 4px 10px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        .footer-col h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-col a {
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .footer-col a:hover {
+            color: var(--text-main);
+            padding-left: 4px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+
+            14% {
+                transform: scale(1.1);
+            }
+
+            28% {
+                transform: scale(1);
+            }
+
+            42% {
+                transform: scale(1.15);
+            }
+
+            70% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.4));
+            }
+
+            100% {
+                filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.8));
+            }
+        }
+
+        @keyframes rotate-cog {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes float-3d {
+            0% {
+                transform: rotateY(-20deg) rotateX(15deg) translateY(0);
+            }
+
+            100% {
+                transform: rotateY(-10deg) rotateX(25deg) translateY(-15px);
+            }
+        }
+
+        @keyframes bar-grow {
+            0% {
+                height: 30px;
+            }
+
+            100% {
+                height: 90px;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-grid {
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-text {
+                order: 2;
+            }
+
+            .hero-graphic {
+                display: none !important;
+            }
+
+            .hero-desc {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .intro-grid {
+                grid-template-columns: 1fr 1.1fr;
+            }
+
+            .intro-card:last-child {
+                grid-column: span 2;
+            }
+
+            .comp-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .review-grid {
+                grid-template-columns: 1fr 1.1fr;
+            }
+
+            .review-card:last-child {
+                grid-column: span 2;
+            }
+
+            .pricing-grid {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                justify-content: flex-start !important;
+                gap: 20px !important;
+                padding: 20px 15px !important;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .pricing-grid::-webkit-scrollbar {
+                display: none;
+            }
+            .pricing-card {
+                flex: 0 0 280px !important;
+                width: 280px !important;
+                scroll-snap-align: center;
+                padding: 24px 20px !important;
+            }
+            .pricing-card h4, .pricing-card .plan-name {
+                font-size: 18px !important;
+            }
+            .pricing-card .plan-price-container {
+                margin-bottom: 8px !important;
+            }
+            .pricing-card .plan-desc {
+                font-size: 11px !important;
+                margin-bottom: 12px !important;
+            }
+            .pricing-card .plan-features {
+                gap: 6px !important;
+                margin-bottom: 16px !important;
+            }
+            .pricing-card .plan-features li {
+                font-size: 10px !important;
+            }
+            .pricing-card .btn-pricing {
+                padding: 10px 16px !important;
+                font-size: 12px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-mockup {
+                height: 300px !important;
+                aspect-ratio: auto !important;
+                transform: scale(0.8) !important;
+                transform-origin: center center;
+                margin-top: -30px !important;
+                margin-bottom: -10px !important;
+            }
+
+            header nav {
+                display: none;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: 38px;
+            }
+
+            .intro-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-card:last-child {
+                grid-column: span 1;
+            }
+
+            .persona-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .review-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .review-card:last-child {
+                grid-column: span 1;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1.2fr 1fr !important;
+                gap: 15px !important;
+            }
+            .footer-grid .footer-col:nth-child(2),
+            .footer-grid .footer-col:nth-child(3) {
+                display: none !important;
+            }
+            .footer-desc {
+                font-size: 11px !important;
+                max-width: 100% !important;
+            }
+            .footer-col h4 {
+                font-size: 12px !important;
+                margin-bottom: 12px !important;
+            }
+            .footer-col ul {
+                gap: 6px !important;
+                font-size: 11px !important;
+            }
+            .footer-col span {
+                font-size: 10px !important;
+                display: block;
+            }
+            #pricing {
+                padding-bottom: 20px !important;
+            }
+            #cta {
+                padding: 0 !important;
+            }
+            .cta-btn-wrapper {
+                padding: 10px 0 !important;
+            }
+            .cta-bottom-spacer {
+                display: block !important;
+                height: 48px !important;
+            }
+            .hero-actions {
+                flex-direction: column !important;
+                gap: 12px !important;
+                width: 100% !important;
+                max-width: 320px !important;
+                margin: 0 auto !important;
+            }
+            .hero-actions .btn-primary,
+            .hero-actions .btn-outline,
+            .hero-actions .btn-primary *,
+            .hero-actions .btn-outline * {
+                -webkit-tap-highlight-color: transparent !important;
+                outline: none !important;
+                -webkit-user-select: none !important;
+                user-select: none !important;
+            }
+            .hero-actions .btn-primary,
+            .hero-actions .btn-outline {
+                width: 100% !important;
+                justify-content: center !important;
+                padding: 14px 24px !important;
+                font-size: 15px !important;
+            }
+            .hero-actions .btn-primary ::selection,
+            .hero-actions .btn-outline ::selection,
+            .hero-actions .btn-primary *::selection,
+            .hero-actions .btn-outline *::selection {
+                background: transparent !important;
+                color: #fff !important;
+            }
+            .hero-actions .btn-primary:active,
+            .hero-actions .btn-outline:active {
+                transform: scale(0.97) !important;
+                filter: brightness(0.9) !important;
+                outline: none !important;
+            }
+            .hero-actions > :nth-child(1) {
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+                border: none !important;
+                color: #fff !important;
+                box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35) !important;
+            }
+            .hero-actions > :nth-child(1) i {
+                color: #fff !important;
+            }
+            .hero-actions > :nth-child(2) {
+                background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%) !important;
+                border: none !important;
+                color: #fff !important;
+                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
+            }
+            .hero-actions > :nth-child(2) i {
+                color: #fff !important;
+            }
+            .hero-actions > :nth-child(3) {
+                background: linear-gradient(135deg, #ec4899 0%, #db2777 100%) !important;
+                border: none !important;
+                color: #fff !important;
+                box-shadow: 0 4px 15px rgba(219, 39, 119, 0.3) !important;
+            }
+            .hero-actions > :nth-child(3) i {
+                color: #fff !important;
+            }
+        }
+
+        /* Light Theme Extra Overrides */
+        body.light-theme .toggle-switch {
+            background: #e5e7eb;
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .pricing-card.popular {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(243, 244, 246, 0.9) 100%);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.08);
+        }
+
+        body.light-theme .pricing-card:not(.popular) .btn-pricing {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .mockup-layer {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .layer-base {
+            background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, rgba(255, 255, 255, 0.95) 80%);
+        }
+
+        body.light-theme .layer-ui-1 {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(255, 255, 255, 0.98));
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        body.light-theme .layer-ui-2 {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(255, 255, 255, 0.98));
+            border-color: rgba(6, 182, 212, 0.2);
+        }
+
+        body.light-theme .layer-ui-3 {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(255, 255, 255, 0.98));
+            border-color: rgba(236, 72, 153, 0.2);
+        }
+
+        body.light-theme .mockup-bar {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        body.light-theme .mockup-chart-lines {
+            border-bottom-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme #features {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(255, 255, 255, 0.5) 50%, var(--bg-dark) 100%);
+        }
+
+        body.light-theme .comp-table th {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-theme .comp-table tr:hover td {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        body.light-theme .feature-slide-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(243, 244, 246, 0.95) 100%);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .radar-container {
+            background: rgba(255, 255, 255, 0.7);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme #cta {
+            background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, var(--bg-dark) 70%);
+        }
+
+
+        button.btn-outline {
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Download Modal Styles */
+        .download-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(7, 11, 25, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .download-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .download-modal-card {
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 24px;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .download-modal-overlay.active .download-modal-card {
+            transform: scale(1);
+        }
+
+        .download-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .download-modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .download-modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .download-modal-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .download-options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .download-option-btn {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .download-option-btn i {
+            font-size: 28px;
+            color: var(--primary);
+            transition: transform 0.3s;
+        }
+
+        .download-option-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .download-option-btn:hover i {
+            transform: scale(1.1);
+        }
+
+        .option-title {
+            display: block;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .option-sub {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Light theme adaptions for download modal */
+        body.light-theme .download-modal-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+        body.light-theme .download-modal-title {
+            background: none;
+            -webkit-text-fill-color: initial;
+            color: var(--text-main);
+        }
+        body.light-theme .download-option-btn {
+            background: rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 0, 0, 0.06);
+            color: var(--text-main);
+        }
+        body.light-theme .download-option-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 3D Canvas Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header / Navbar -->
+    <header id="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>心晴AI</span>
+            </a>
+            <nav id="navbar-links">
+                <ul class="nav-links">
+                    <li><a href="#hero" class="active">首页</a></li>
+                    <li><a href="#persona">用户画像</a></li>
+                    <li><a href="#features">特色功能</a></li>
+                    <li><a href="#comp">竞品分析</a></li>
+                    <li><a href="#pricing">会员计划</a></li>
+                </ul>
+            </nav>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="切换主题" style="margin-right: 4px;">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <a href="https://h.playe.top/#/pages/login/login" class="btn-use">
+                    <span>登录</span>
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </a>
+                <div class="mobile-toggle" id="menu-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <div class="hero-tag">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>AI智能 + 多模态生理监测数字疗法</span>
+                    </div>
+                    <h1 class="hero-title">
+                        用科技守护<br>
+                        <span class="text-gradient-primary">身心健康底线</span>
+                    </h1>
+                    <p class="hero-desc">
+                        心晴AI是一款融合智能手表生理参数监测、人工智能聊天与情绪诊断、房树人（HTP）绘画分析及健康日记于一体的数字化健康管理平台。帮助您实时把控健康状况，建立医生与家庭成员的紧密连结。
+                    </p>
+                    <div class="hero-actions">
+                        <a href="https://h.playe.top/#/pages/login/login" class="btn-primary">
+                            <span>立即体验</span>
+                            <i class="fa-solid fa-circle-play"></i>
+                        </a>
+                        <a href="https://www.nwpuhs.cn/" target="_blank" class="btn-outline">
+                            <span>管理后台</span>
+                            <i class="fa-solid fa-user-shield"></i>
+                        </a>
+                        <button onclick="openDownloadModal()" class="btn-outline">
+                            <span>下载安装</span>
+                            <i class="fa-solid fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3D Mockup Graphic -->
+                <div class="hero-graphic">
+                    <div class="dashboard-mockup">
+                        <div class="mockup-inner">
+                            <div class="mockup-layer layer-base">
+                                <div class="mockup-header">
+                                    <div class="mockup-dot"></div>
+                                    <div class="mockup-dot"></div>
+                                    <div class="mockup-dot"></div>
+                                </div>
+                                <div class="mockup-bar w-70"></div>
+                                <div class="mockup-bar w-40"></div>
+                                <div class="mockup-chart-lines">
+                                    <div class="chart-bar" style="height: 40px;"></div>
+                                    <div class="chart-bar" style="height: 80px;"></div>
+                                    <div class="chart-bar" style="height: 60px;"></div>
+                                    <div class="chart-bar" style="height: 95px;"></div>
+                                    <div class="chart-bar" style="height: 50px;"></div>
+                                </div>
+                            </div>
+                            <div class="mockup-layer layer-ui-1">
+                                <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">情绪状态指数</h4>
+                                <div style="font-size: 20px; font-weight:800; color: #10b981; margin-bottom: 6px;">
+                                    88/100</div>
+                                <div class="mockup-bar w-90"></div>
+                                <p style="font-size: 11px; color: var(--text-muted);">状态处于最佳水平，继续保持良好的作息。</p>
+                            </div>
+                            <div class="mockup-layer layer-ui-2">
+                                <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">今日运动步数</h4>
+                                <div style="font-size: 22px; font-weight:800; color: #60a5fa;">11,245</div>
+                                <p style="font-size: 11px; color: #60a5fa;"><i class="fa-solid fa-arrow-trend-up"></i>
+                                    达成目标 112%</p>
+                            </div>
+                            <div class="mockup-layer layer-ui-3">
+                                <i class="fa-solid fa-heart pulse-icon"></i>
+                                <span style="font-size: 12px; color: var(--text-muted);">当前心率</span>
+                                <span style="font-size: 24px; font-weight: 800; color: #f43f5e;">72 <span
+                                        style="font-size: 12px;">bpm</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Persona Section -->
+    <section id="persona">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">用户画像</span>
+                <h2 class="section-title">他们都在使用心晴AI</h2>
+                <p class="section-desc">心晴AI致力于满足不同背景群体的核心健康诉求，覆盖普通人、高压群体及医疗工作者。</p>
+            </div>
+
+            <div class="persona-tabs-nav">
+                <button class="persona-tab-btn active" onclick="switchPersona(0)">高压职场人</button>
+                <button class="persona-tab-btn" onclick="switchPersona(1)">心理疗愈者</button>
+                <button class="persona-tab-btn" onclick="switchPersona(2)">专业精神科医生</button>
+            </div>
+
+            <div class="persona-content-wrapper glass-panel" style="padding: 40px; max-width: 850px; margin: 0 auto;">
+                <!-- Panel 1 -->
+                <div class="persona-panel active">
+                    <div class="persona-header">
+                        <h3>张宇 (35岁)</h3>
+                        <span class="persona-role">高级系统架构师 / 互联网从业者</span>
+                    </div>
+                    <hr class="persona-divider">
+                    <div class="persona-quote-box">
+                        "经常连夜赶项目，失眠加剧了我的焦虑。智能手表能同步我所有的睡眠与心率，一旦我今天HRV过低，小晴就会主动提醒我深呼吸 and 冥想，它比我更懂我的情绪状态。"
+                    </div>
+                    <div class="persona-meta-grid">
+                        <div class="persona-meta-item">
+                            <h4>核心痛点</h4>
+                            <p class="pain-points-text">重度失眠、心率变异性波动剧烈、日常高压无法排解</p>
+                        </div>
+                        <div class="persona-meta-item">
+                            <h4>常用模块</h4>
+                            <ul class="modules-list">
+                                <li><i class="fa-solid fa-check"></i> 佳明数据同步看板</li>
+                                <li><i class="fa-solid fa-check"></i> 睡眠质量深度分析</li>
+                                <li><i class="fa-solid fa-check"></i> 危机主动预警</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="persona-dashboard-mockup">
+                        <div class="mockup-item">
+                            <div class="mockup-label-flex">
+                                <span>今日疲劳指数 (Stress Score)</span>
+                                <span>78 / 100</span>
+                            </div>
+                            <div class="mockup-progress-bar">
+                                <div class="mockup-progress-fill" style="width: 78%; background: linear-gradient(to right, var(--pink), var(--secondary));"></div>
+                            </div>
+                        </div>
+                        <div class="mockup-item">
+                            <div class="mockup-label-flex">
+                                <span>心率变异性 (HRV Baseline)</span>
+                                <span>42 ms (正常偏低)</span>
+                            </div>
+                            <div class="mockup-progress-bar">
+                                <div class="mockup-progress-fill" style="width: 42%; background: linear-gradient(to right, var(--pink), var(--primary));"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel 2 -->
+                <div class="persona-panel">
+                    <div class="persona-header">
+                        <h3>林溪 (22岁)</h3>
+                        <span class="persona-role" style="color: var(--secondary);">大学大四在读 / 插画创作者</span>
+                    </div>
+                    <hr class="persona-divider">
+                    <div class="persona-quote-box" style="border-left-color: var(--secondary);">
+                        "考研 and 找工作的压力让我容易抑郁。我不习惯去心理咨询室，但在纸上画一幅房树人上传，系统就会剖析我的心理阴影并给出很准的报告，跟小晴聊天也毫无防备。"
+                    </div>
+                    <div class="persona-meta-grid">
+                        <div class="persona-meta-item">
+                            <h4>核心痛点</h4>
+                            <p class="pain-points-text">前途迷茫、轻度抑郁状态、抗拒线下心理问诊</p>
+                        </div>
+                        <div class="persona-meta-item">
+                            <h4>常用模块</h4>
+                            <ul class="modules-list">
+                                <li style="color: var(--secondary);"><i class="fa-solid fa-check" style="color: var(--secondary);"></i> HTP 房树人自主绘画测试</li>
+                                <li style="color: var(--secondary);"><i class="fa-solid fa-check" style="color: var(--secondary);"></i> 24h AI 情绪解忧对话</li>
+                                <li style="color: var(--secondary);"><i class="fa-solid fa-check" style="color: var(--secondary);"></i> 国际金标准量表测试</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="persona-dashboard-mockup">
+                        <div class="mockup-item">
+                            <div class="mockup-label-flex">
+                                <span>房树人抑郁分值预测</span>
+                                <span>45% (低风险)</span>
+                            </div>
+                            <div class="mockup-progress-bar">
+                                <div class="mockup-progress-fill" style="width: 45%; background: linear-gradient(to right, var(--accent), var(--primary));"></div>
+                            </div>
+                        </div>
+                        <div class="mockup-item">
+                            <div class="mockup-label-flex">
+                                <span>AI 陪护疏导值</span>
+                                <span>92 / 100</span>
+                            </div>
+                            <div class="mockup-progress-bar">
+                                <div class="mockup-progress-fill" style="width: 92%; background: linear-gradient(to right, var(--primary), var(--secondary));"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel 3 -->
+                <div class="persona-panel">
+                    <div class="persona-header">
+                        <h3>王海 (46岁)</h3>
+                        <span class="persona-role" style="color: var(--accent);">市心理健康研究中心 / 主任医师</span>
+                    </div>
+                    <hr class="persona-divider">
+                    <div class="persona-quote-box" style="border-left-color: var(--accent);">
+                        "传统就诊每次就十多分钟，很难摸清患者出院后的日常生活状态。心晴AI提供极好的患者绑定功能，医生一键拉取图表，能帮我极大地提高诊断并开处方的精准度。"
+                    </div>
+                    <div class="persona-meta-grid">
+                        <div class="persona-meta-item">
+                            <h4>核心痛点</h4>
+                            <p class="pain-points-text">患者日常生理指标脱节、复诊主观报告偏差、随访低效</p>
+                        </div>
+                        <div class="persona-meta-item">
+                            <h4>常用模块</h4>
+                            <ul class="modules-list">
+                                <li style="color: var(--accent);"><i class="fa-solid fa-check" style="color: var(--accent);"></i> 医生后台管理看板</li>
+                                <li style="color: var(--accent);"><i class="fa-solid fa-check" style="color: var(--accent);"></i> 多模态生理图表导出</li>
+                                <li style="color: var(--accent);"><i class="fa-solid fa-check" style="color: var(--accent);"></i> 危机防范随访系统</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="persona-dashboard-mockup">
+                        <div class="mockup-item">
+                            <div class="mockup-label-flex">
+                                <span>临床辅助诊断提效</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="mockup-progress-bar">
+                                <div class="mockup-progress-fill" style="width: 65%; background: linear-gradient(to right, var(--accent), var(--primary));"></div>
+                            </div>
+                        </div>
+                        <div class="mockup-item">
+                            <div class="mockup-label-flex">
+                                <span>患者就诊随访覆盖率</span>
+                                <span>98%</span>
+                            </div>
+                            <div class="mockup-progress-bar">
+                                <div class="mockup-progress-fill" style="width: 98%; background: linear-gradient(to right, var(--primary), var(--secondary));"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section (3D Coverflow Swiper) -->
+    <section id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">特色功能</span>
+                <h2 class="section-title">创新的多维评估与干预机制</h2>
+                <p class="section-desc">滑动查看心晴AI的科技特色，让健康管理摆脱枯燥乏味。</p>
+            </div>
+
+            <!-- Swiper Slider -->
+            <div class="swiper features-swiper">
+                <div class="swiper-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide" style="width: auto;">
+                        <div class="feature-slide-card">
+                            <div>
+                                <div class="feature-icon-wrapper"><i class="fa-solid fa-clock"></i></div>
+                                <h3>24小时多维生理监测</h3>
+                                <p>深度对接Garmin等智能穿戴硬件，采集静息心率、心率变异性(HRV)、睡眠结构与呼吸暂停，实现情绪波动预警。</p>
+                            </div>
+                            <a href="page/login.html" class="feature-learn-more">
+                                <span>立即体验</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide" style="width: auto;">
+                        <div class="feature-slide-card">
+                            <div>
+                                <div class="feature-icon-wrapper"
+                                    style="background: linear-gradient(135deg, var(--secondary), var(--pink));"><i
+                                        class="fa-solid fa-comments"></i></div>
+                                <h3>AI小晴心理陪护聊天</h3>
+                                <p>结合自研心理大模型，支持文字和语音输入。它如温润的倾听者，结合前序诊断数据，为用户提供贴切的认知行为疏导建议。</p>
+                            </div>
+                            <a href="page/login.html" class="feature-learn-more">
+                                <span>立即体验</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide" style="width: auto;">
+                        <div class="feature-slide-card">
+                            <div>
+                                <div class="feature-icon-wrapper"
+                                    style="background: linear-gradient(135deg, var(--accent), var(--primary));"><i
+                                        class="fa-solid fa-house-chimney-window"></i></div>
+                                <h3>房树人(HTP)全自动诊断</h3>
+                                <p>告别纸笔分析！上传您的房树人画作，AI绘画特征识别模型将对笔画深度、空间布局进行语义化特征分析，输出抑郁和自残概率报告。</p>
+                            </div>
+                            <a href="page/login.html" class="feature-learn-more">
+                                <span>立即体验</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Slide 4 -->
+                    <div class="swiper-slide" style="width: auto;">
+                        <div class="feature-slide-card">
+                            <div>
+                                <div class="feature-icon-wrapper"
+                                    style="background: linear-gradient(135deg, var(--pink), var(--secondary));"><i
+                                        class="fa-solid fa-square-poll-horizontal"></i></div>
+                                <h3>7+心理量表与分析</h3>
+                                <p>内置国际临床金标准量表（包括SCL-90, SDS, PSQI, PARS-3等），支持多次作答结果折线图展示，直观了解治疗前后病情变化。</p>
+                            </div>
+                            <a href="page/login.html" class="feature-learn-more">
+                                <span>立即体验</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Slide 5 -->
+                    <div class="swiper-slide" style="width: auto;">
+                        <div class="feature-slide-card">
+                            <div>
+                                <div class="feature-icon-wrapper"
+                                    style="background: linear-gradient(135deg, var(--primary), var(--secondary));"><i
+                                        class="fa-solid fa-file-invoice-dollar"></i></div>
+                                <h3>健康与日志智能归档</h3>
+                                <p>结合自然语言处理，系统自动为用户的日常情绪日志提炼关键字 and 情绪标签，汇总出生成式健康分析报告，供医生临床评估。</p>
+                            </div>
+                            <a href="page/login.html" class="feature-learn-more">
+                                <span>立即体验</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="swiper-pagination" style="margin-top: 30px; position: static;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Competitive Analysis (Radar Chart) -->
+    <section id="comp">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">竞品分析</span>
+                <h2 class="section-title">对比传统心理健康服务</h2>
+                <p class="section-desc">心晴AI不仅提供单一维度量表填报，更在多模态、AI 辅助诊断和医患协作上取得了颠覆性突破。</p>
+            </div>
+
+            <div class="comp-grid">
+                <!-- ECharts Radar Container -->
+                <div class="radar-container" id="radar-chart"></div>
+
+                <!-- Comparison Table -->
+                <div class="comp-table-wrapper">
+                    <table class="comp-table">
+                        <thead>
+                            <tr>
+                                <th>特性功能</th>
+                                <th>心晴AI</th>
+                                <th>纯量表APP</th>
+                                <th>普通手环监测</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="feature-name">多模态数据分析</td>
+                                <td><i class="fa-solid fa-circle-check status-yes"></i> 优 (生理+心理)</td>
+                                <td><i class="fa-solid fa-circle-xmark status-no"></i> 无 (仅心理)</td>
+                                <td><i class="fa-solid fa-circle-minus status-partial"></i> 中 (仅生理)</td>
+                            </tr>
+                            <tr>
+                                <td class="feature-name">AI房树人绘画测评</td>
+                                <td><i class="fa-solid fa-circle-check status-yes"></i> 优 (一键AI评估)</td>
+                                <td><i class="fa-solid fa-circle-xmark status-no"></i> 无</td>
+                                <td><i class="fa-solid fa-circle-xmark status-no"></i> 无</td>
+                            </tr>
+                            <tr>
+                                <td class="feature-name">24h AI聊天伴护</td>
+                                <td><i class="fa-solid fa-circle-check status-yes"></i> 优 (实时解忧)</td>
+                                <td><i class="fa-solid fa-circle-minus status-partial"></i> 低 (仅文字库)</td>
+                                <td><i class="fa-solid fa-circle-xmark status-no"></i> 无</td>
+                            </tr>
+                            <tr>
+                                <td class="feature-name">医生患者深度连结</td>
+                                <td><i class="fa-solid fa-circle-check status-yes"></i> 优 (二维码绑定及导出)</td>
+                                <td><i class="fa-solid fa-circle-xmark status-no"></i> 无</td>
+                                <td><i class="fa-solid fa-circle-xmark status-no"></i> 无</td>
+                            </tr>
+                            <tr>
+                                <td class="feature-name">用户隐私与权限分级</td>
+                                <td><i class="fa-solid fa-circle-check status-yes"></i> 优 (JWT+Shiro细粒度)</td>
+                                <td><i class="fa-solid fa-circle-minus status-partial"></i> 中 (常规密码)</td>
+                                <td><i class="fa-solid fa-circle-check status-yes"></i> 优 (大厂级别)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Membership Plans Section -->
+    <section id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">会员计划</span>
+                <h2 class="section-title">灵活适配各种健康需求</h2>
+                <p class="section-desc">无论是个人自助疗愈还是医疗机构团队临床管理，都有为您定制的合适方案。</p>
+            </div>
+
+            <!-- Billing Toggle -->
+            <div class="billing-toggle-container">
+                <span class="billing-toggle-label active" id="toggle-monthly-text"
+                    onclick="toggleBilling(false)">按月付款</span>
+                <div class="toggle-switch" id="billing-switch" onclick="toggleBilling()">
+                    <div class="toggle-knob"></div>
+                </div>
+                <span class="billing-toggle-label" id="toggle-yearly-text" onclick="toggleBilling(true)">按年付款 <span
+                        style="color:#10b981; font-size:12px; font-weight:700;">(省20%)</span></span>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Plan 1 -->
+                <div class="pricing-card glass-panel">
+                    <div>
+                        <div class="plan-name">体验版</div>
+                        <div class="plan-price-container">
+                            <span class="plan-price" id="price-free">¥0</span>
+                            <span class="plan-price-unit">/ 永久免费</span>
+                        </div>
+                        <p class="plan-desc">适合健康状态良好的个人，进行定期的心理量表监测与基础身体数据跟进。</p>
+                        <ul class="plan-features">
+                            <li><i class="fa-solid fa-circle-check"></i> 7套主流心理量表自主填报</li>
+                            <li><i class="fa-solid fa-circle-check"></i> 单一维度心率/步数历史图表</li>
+                            <li><i class="fa-solid fa-circle-check"></i> AI助理小晴基础心理对话(每日10次)</li>
+                            <li><i class="fa-solid fa-circle-xmark" style="color:var(--text-muted);"></i> HTP绘画测试AI深度诊断
+                            </li>
+                            <li><i class="fa-solid fa-circle-xmark" style="color:var(--text-muted);"></i> 生成式健康分析报告导出
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Plan 2 (Popular) -->
+                <div class="pricing-card glass-panel popular">
+                    <div class="popular-badge">最受欢迎</div>
+                    <div>
+                        <div class="plan-name" style="color:#c084fc;">专业疗愈版</div>
+                        <div class="plan-price-container">
+                            <span class="plan-price" id="price-pro">¥29</span>
+                            <span class="plan-price-unit" id="unit-pro">/ 月</span>
+                        </div>
+                        <p class="plan-desc">最适合身心高压、有情绪调节诉求的亚健康人士，提供深度的多模态分析。</p>
+                        <ul class="plan-features">
+                            <li><i class="fa-solid fa-circle-check" style="color:#c084fc;"></i> 7+量表历次测评趋势多图对比</li>
+                            <li><i class="fa-solid fa-circle-check" style="color:#c084fc;"></i> 多模态静息心率/睡眠指数关联</li>
+                            <li><i class="fa-solid fa-circle-check" style="color:#c084fc;"></i> 24h AI小晴心理导师(无字数限制)</li>
+                            <li><i class="fa-solid fa-circle-check" style="color:#c084fc;"></i> HTP房树人绘画自动AI特征诊断</li>
+                            <li><i class="fa-solid fa-circle-check" style="color:#c084fc;"></i> 周度身心报告导出(PDF/图片)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Plan 3 -->
+                <div class="pricing-card glass-panel">
+                    <div>
+                        <div class="plan-name">医疗机构版</div>
+                        <div class="plan-price-container">
+                            <span class="plan-price" id="price-enterprise">¥199</span>
+                            <span class="plan-price-unit" id="unit-enterprise">/ 月</span>
+                        </div>
+                        <p class="plan-desc">适合心理咨询诊所、高校科研团队与安全管控机构开展群体监测和干预。</p>
+                        <ul class="plan-features">
+                            <li><i class="fa-solid fa-circle-check"></i> 患者管理面板(支持100+人绑定)</li>
+                            <li><i class="fa-solid fa-circle-check"></i> 二维码快速扫码注册及邀请码分发</li>
+                            <li><i class="fa-solid fa-circle-check"></i> 专属患者危机警报阈值设置(短信提醒)</li>
+                            <li><i class="fa-solid fa-circle-check"></i> 批量临床报告及脱敏科研数据导出</li>
+                            <li><i class="fa-solid fa-circle-check"></i> 定制化大模型私有部署集成接口</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call To Action Section -->
+    <section id="cta">
+        <div class="container">
+            <div class="cta-btn-wrapper">
+                <a href="https://h.playe.top/#/pages/login/login" class="cta-hero-btn">
+                    <span>开始免费使用</span>
+                    <i class="fa-solid fa-bolt"></i>
+                </a>
+            </div>
+            <!-- Empty space below the button (equivalent to two lines of height) -->
+            <div class="cta-bottom-spacer" style="height: 48px;"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#" class="footer-logo">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        <span>心晴AI</span>
+                    </a>
+                    <p class="footer-desc">前沿的数字化心理与多模态生理健康管理平台。融合智能穿戴与大语言模型，做您的贴身身心伴侣。</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fa-brands fa-weixin"></i></a>
+                        <a href="#"><i class="fa-brands fa-weibo"></i></a>
+                        <a href="#"><i class="fa-solid fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>产品功能</h4>
+                    <ul>
+                        <li><a href="#features">多模态监测</a></li>
+                        <li><a href="#features">AI小晴聊天</a></li>
+                        <li><a href="#features">房树人测试</a></li>
+                        <li><a href="#features">7+专业量表</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>资源中心</h4>
+                    <ul>
+                        <li><a href="/PrivacyPolicy/">用户隐私政策</a></li>
+                        <li><a href="/PrivacyPolicy/">服务使用协议</a></li>
+                        <li><a href="page/login.html">管理控制台</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>联系我们</h4>
+                    <ul>
+                        <li><span>合作信箱：cooperation@nwpuhs.cn</span></li>
+                        <li><span>客服专线：400-888-0000</span></li>
+                        <li><span>机构地址：西北工业大学身心健康管理研究组</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 心晴AI. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // --- 1. Dynamic 3D Floating Particles Canvas ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // Particle Class
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.z = Math.random() * 1.5; // Simulate 3D Depth
+                this.radius = (Math.random() * 2 + 1) * this.z;
+                this.vx = (Math.random() * 0.4 - 0.2) * this.z;
+                this.vy = (Math.random() * 0.4 - 0.2) * this.z;
+                // Elegant soft colors
+                const colors = ['rgba(99, 102, 241, ', 'rgba(168, 85, 247, ', 'rgba(6, 182, 212, '];
+                this.colorBase = colors[Math.floor(Math.random() * colors.length)];
+                this.alpha = Math.random() * 0.35 + 0.15;
+            }
+
+            update(mouseX, mouseY) {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Mouse interaction / push effect
+                const dx = this.x - mouseX;
+                const dy = this.y - mouseY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 180) {
+                    const force = (180 - dist) / 180;
+                    this.x += (dx / dist) * force * 3 * this.z;
+                    this.y += (dy / dist) * force * 3 * this.z;
+                }
+
+                // Bounce borders
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.colorBase + this.alpha + ')';
+                ctx.fill();
+            }
+        }
+
+        const particles = Array.from({ length: 65 }, () => new Particle());
+        let mouseX = -1000, mouseY = -1000;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouseX = -1000;
+            mouseY = -1000;
+        });
+
+        // Particle Draw signature updated to accept isLight
+        Particle.prototype.draw = function(isLight) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.colorBase + (isLight ? this.alpha * 2.2 : this.alpha) + ')';
+            ctx.fill();
+        };
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            const isLight = document.body.classList.contains('light-theme');
+            // Draw radial background mesh glow
+            const gradient = ctx.createRadialGradient(width / 2, height / 2, 10, width / 2, height / 2, Math.max(width, height));
+            if (isLight) {
+                gradient.addColorStop(0, '#f9fafb');
+                gradient.addColorStop(1, '#e5e7eb');
+            } else {
+                gradient.addColorStop(0, '#0a0f24');
+                gradient.addColorStop(1, '#02050f');
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw line connections (Simulate Network Grid)
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        const alpha = (1 - (dist / 150)) * 0.12 * Math.min(particles[i].z, particles[j].z);
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = isLight ? `rgba(99, 102, 241, ${alpha * 2.5})` : `rgba(139, 92, 246, ${alpha})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Update & Draw particles
+            particles.forEach(p => {
+                p.update(mouseX, mouseY);
+                p.draw(isLight);
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 2. Scroll Header Shrink & Active Links ---
+        const header = document.getElementById('header');
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            // Highlight Active Section Link
+            let currentSec = '';
+            sections.forEach(sec => {
+                const secTop = sec.offsetTop;
+                if (window.scrollY >= secTop - 120) {
+                    currentSec = sec.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(currentSec)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // --- 3. User Persona switcher ---
+        function switchPersona(index) {
+            const panels = document.querySelectorAll('.persona-panel');
+            const btns = document.querySelectorAll('.persona-tab-btn');
+
+            panels.forEach(p => p.classList.remove('active'));
+            btns.forEach(b => b.classList.remove('active'));
+
+            // Wait brief moment for cross-fade transitions
+            setTimeout(() => {
+                panels[index].classList.add('active');
+                btns[index].classList.add('active');
+            }, 50);
+        }
+
+        // --- 4. Initialize Swiper Slider (3D Coverflow) ---
+        const swiper = new Swiper('.features-swiper', {
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            initialSlide: 2,
+            slidesPerView: 'auto',
+            coverflowEffect: {
+                rotate: 15,
+                stretch: -30,
+                depth: 120,
+                modifier: 1,
+                slideShadows: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            loop: false,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            }
+        });
+
+        // --- 5. ECharts Radar Chart Setup ---
+        const radarDom = document.getElementById('radar-chart');
+        const radarChart = echarts.init(radarDom);
+        const radarOption = {
+            title: {
+                text: '核心能力维度对比',
+                textStyle: {
+                    color: '#f8fafc',
+                    fontSize: 16,
+                    fontFamily: 'Outfit, Noto Sans SC'
+                },
+                left: 'center',
+                top: 20
+            },
+            tooltip: {
+                trigger: 'item',
+                backgroundColor: 'rgba(15, 23, 42, 0.85)',
+                borderColor: 'rgba(99, 102, 241, 0.3)',
+                textStyle: {
+                    color: '#f8fafc'
+                }
+            },
+            legend: {
+                data: ['心晴AI', '传统量表', '健康手环'],
+                textStyle: {
+                    color: '#94a3b8'
+                },
+                bottom: 20
+            },
+            radar: {
+                indicator: [
+                    { name: '多模态整合度 (HRV/睡眠/心情)', max: 100 },
+                    { name: 'AI 交互诊断 (小晴伴护)', max: 100 },
+                    { name: '艺术治疗 (HTP房树人)', max: 100 },
+                    { name: '专业精度 (SCL90/SDS)', max: 100 },
+                    { name: '医患互通 (二维码绑定)', max: 100 },
+                    { name: '隐私安全 (JWT/Shiro)', max: 100 }
+                ],
+                shape: 'circle',
+                splitNumber: 5,
+                axisName: {
+                    color: '#94a3b8',
+                    fontSize: 12,
+                    fontFamily: 'Noto Sans SC'
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    }
+                },
+                splitArea: {
+                    areaStyle: {
+                        color: ['rgba(255,255,255,0.01)', 'rgba(255,255,255,0.025)']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '维度评估',
+                    type: 'radar',
+                    data: [
+                        {
+                            value: [96, 95, 92, 98, 95, 96],
+                            name: '心晴AI',
+                            itemStyle: { color: '#3b82f6' },
+                            areaStyle: { color: 'rgba(59, 130, 246, 0.25)' },
+                            lineStyle: { width: 3 }
+                        },
+                        {
+                            value: [30, 45, 10, 92, 20, 75],
+                            name: '传统量表',
+                            itemStyle: { color: '#8b5cf6' },
+                            areaStyle: { color: 'rgba(139, 92, 246, 0.15)' }
+                        },
+                        {
+                            value: [70, 10, 5, 5, 10, 90],
+                            name: '健康手环',
+                            itemStyle: { color: '#06b6d4' },
+                            areaStyle: { color: 'rgba(6, 182, 212, 0.15)' }
+                        }
+                    ]
+                }
+            ]
+        };
+        radarChart.setOption(radarOption);
+
+        // Responsive chart
+        window.addEventListener('resize', () => {
+            radarChart.resize();
+        });
+
+        // --- 6. Pricing Plan billing toggler ---
+        let isYearly = false;
+        function toggleBilling(forceVal) {
+            const toggle = document.getElementById('billing-switch');
+            const proPriceText = document.getElementById('price-pro');
+            const entPriceText = document.getElementById('price-enterprise');
+            const proUnit = document.getElementById('unit-pro');
+            const entUnit = document.getElementById('unit-enterprise');
+            const monthlyText = document.getElementById('toggle-monthly-text');
+            const yearlyText = document.getElementById('toggle-yearly-text');
+
+            if (forceVal !== undefined) {
+                isYearly = forceVal;
+            } else {
+                isYearly = !isYearly;
+            }
+
+            if (isYearly) {
+                toggle.classList.add('yearly');
+                monthlyText.classList.remove('active');
+                yearlyText.classList.add('active');
+
+                // Show discounted yearly prices (e.g. 29/mo * 12 * 0.8 = 278/yr, ~23/mo equivalent)
+                proPriceText.innerHTML = "¥278";
+                proUnit.innerHTML = "/ 年 (节省20%)";
+                entPriceText.innerHTML = "¥1910";
+                entUnit.innerHTML = "/ 年 (节省20%)";
+            } else {
+                toggle.classList.remove('yearly');
+                monthlyText.classList.add('active');
+                yearlyText.classList.remove('active');
+
+                proPriceText.innerHTML = "¥29";
+                proUnit.innerHTML = "/ 月";
+                entPriceText.innerHTML = "¥199";
+                entUnit.innerHTML = "/ 月";
+            }
+        }
+
+        // --- 7. Mobile Navigation Toggle ---
+        const menuBtn = document.getElementById('menu-btn');
+        const navLinksList = document.getElementById('navbar-links');
+
+        menuBtn.addEventListener('click', () => {
+            const style = window.getComputedStyle(navLinksList);
+            if (style.display === 'none') {
+                const isLight = document.body.classList.contains('light-theme');
+                navLinksList.style.display = 'block';
+                navLinksList.style.position = 'absolute';
+                navLinksList.style.top = '80px';
+                navLinksList.style.left = '0';
+                navLinksList.style.width = '100%';
+                navLinksList.style.background = isLight ? 'rgba(243, 244, 246, 0.98)' : 'rgba(7, 11, 25, 0.95)';
+                navLinksList.style.borderBottom = isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.08)';
+                navLinksList.style.padding = '20px 24px';
+
+                const ul = navLinksList.querySelector('.nav-links');
+                ul.style.flexDirection = 'column';
+                ul.style.gap = '16px';
+            } else {
+                navLinksList.style.display = '';
+            }
+        });
+
+        // --- 8. Theme Toggle Script ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check local storage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeIcon.className = 'fa-solid fa-sun';
+            // Wait for ECharts to load
+            setTimeout(updateChartTheme, 100);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            themeIcon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            updateChartTheme();
+        });
+
+        function updateChartTheme() {
+            if (typeof radarChart !== 'undefined') {
+                const isLight = document.body.classList.contains('light-theme');
+                radarChart.setOption({
+                    title: {
+                        textStyle: {
+                            color: isLight ? '#111827' : '#f8fafc'
+                        }
+                    },
+                    radar: {
+                        axisName: {
+                            color: isLight ? '#4b5563' : '#94a3b8'
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.05)'
+                            }
+                        },
+                        splitArea: {
+                            areaStyle: {
+                                color: isLight ? ['rgba(0,0,0,0.01)', 'rgba(0,0,0,0.025)'] : ['rgba(255,255,255,0.01)', 'rgba(255,255,255,0.025)']
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.05)'
+                            }
+                        }
+                    },
+                    legend: {
+                        textStyle: {
+                            color: isLight ? '#4b5563' : '#94a3b8'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: isLight ? 'rgba(255, 255, 255, 0.9)' : 'rgba(15, 23, 42, 0.85)',
+                        borderColor: isLight ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.3)',
+                        textStyle: {
+                            color: isLight ? '#111827' : '#f8fafc'
+                        }
+                    }
+                });
+            }
+        }
+
+        // --- 7. Download Modal Controllers ---
+        function openDownloadModal() {
+            document.getElementById('download-modal').classList.add('active');
+        }
+
+        function closeDownloadModal() {
+            document.getElementById('download-modal').classList.remove('active');
+        }
+
+        // Close modal on clicking overlay
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('download-modal');
+            if (e.target === modal) {
+                closeDownloadModal();
+            }
+        });
+    </script>
+
+    <!-- Download Modal Markup -->
+    <div id="download-modal" class="download-modal-overlay">
+        <div class="download-modal-card">
+            <button class="download-modal-close" onclick="closeDownloadModal()">&times;</button>
+            <h3 class="download-modal-title">下载心晴AI客户端</h3>
+            <p class="download-modal-desc">选择您的设备平台，体验无缝的身心健康守护</p>
+            <div class="download-options-grid">
+                <a href="#" class="download-option-btn">
+                    <i class="fa-brands fa-android"></i>
+                    <div>
+                        <span class="option-title">Android 安卓端</span>
+                        <span class="option-sub">下载 APK 安装包并手动安装</span>
+                    </div>
+                </a>
+                <a href="#" class="download-option-btn">
+                    <i class="fa-brands fa-apple"></i>
+                    <div>
+                        <span class="option-title">iOS 苹果端</span>
+                        <span class="option-sub">前往 App Store 下载安装</span>
+                    </div>
+                </a>
+                <a href="#" class="download-option-btn">
+                    <i class="fa-brands fa-windows"></i>
+                    <div>
+                        <span class="option-title">Windows 桌面端</span>
+                        <span class="option-sub">下载独立 EXE 绿色安装包</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

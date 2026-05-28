@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.SASMapper">
+    <insert id="insertSAS" >
+        insert into sas
+        (user_id,sas_q1,sas_q2,sas_q3,sas_q4,sas_q5,sas_q6,sas_q7,sas_q8,sas_q9,sas_q10,sas_q11,sas_q12,sas_q13,sas_q14,sas_q15,sas_q16,sas_q17,sas_q18,sas_q19,sas_q20,score)
+        values
+            (#{userId},#{sasQ1},#{sasQ2},#{sasQ3},#{sasQ4},#{sasQ5},#{sasQ6},#{sasQ7},#{sasQ8},#{sasQ9},#{sasQ10},#{sasQ11},#{sasQ12},#{sasQ13},#{sasQ14},#{sasQ15},#{sasQ16},#{sasQ17},#{sasQ18},#{sasQ19},#{sasQ20},#{score})
+    </insert>
+
+    <!--    这里可以选择是否返回分数字段-->
+    <select id="getSASListByPage" resultType="com.nwpu.healthsystem.backend.entity.scale.SAS">
+        select *
+        from sas
+        where user_id=#{userId}
+        ORDER BY id DESC
+    </select>
+
+    <select id="getToday" resultType="int">
+        select count(0)
+        from sas
+        where user_id=#{userId} and log_date=#{date}
+    </select>
+
+    <select id="getRecentInput" resultType="com.nwpu.healthsystem.backend.entity.scale.SAS">
+        select *
+        from sas
+        where user_id=#{userId} and yearweek(log_date,1) between yearweek(now(),1) - 1 and yearweek(now(),1)
+        order by  log_date desc limit 1
+    </select>
+
+    <update id="updateSAS">
+        update sas
+        set sas_q1=#{sasQ1},sas_q2=#{sasQ2},sas_q3=#{sasQ3},sas_q4=#{sasQ4},sas_q5=#{sasQ5},sas_q6=#{sasQ6},
+            sas_q7=#{sasQ7},sas_q8=#{sasQ8},sas_q9=#{sasQ9},sas_q10=#{sasQ10},sas_q11=#{sasQ11},sas_q12=#{sasQ12},
+            sas_q13=#{sasQ13},sas_q13=#{sasQ13},sas_q14=#{sasQ14},sas_q15=#{sasQ15},sas_q16=#{sasQ16},sas_q17=#{sasQ17},
+            sas_q18=#{sasQ18},sas_q19=#{sasQ19},sas_q20=#{sasQ20},score=#{score}
+        where user_id = #{userId} and log_date=#{logDate}
+    </update>
+
+    <select id="getRecentInputs" resultType="com.nwpu.healthsystem.backend.entity.scale.SAS">
+        select *
+        from sas
+        where yearweek(log_date,1) between yearweek(now(),1) - 1 and yearweek(now(),1)
+    </select>
+
+    <select id="getAllData" resultType="com.nwpu.healthsystem.backend.entity.scale.SAS">
+        select *,user_info.user_name as username
+        from sas
+        left join user_info  on sas.user_id = user_info.user_id
+    </select>
+
+</mapper>

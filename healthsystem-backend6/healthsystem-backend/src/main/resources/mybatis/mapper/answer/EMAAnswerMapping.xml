@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.answer.EMAAnswerMapper">
+    <insert id="insertEMAAnswer" >
+        insert into ema_answer
+        (user_id,mood,moodlevel,stresslevel,speech_url,pam,valence,arousal,pam_score,img_datas,img_selected)
+        values
+        (#{userId},#{mood},#{moodLevel},#{stressLevel},#{speechUrl},#{pam},#{valence},#{arousal},#{pamScore},#{imgDatas},#{imgSelected})
+    </insert>
+
+    <insert id="updateEMAAnswer" >
+        update ema_answer
+        set mood=#{mood},moodlevel=#{moodLevel},
+            stresslevel=#{stressLevel},speech_url=#{speechUrl}
+            ,pam=#{pam},valence=#{valence},arousal=#{arousal},
+            pam_score=#{pamScore},
+            img_datas=#{imgDatas},img_selected=#{imgSelected}
+        where user_id = #{userId} and log_date=#{logDate} and log_time=#{logTime}
+    </insert>
+
+
+    <select id="getEMAAnswerListByPage" resultType="com.nwpu.healthsystem.backend.entity.answer.EMAAnswer">
+        select *
+        from ema_answer
+        where user_id=#{userId}
+        ORDER BY id DESC
+    </select>
+
+    <select id="getEMAAnswerListBySelectTime" resultType="com.nwpu.healthsystem.backend.entity.answer.EMAAnswer">
+        select *
+        from ema_answer
+        where user_id=#{userId} and DATEDIFF(NOW(), log_date) &lt; #{period}
+    </select>
+
+    <select id="getEMAAnswerListByDate" resultType="com.nwpu.healthsystem.backend.entity.answer.EMAAnswer">
+        select log_date, log_time, mood
+        from ema_answer
+        where user_id=#{userId} and log_date=#{date}
+    </select>
+
+    <select id="getPamListByDate" resultType="com.nwpu.healthsystem.backend.common.dto.echarts.PamScoreResponseDto">
+        select log_date, log_time, pam_score, valence, arousal
+        from ema_answer
+        where user_id=#{userId} and log_date=#{date}
+    </select>
+
+    <select id="getPamListBySelectTime" resultType="com.nwpu.healthsystem.backend.common.dto.echarts.PamScoreResponseDto">
+        select log_date, log_time, pam_score, valence, arousal
+        from ema_answer
+        where user_id=#{userId} and DATEDIFF(NOW(), log_date) &lt; #{period}
+    </select>
+
+    <select id="getRecentInput" resultType="com.nwpu.healthsystem.backend.entity.answer.EMAAnswer">
+        select *
+        from ema_answer
+        where user_id=#{userId}  and log_date=#{date}
+        order by  log_date desc limit 3
+    </select>
+
+    <select id="getRecentInputs" resultType="com.nwpu.healthsystem.backend.entity.answer.EMAAnswer">
+        select *
+        from ema_answer
+        where log_date=#{date}
+        order by  user_id,log_date
+    </select>
+</mapper>

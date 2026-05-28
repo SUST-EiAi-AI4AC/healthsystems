@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>健康报告</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户名/姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="keyword" autocomplete="off" class="layui-input" placeholder="输入用户名或真实姓名">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn">
+                                <i class="layui-icon"></i> 搜 索
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <!-- 统计卡片 -->
+        <div class="layui-row layui-col-space15" style="margin-bottom: 15px;">
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #5FB878;" id="stat-normal">0</div>
+                            <div style="color: #666; margin-top: 5px;">正常</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FFB800;" id="stat-low">0</div>
+                            <div style="color: #666; margin-top: 5px;">轻度风险</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FF5722;" id="stat-medium">0</div>
+                            <div style="color: #666; margin-top: 5px;">中度风险</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #FF0000;" id="stat-high">0</div>
+                            <div style="color: #666; margin-top: 5px;">重度风险</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据表格 -->
+        <table class="layui-hide" id="healthTable" lay-filter="healthTable"></table>
+
+        <!-- 尾部工具栏 -->
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="detail">查看详情</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+        </script>
+
+        <!-- 抑郁程度模板 -->
+        <script type="text/html" id="depressedTpl">
+            {{# if(d.depressed == '正常' || d.depressed == '待标注' || d.depressed == '') { }}
+                <span style="color: #5FB878;">{{d.depressed || '待标注'}}</span>
+            {{# } else if(d.depressed == '轻度') { }}
+                <span style="color: #FFB800;">{{d.depressed}}</span>
+            {{# } else if(d.depressed == '中度') { }}
+                <span style="color: #FF5722;">{{d.depressed}}</span>
+            {{# } else { }}
+                <span style="color: #FF0000;">{{d.depressed}}</span>
+            {{# } }}
+        </script>
+
+    </div>
+</div>
+
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use(['form', 'table', 'layer'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer;
+
+        let token = getToken();
+        if(null == token) {
+            reLoginForShiroExecption()
+        }
+
+        // 加载统计数据
+        function loadStatistics() {
+            $.ajax({
+                type: "GET",
+                url: "/healthReport/getDepressionStatistics",
+                headers: {
+                    Authorization: token
+                },
+                success: function (res) {
+                    if(res.code == 200) {
+                        var data = res.result;
+                        $('#stat-normal').text(data.normal || 0);
+                        $('#stat-low').text(data.low_risk || 0);
+                        $('#stat-medium').text(data.medium_risk || 0);
+                        $('#stat-high').text(data.high_risk || 0);
+                    }
+                }
+            });
+        }
+
+        loadStatistics();
+
+        var tableIns = table.render({
+            elem: '#healthTable',
+            url: '/healthReport/getHealthReportList',
+            method: 'GET',
+            title: '健康报告数据',
+            limits: [10, 15, 20, 30, 40, 50],
+            limit: 15,
+            request: {
+                pageName: 'currentPage',
+                limitName: 'pageSize'
+            },
+            headers: {
+                Authorization: token
+            },
+            parseData: function(res){
+                if(res.code == 401) {
+                    return {
+                        "code": res.code,
+                        "msg": res.message,
+                    };
+                }
+                return {
+                    "code": res.code == 200 ? 0 : res.code,
+                    "msg": res.message,
+                    "count": res.result.pageInfo.totalNumber,
+                    "data": res.result.data
+                };
+            },
+            done: function(res){
+                if(res.code == 401) {
+                    reLoginForShiroExecption();
+                }
+            },
+            cols: [[
+                {field:'id', title:'ID', width:60, sort: true},
+                {field:'real_name', title:'用户姓名', width:100},
+                {field:'user_name', title:'用户名', width:120},
+                {field:'phone', title:'手机号', width:120},
+                {field:'sex', title:'性别', width:60},
+                {field:'birth_date', title:'出生日期', width:120},
+                {field:'height', title:'身高(cm)', width:90, sort: true},
+                {field:'weight', title:'体重(kg)', width:90, sort: true},
+                {field:'depressed', title:'抑郁程度', width:120, templet: '#depressedTpl', sort: true},
+                {field:'remark', title:'备注', width:200},
+                {field:'mod_timestamp_mils', title:'更新时间', width:160, sort: true},
+                {fixed: 'right', title:'操作', toolbar: '#barDemo', width: 180}
+            ]],
+            page: true
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            table.reload('healthTable', {
+                page: {
+                    curr: 1
+                },
+                where: {
+                    keyword: data.field.keyword
+                }
+            });
+            return false;
+        });
+
+        // 计算BMI
+        function calculateBMI(height, weight) {
+            if(height > 0 && weight > 0) {
+                var heightM = height / 100;
+                var bmi = (weight / (heightM * heightM)).toFixed(2);
+                return bmi;
+            }
+            return '无数据';
+        }
+
+        // 获取BMI评价
+        function getBMILevel(bmi) {
+            if(bmi == '无数据') return {text: '无数据', color: '#999'};
+            bmi = parseFloat(bmi);
+            if(bmi < 18.5) return {text: '偏瘦', color: '#FFB800'};
+            if(bmi < 24) return {text: '正常', color: '#5FB878'};
+            if(bmi < 28) return {text: '偏胖', color: '#FFB800'};
+            return {text: '肥胖', color: '#FF5722'};
+        }
+
+        // 监听工具条
+        table.on('tool(healthTable)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                // 获取详细健康报告
+                $.ajax({
+                    type: "GET",
+                    url: "/healthReport/getUserHealthDetail",
+                    data: {userId: data.user_id},
+                    headers: {
+                        Authorization: token
+                    },
+                    success: function (res) {
+                        if(res.code == 200) {
+                            var detail = res.result;
+                            
+                            var riskLevel = '';
+                            var riskColor = '';
+                            if(detail.depressed == '正常' || detail.depressed == '待标注' || detail.depressed == '') {
+                                riskLevel = '正常';
+                                riskColor = '#5FB878';
+                            } else if(detail.depressed == '轻度') {
+                                riskLevel = '轻度风险';
+                                riskColor = '#FFB800';
+                            } else if(detail.depressed == '中度') {
+                                riskLevel = '中度风险';
+                                riskColor = '#FF5722';
+                            } else {
+                                riskLevel = '重度风险';
+                                riskColor = '#FF0000';
+                            }
+
+                            var bmi = calculateBMI(detail.height, detail.weight);
+                            var bmiLevel = getBMILevel(bmi);
+
+                            var content = '<div style="padding: 15px;">';
+                            
+                            // 基本信息
+                            content += '<div style="margin-bottom: 20px;">';
+                            content += '<h3 style="border-bottom: 2px solid #1E9FFF; padding-bottom: 10px; margin-bottom: 15px;">基本信息</h3>';
+                            content += '<div style="line-height: 2;">';
+                            content += '<div><strong>姓名：</strong>' + detail.real_name + '</div>';
+                            content += '<div><strong>用户名：</strong>' + detail.user_name + '</div>';
+                            content += '<div><strong>手机号：</strong>' + detail.phone + '</div>';
+                            content += '<div><strong>性别：</strong>' + detail.sex + '</div>';
+                            content += '<div><strong>出生日期：</strong>' + (detail.birth_date || '未填写') + '</div>';
+                            content += '</div></div>';
+                            
+                            // 健康指标
+                            content += '<div style="margin-bottom: 20px;">';
+                            content += '<h3 style="border-bottom: 2px solid #1E9FFF; padding-bottom: 10px; margin-bottom: 15px;">健康指标</h3>';
+                            content += '<div style="line-height: 2;">';
+                            content += '<div><strong>身高：</strong>' + (detail.height > 0 ? detail.height + ' cm' : '未填写') + '</div>';
+                            content += '<div><strong>体重：</strong>' + (detail.weight > 0 ? detail.weight + ' kg' : '未填写') + '</div>';
+                            content += '<div><strong>BMI指数：</strong>' + bmi + ' <span style="color: ' + bmiLevel.color + '; font-weight: bold;">(' + bmiLevel.text + ')</span></div>';
+                            content += '</div></div>';
+                            
+                            // 心理健康评估
+                            content += '<div style="margin-bottom: 20px;">';
+                            content += '<h3 style="border-bottom: 2px solid #1E9FFF; padding-bottom: 10px; margin-bottom: 15px;">心理健康评估</h3>';
+                            content += '<div style="line-height: 2;">';
+                            content += '<div><strong>抑郁程度：</strong><span style="color: ' + riskColor + '; font-weight: bold; font-size: 16px;">' + (detail.depressed || '待标注') + '</span></div>';
+                            content += '<div><strong>医生备注：</strong>' + (detail.remark || '无') + '</div>';
+                            content += '<div><strong>日记记录数：</strong>' + (detail.diary_count || 0) + ' 条</div>';
+                            content += '<div><strong>AI聊天会话数：</strong>' + (detail.chat_count || 0) + ' 次</div>';
+                            content += '</div></div>';
+                            
+                            // 智能分析建议
+                            content += '<div style="padding: 15px; background: #e8f4ff; border-left: 4px solid #1E9FFF; border-radius: 5px;">';
+                            content += '<div style="font-weight: bold; margin-bottom: 10px; font-size: 16px;">综合健康分析建议：</div>';
+                            
+                            var suggestions = [];
+                            
+                            // BMI建议
+                            if(bmi != '无数据') {
+                                var bmif = parseFloat(bmi);
+                                if(bmif < 18.5) {
+                                    suggestions.push('• 体重偏轻，建议增加营养摄入，适当增重。');
+                                } else if(bmif >= 28) {
+                                    suggestions.push('• 体重超标，建议控制饮食，增加运动量。');
+                                }
+                            }
+                            
+                            // 心理健康建议
+                            if(detail.depressed == '重度' || detail.depressed == '高危') {
+                                suggestions.push('<span style="color: #FF0000;">• 心理健康状况需要高度关注，建议立即进行专业心理干预和治疗。</span>');
+                            } else if(detail.depressed == '中度') {
+                                suggestions.push('<span style="color: #FF5722;">• 存在中度心理健康问题，建议定期进行心理咨询，加强心理疏导。</span>');
+                            } else if(detail.depressed == '轻度') {
+                                suggestions.push('• 存在轻度心理波动，建议保持良好的生活习惯，适当进行心理调节。');
+                            } else {
+                                suggestions.push('• 心理健康状况良好，建议继续保持积极的生活态度。');
+                            }
+                            
+                            // 活跃度建议
+                            var totalActivity = (detail.diary_count || 0) + (detail.chat_count || 0);
+                            if(totalActivity < 5) {
+                                suggestions.push('• 用户活跃度较低，建议鼓励其多使用日记和AI聊天功能进行自我记录和疏导。');
+                            } else if(totalActivity > 20) {
+                                suggestions.push('• 用户活跃度高，说明其有较强的自我关注意识，建议持续关注其心理状态变化。');
+                            }
+                            
+                            if(suggestions.length > 0) {
+                                content += '<div style="line-height: 2;">' + suggestions.join('<br>') + '</div>';
+                            } else {
+                                content += '<div>暂无特殊建议，请继续保持健康的生活方式。</div>';
+                            }
+                            
+                            content += '</div>';
+                            content += '</div>';
+                            
+                            layer.open({
+                                type: 1,
+                                title: '综合健康报告 - ' + detail.real_name,
+                                area: ['800px', '700px'],
+                                content: content,
+                                shadeClose: true
+                            });
+                        } else if(res.code == 401) {
+                            reLoginForShiroExecption();
+                        } else {
+                            layer.msg('获取健康报告详情失败');
+                        }
+                    }
+                });
+            } else if(obj.event === 'delete') {
+                layer.confirm('真的删除这行记录吗？', function(index){
+                    $.ajax({
+                        url: '/healthReport/delete/' + data.id,
+                        type: 'POST',
+                        headers: { Authorization: token },
+                        success: function(res) {
+                            if(res.code === 200) {
+                                layer.msg('删除成功');
+                                table.reload('healthTable');
+                                loadStatistics();
+                            } else {
+                                layer.msg(res.message || '删除失败');
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

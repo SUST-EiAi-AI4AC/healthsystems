@@ -1,0 +1,29 @@
+server:
+  #  https 端口
+  port: 1443
+  address: 0.0.0.0
+  ssl:
+    #    key-store: classpath:keystore.p12
+    #    key-store-password: nwpuhs207
+    #    key-store-type: PKCS12
+    #    key-alias: healthsystembackend
+    #    key-store: classpath:mentalhs.ml.jks
+    #    key-store-password: ql9x9jx17dt4799
+    #    key-store-type: JKS
+    key-store: classpath:nwpuhs.cn.pfx
+    key-store-password: yz3ximrk
+    key-store-type: PKCS12
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml,classpath:mybatis/mapper/answer/*.xml,classpath:mybatis/mapper/scale/*.xml,classpath:mybatis/mapper/depression/*.xml
+
+spring:
+  profiles:
+    #    开发环境（打开这个即可）
+    # active: default
+    #    部署环境（打开这个）
+    active: default
+
+register:
+  open: false

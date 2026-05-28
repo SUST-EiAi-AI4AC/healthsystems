@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SASChart</title>
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+<body>
+<div>
+
+    <div class="title">
+        最近3次的焦虑量表测试结果
+    </div>
+
+    <div class="dr-wrapper">
+        <div class="SASscore" id ="SAS" ref="SASscore"></div>
+    </div>
+
+    <p class="note">
+        注：
+        <b style="color: rgb(110, 210, 100)">绿色</b>标识分数<b>最大值</b>，
+        <b style="color: rgb(234, 129, 87)">橙色</b>标识分数<b>最小值</b>，
+        <b>虚线</b>标识分数<b>平均值</b>
+    </p>
+
+    <div class="box-card">
+        <p>量表测试结果<b>不是</b>专业医生的诊断结果。如果测试结果不甚良好，您<b>不必慌张</b>，我们建议您积极调节心态并及时寻求医生或心理医师的帮助。
+        </p>
+    </div>
+
+    <table border="1" class="table">
+        <tr>
+            <th>分数段</th>
+            <th>分数说明</th>
+            <th>医生建议</th>
+        </tr>
+        <tr>
+            <td>0-49</td>
+            <td>没有焦虑症</td>
+            <td>注意自我保重</td>
+        </tr>
+        <tr>
+            <td>50-59</td>
+            <td>可能有轻微焦虑症</td>
+            <td>建议咨询心理医生或心理医学工作者</td>
+        </tr>
+        <tr>
+            <td>60-69</td>
+            <td>可能有中度焦虑症</td>
+            <td>最好咨询心理医生或心理医学工作者</td>
+        </tr>
+        <tr>
+            <td>70-100</td>
+            <td>可能有重度焦虑症</td>
+            <td>一定要看心理医生或精神科医生</td>
+        </tr>
+    </table>
+
+</div>
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<!-- 引入myjs -->
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use(['jquery', 'echarts'], function() {
+        var $ = layui.jquery;
+        var echarts = layui.echarts;
+
+        // userId需要确定
+        userId = parent.userInfo.userId;
+        // 引入token
+        let token = getToken();
+        // 分页查询
+        currentPage= 1,
+        // 每页的数据条目数
+        pageSize= 5,
+        charts= '',
+        opinionData= [],
+        SASdateData= [], // 睡眠日期
+        SASscoreData= [], // 睡眠时长
+
+        console.log(this);
+
+        function getData() {
+            $.ajax({
+                type:"get",
+                dataType:"json",
+                url:"/doctor/getsaslist?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + "&userId=" + this.userId,
+                headers:{
+                    Authorization:token
+                },
+                contentType: "application/json;charset=UTF-8",//指定消息请求类型
+                success: function (data,status) {
+                    if(data.code == 200) {
+                        processData(data);
+                    } else if(data.code == 401) {
+                        reLoginForShiroExecption();
+                    } else {
+                        layer.alert('错误代码：' + data.code + ', 请联系后台管理员');
+                    }
+                }
+                }
+            )
+        }
+        function processData(data){
+            console.log(data)
+            // console.log(response.data);
+            // 获得数据
+            this.opinionData = data.result.data;
+            console.log(this.opinionData);
+
+            // 数据库为了返回最近15天的数据，采用了降序排列，
+            // 但前端画图需要用最远的日期做index 0，
+            // 所以这里重新排成正序（升序）
+            this.opinionData.sort(function (a, b) {
+                return Date.parse(a.logDate) - Date.parse(b.logDate); // 时间正序
+            });
+
+            for (var i = 0, l = this.opinionData.length; i < l; i++) {
+
+                // 日期的形式是 2020-10-01，slice(-5)切出 10-01
+                this.SASdateData.push(this.opinionData[i].logDate.slice(-5));
+                this.SASscoreData.push(this.opinionData[i].score);
+            }
+            console.log(this.SASdateData);
+            console.log(this.SASdateData);
+            drawSAS()
+        }
+        function drawSAS(){
+
+            console.log('echarts');
+            // 初始化echarts实例
+            this.charts = echarts.init(document.getElementById('SAS'), 'walden');
+            console.log(charts);
+            // 绘制图表
+            // 配置项option的文档：https://echarts.apache.org/zh/option.html#title
+            this.charts.setOption({
+                // 线的颜色，默认是红色
+                color: ["white"],
+
+                // 提示框组件
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        // 坐标轴指示器，坐标轴触发有效
+                        type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+                    },
+
+                    formatter: function (param) {
+                        param = param[0];
+                        return [
+                            '日期:' + param.name + '<br/>',
+                            '分数:' + param.value + '分<br/>',
+                        ].join('');
+                    }
+                },
+                toolbox: {
+                    show: true,  //工具箱显示
+                    feature: {
+                        mark: {show: true}, //辅助线开关
+                        dataView: {
+                            show: true, readOnly: false,
+                            optionToContent: function (opt) {
+                                let axisData = opt.xAxis[0].data; //坐标数据
+                                let series = opt.series; //折线图数据
+                                let tdHeads = '<td  style="padding: 0 10px">时间</td>'; //表头
+                                let tdBodys = ''; //数据
+                                series.forEach(function (item) {
+                                    //组装表头
+                                    tdHeads += `<td style="padding: 0 10px">${item.name}</td>`;
+                                });
+                                let table = `<table border="1" style="margin-left:20px;border-collapse:collapse;font-size:14px;text-align:center"><tbody><tr>${tdHeads} </tr>`;
+                                for (let i = 0, l = axisData.length; i < l; i++) {
+                                    for (let j = 0; j < series.length; j++) {
+                                        //组装表数据
+                                        tdBodys += `<td>${series[j].data[i]}</td>`;
+                                    }
+                                    table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`;
+                                    tdBodys = '';
+                                }
+                                table += '</tbody></table>';
+                                return table;
+                            }
+                        },//刷新数据
+                        saveAsImage: {show: true} //保存图片
+                    }
+                },
+
+                // 直角坐标系底板
+                grid: {
+                },
+
+                // 图例
+                // legend的data 与 series的name 两者必须同时存在，且数量和文字内容必须一致。
+                legend: {
+                    data: ['测试得分'],
+                    textStyle: {
+                        color: "white",
+                    },
+                    selectedMode: false, // 图例选择的模式，控制是否可以通过点击图例改变系列的显示状态。默认开启图例选择，可以设成 false 关闭。
+                },
+
+                // 直角坐标系 X 轴
+                xAxis: {
+                    name: "日期", //  坐标轴的单位
+                    data: this.SASdateData,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+                },
+
+                // 直角坐标系 Y 轴
+                yAxis: {
+                    name: "分数", //  坐标轴的单位
+                    min: 10,
+                    max: 100,
+                    axisLabel: {
+                        color: "white", // 刻度标签文字的颜色
+                    },
+
+                    axisTick: { // 刻度线和标签对齐
+                        alignWithLabel: true,
+                    },
+
+                    axisLine: {
+                        lineStyle: {
+                            color: "white", // 坐标轴颜色
+                        }
+                    },
+
+                    // 是否显示分隔线
+                    splitLine: {
+                        show: false,
+                    },
+                },
+
+                // 一组数值以及他们映射成的图
+                series: [{
+                    name: "测试得分",
+                    type: 'line',  // 图表类型，折线图还是柱状图还是饼图
+                    smooth: true,
+                    data: this.SASscoreData, // 列表得分
+
+                    markPoint: {
+                        symbol: 'pin', //标记(气泡)的图形
+                        symbolSize: 40, //标记(气泡)的大小
+                        data: [
+                            {
+                                type: 'max', name: '最大值', label: {formatter: '{c}'},
+                                itemStyle: {
+                                    color: "rgb(110, 210, 100)",
+                                },
+                            },
+                            {
+                                type: 'min', name: '最小值', label: {formatter: '{c}'},
+                                itemStyle: {
+                                    color: "rgb(234, 129, 87)",
+                                },
+                            }
+                        ]
+                    },
+
+                    markLine: {
+                        data: [
+                            {
+                                type: 'average', name: '平均值', label: {formatter: '{c}'},
+                                itemStyle: {
+                                    color: "rgb(255, 255, 255)",
+                                },
+                            }
+                        ]
+                    }
+
+                }]
+            })
+        }
+        console.log(this);
+        getData();
+    })
+
+</script>
+<style  lang="scss" scoped>
+
+    .title{
+        font-size: 1.2em;
+        color: rgb(40, 40, 40);
+        padding: 2px 0 2px 5px; // 文字
+        margin: 10px auto;
+        border-left: 8px solid rgb(0, 80, 255);
+    }
+
+    .dr-wrapper {
+        border-radius: 10px;
+        background: rgb(0, 80, 255);
+        margin: 10px 0 0 0;
+    }
+
+    .SASscore {
+        height: 200px;
+        width: 100%;
+    }
+
+    .note {
+        font-size: 0.8em;
+        color: rgb(100, 100, 100);
+    }
+
+    .box-card {
+        width: auto;
+        height: 80px;
+        background: rgb(246, 246, 246);
+        border-radius: 10px;
+
+    p {
+        font-size: 0.95em;
+        color: rgb(40, 40, 40);
+        padding: 6px 10px 0 10px;
+    }
+    }
+
+    .table {
+        width: 100%; /* 设置表格宽度为页面的90% */
+        margin: auto; /* 使表格在页面中居中显示 */
+    }
+    .table th, .table td {
+        text-align: center; /* 设置表格内容居中 */
+        padding: 8px; /* 设置单元格内边距 */
+    }
+    .table th {
+        font-weight: bold; /* 表头字体加粗 */
+        font-size: 1.2em; /* 表头字号为2.2em */
+    }
+    .table td {
+        font-size: 1.0em; /* 表格其他部分字体大小为1.8em */
+    }
+
+</style>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.Scl90Mapper">
+    <insert id="insert">
+        insert into scl90
+        (user_id, q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,
+         q11,q12,q13,q14,q15,q16,q17,q18,q19,q20,
+         q21,q22,q23,q24,q25,q26,q27,q28,q29,q30,
+         q31,q32,q33,q34,q35,q36,q37,q38,q39,q40,
+         q41,q42,q43,q44,q45,q46,q47,q48,q49,q50,
+         q51,q52,q53,q54,q55,q56,q57,q58,q59,q60,
+         q61,q62,q63,q64,q65,q66,q67,q68,q69,q70,
+         q71,q72,q73,q74,q75,q76,q77,q78,q79,q80,
+         q81,q82,q83,q84,q85,q86,q87,q88,q89,q90,
+         score,status,log_date)
+        values
+        (#{userId},
+         #{q1},#{q2},#{q3},#{q4},#{q5},#{q6},#{q7},#{q8},#{q9},#{q10},
+         #{q11},#{q12},#{q13},#{q14},#{q15},#{q16},#{q17},#{q18},#{q19},#{q20},
+         #{q21},#{q22},#{q23},#{q24},#{q25},#{q26},#{q27},#{q28},#{q29},#{q30},
+         #{q31},#{q32},#{q33},#{q34},#{q35},#{q36},#{q37},#{q38},#{q39},#{q40},
+         #{q41},#{q42},#{q43},#{q44},#{q45},#{q46},#{q47},#{q48},#{q49},#{q50},
+         #{q51},#{q52},#{q53},#{q54},#{q55},#{q56},#{q57},#{q58},#{q59},#{q60},
+         #{q61},#{q62},#{q63},#{q64},#{q65},#{q66},#{q67},#{q68},#{q69},#{q70},
+         #{q71},#{q72},#{q73},#{q74},#{q75},#{q76},#{q77},#{q78},#{q79},#{q80},
+         #{q81},#{q82},#{q83},#{q84},#{q85},#{q86},#{q87},#{q88},#{q89},#{q90},
+         #{score},#{status},#{logDate})
+    </insert>
+
+    <update id="update">
+        update scl90
+        set
+        q1=#{q1},q2=#{q2},q3=#{q3},q4=#{q4},q5=#{q5},q6=#{q6},q7=#{q7},q8=#{q8},q9=#{q9},q10=#{q10},
+        q11=#{q11},q12=#{q12},q13=#{q13},q14=#{q14},q15=#{q15},q16=#{q16},q17=#{q17},q18=#{q18},q19=#{q19},q20=#{q20},
+        q21=#{q21},q22=#{q22},q23=#{q23},q24=#{q24},q25=#{q25},q26=#{q26},q27=#{q27},q28=#{q28},q29=#{q29},q30=#{q30},
+        q31=#{q31},q32=#{q32},q33=#{q33},q34=#{q34},q35=#{q35},q36=#{q36},q37=#{q37},q38=#{q38},q39=#{q39},q40=#{q40},
+        q41=#{q41},q42=#{q42},q43=#{q43},q44=#{q44},q45=#{q45},q46=#{q46},q47=#{q47},q48=#{q48},q49=#{q49},q50=#{q50},
+        q51=#{q51},q52=#{q52},q53=#{q53},q54=#{q54},q55=#{q55},q56=#{q56},q57=#{q57},q58=#{q58},q59=#{q59},q60=#{q60},
+        q61=#{q61},q62=#{q62},q63=#{q63},q64=#{q64},q65=#{q65},q66=#{q66},q67=#{q67},q68=#{q68},q69=#{q69},q70=#{q70},
+        q71=#{q71},q72=#{q72},q73=#{q73},q74=#{q74},q75=#{q75},q76=#{q76},q77=#{q77},q78=#{q78},q79=#{q79},q80=#{q80},
+        q81=#{q81},q82=#{q82},q83=#{q83},q84=#{q84},q85=#{q85},q86=#{q86},q87=#{q87},q88=#{q88},q89=#{q89},q90=#{q90},
+        score=#{score},status=#{status}
+        where user_id=#{userId} and log_date=#{logDate}
+    </update>
+
+    <select id="getListByPage" resultType="com.nwpu.healthsystem.backend.entity.scale.Scl90">
+        select * from scl90 where user_id=#{userId} order by id desc
+    </select>
+
+    <select id="getToday" resultType="int">
+        select count(0) from scl90 where user_id=#{userId} and log_date=#{date}
+    </select>
+
+    <select id="getRecentInput" resultType="com.nwpu.healthsystem.backend.entity.scale.Scl90">
+        select * from scl90
+        where user_id=#{userId}
+        order by log_date desc limit 1
+    </select>
+</mapper>

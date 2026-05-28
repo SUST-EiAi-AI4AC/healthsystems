@@ -1,0 +1,87 @@
+
+========================================
+COMMAND: ps -ef | grep java | grep -v grep
+========================================
+
+========================================
+COMMAND: netstat -tulnp | grep -E '8081|1443|80|443'
+========================================
+--- STDOUT ---
+tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      8180/mysqld         
+tcp        0      0 0.0.0.0:8082            0.0.0.0:*               LISTEN      12458/nginx: master 
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN      12458/nginx: master 
+tcp6       0      0 :::33060                :::*                    LISTEN      8180/mysqld         
+
+========================================
+COMMAND: systemctl status nginx | cat
+========================================
+--- STDOUT ---
+● nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+   Active: active (running) since Mon 2024-06-10 19:36:50 CST; 1 years 11 months ago
+ Main PID: 12458 (nginx)
+   CGroup: /system.slice/nginx.service
+           ├─12458 nginx: master process /usr/sbin/ngin
+           ├─27028 nginx: worker proces
+           └─27029 nginx: worker proces
+
+Jun 10 19:36:50 iZ2vc3ieqpo1k12ti7kii5Z systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Jun 10 19:36:50 iZ2vc3ieqpo1k12ti7kii5Z nginx[12452]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Jun 10 19:36:50 iZ2vc3ieqpo1k12ti7kii5Z nginx[12452]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Jun 10 19:36:50 iZ2vc3ieqpo1k12ti7kii5Z systemd[1]: Started The nginx HTTP and reverse proxy server.
+
+========================================
+COMMAND: tail -n 100 /healthsystem-test/backend.log
+========================================
+--- STDOUT ---
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.3.4.RELEASE)
+
+2026-05-21 21:47:40.867  INFO 30861 --- [           main] c.n.h.backend.BackendApplication         : Starting BackendApplication v0.0.1-SNAPSHOT on iZ2vc3ieqpo1k12ti7kii5Z with PID 30861 (/healthsystem-test/backend-0.0.1-SNAPSHOT.jar started by root in /root)
+2026-05-21 21:47:40.870  INFO 30861 --- [           main] c.n.h.backend.BackendApplication         : The following profiles are active: deploy
+2026-05-21 21:47:42.698  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'shiroConfig' of type [com.nwpu.healthsystem.backend.config.ShiroConfig$$EnhancerBySpringCGLIB$$abb1e5cb] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:42.805  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'mybatis-org.mybatis.spring.boot.autoconfigure.MybatisProperties' of type [org.mybatis.spring.boot.autoconfigure.MybatisProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:42.815  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration' of type [org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration$$EnhancerBySpringCGLIB$$de9751e5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:42.818  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'druidConfig' of type [com.nwpu.healthsystem.backend.config.DruidConfig$$EnhancerBySpringCGLIB$$58493c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:42.921  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'druid' of type [com.alibaba.druid.pool.DruidDataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:43.550  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'sqlSessionFactory' of type [org.apache.ibatis.session.defaults.DefaultSqlSessionFactory] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:43.556  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'sqlSessionTemplate' of type [org.mybatis.spring.SqlSessionTemplate] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:43.557  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'userInfoMapper' of type [org.mybatis.spring.mapper.MapperFactoryBean] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:43.622  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'userInfoMapper' of type [com.sun.proxy.$Proxy66] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:43.626  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'customRealm' of type [com.nwpu.healthsystem.backend.shiro.CustomRealm] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:43.712  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'securityManager' of type [org.apache.shiro.web.mgt.DefaultWebSecurityManager] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:43.850  INFO 30861 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'authorizationAttributeSourceAdvisor' of type [org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-05-21 21:47:44.227  INFO 30861 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 1443 (https) 8081 (http)
+2026-05-21 21:47:44.256  INFO 30861 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-21 21:47:44.257  INFO 30861 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.38]
+2026-05-21 21:47:44.325  INFO 30861 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-21 21:47:44.326  INFO 30861 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3339 ms
+2026-05-21 21:47:45.094  INFO 30861 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService
+2026-05-21 21:47:45.095  INFO 30861 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'taskExecutor'
+2026-05-21 21:47:45.602  INFO 30861 --- [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [templates/index.html]
+2026-05-21 21:47:45.960  INFO 30861 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2026-05-21 21:47:46.620  INFO 30861 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 1443 (https) 8081 (http) with context path ''
+2026-05-21 21:47:46.650  INFO 30861 --- [           main] c.n.h.backend.BackendApplication         : Started BackendApplication in 6.47 seconds (JVM running for 7.073)
+2026-05-21 21:47:53.931  INFO 30861 --- [0.0-1443-exec-6] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-21 21:47:53.931  INFO 30861 --- [0.0-1443-exec-6] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-21 21:47:53.950  INFO 30861 --- [0.0-1443-exec-6] o.s.web.servlet.DispatcherServlet        : Completed initialization in 19 ms
+2026-05-21 22:01:00.001  INFO 30861 --- [   scheduling-1] c.n.h.b.service.answer.AnswerService     : 日常状态提醒任务：开始执行
+2026-05-21 22:01:00.004  INFO 30861 --- [   scheduling-1] c.n.h.backend.service.scale.SdsService   : SDS提醒任务：开始执行
+2026-05-21 22:01:00.005  INFO 30861 --- [   scheduling-1] c.n.h.b.s.scale.PerceivedStressService   : PSS提醒任务：开始执行
+2026-05-21 22:01:00.005  INFO 30861 --- [   scheduling-1] c.n.h.backend.service.scale.SASService   : SAS提醒任务：开始执行
+2026-05-21 22:01:00.005  INFO 30861 --- [   scheduling-1] c.n.h.b.service.answer.EMAAnswerService  : 情绪提醒任务：开始执行
+Exception in thread "SpringContextShutdownHook" java.lang.NoClassDefFoundError: ch/qos/logback/classic/spi/ThrowableProxy
+	at ch.qos.logback.classic.spi.LoggingEvent.<init>(LoggingEvent.java:119)
+	at ch.qos.logback.classic.Logger.buildLoggingEventAndAppend(Logger.java:419)
+	at ch.qos.logback.classic.Logger.filterAndLog_0_Or3Plus(Logger.java:383)
+	at ch.qos.logback.classic.Logger.log(Logger.java:765)
+	at org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog.warn(LogAdapter.java:447)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1025)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:170)
+	at org.springframework.context.support.AbstractApplicationContext$1.run(AbstractApplicationContext.java:949)

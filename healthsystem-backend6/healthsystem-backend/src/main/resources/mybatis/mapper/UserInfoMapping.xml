@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.UserInfoMapper">
+
+    <select id="getUserInfoByName" resultType="com.nwpu.healthsystem.backend.entity.UserInfo">
+        select *
+        from user_info
+        where user_name = #{userName}
+    </select>
+
+    <select id="getUserIdByName" resultType="String">
+        select user_id
+        from user_info
+        where user_name = #{userName}
+    </select>
+
+    <select id="selectRealNameByUserId" resultType="String">
+        select real_name
+        from user_info
+        where user_id = #{userId}
+    </select>
+
+    <select id="getUserInfoByPhone" resultType="com.nwpu.healthsystem.backend.entity.UserInfo">
+        select *
+        from user_info
+        where phone = #{phone}
+    </select>
+
+    <select id="getUserInfoById" resultType="com.nwpu.healthsystem.backend.entity.UserInfo">
+        select *
+        from user_info
+        where user_id = #{userId}
+    </select>
+
+    <select id="getUserInfoByEmail" resultType="com.nwpu.healthsystem.backend.entity.UserInfo">
+        select *
+        from user_info
+        where email = #{email}
+    </select>
+
+    <select id="getUsersByRole" resultType="com.nwpu.healthsystem.backend.entity.UserInfo">
+        select *
+        from user_info
+        where role = #{role}
+    </select>
+
+    <select id="getRolePermission" parameterType="long" resultType="String">
+        SELECT role_permission.permission
+        FROM user_info, role_permission
+        WHERE user_id = #{userId} AND role_permission.role = user_info.role
+    </select>
+
+    <!--    <select id="getUserByName" resultType="com.nwpu.healthsystem.backend.entity.UserInfo">-->
+    <!--        select * from userInfo where userName=#{userName}-->
+    <!--    </select>-->
+
+    <insert id="insertUser">
+        insert into user_info
+        (phone, user_name, password, email, garminPassword, real_name, identity_number, city, province, country, avatar, nwpu)
+        values
+            (#{phone},#{userName},#{password},#{email},#{garminPassword},#{realName},#{identityNumber},#{city},#{province},#{country},#{avatar},#{nwpu})
+    </insert>
+
+    <update id="updateUser">
+        update user_info
+        set real_name=#{realName},identity_number=#{identityNumber},
+        city=#{city},province=#{province},
+        <if test="country != null and country != ''">
+            country=#{country},
+        </if>
+        avatar=#{avatar},nwpu=#{nwpu}
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteUserById">
+        delete from user_info
+        where user_id=#{userId}
+    </delete>
+
+    <update id="updatePassword">
+        update user_info
+        set password=#{password}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateAvatar">
+        update user_info
+        set avatar=#{avatar}
+        where user_id = #{userId}
+    </update>
+
+    <select id="getPassword" parameterType="long" resultType="String">
+        SELECT password
+        FROM user_info
+        WHERE user_id = #{userId}
+    </select>
+
+
+
+    <!--    后台管理接口：  -->
+    <!--    后台管理接口：  -->
+    <!--    后台管理接口：  -->
+    <!--    后台管理接口：  -->
+
+    <!--    连接查询还是得要优化 -->
+    <!--    请勿在sql语句里面写注释： 报错报错报错，好坑啊(拦截器统计数目的时候报错)-->
+
+    <!--    动态sql-->
+    <!--    模糊查询  可以防止sql注入 -->
+
+    <select id="getUsersInfoOfDoctorByPage" resultType="com.nwpu.healthsystem.backend.common.dto.UserAllInfoDto">
+        SELECT user_info.user_id, phone, user_name, email, garminPassword, real_name, identity_number, city, province, country,avatar, nwpu,
+        sex, birth_date, height, weight, depressed, remark, user_info.nwpu_id, college, grade, user_info.type, user_info.add_timestamp_mils,user_info.mod_timestamp_mils
+        FROM user_info
+        LEFT JOIN user_health_info on user_health_info.user_id = user_info.user_id
+        LEFT JOIN nwpu_user_info on user_info.user_id = nwpu_user_info.user_id
+        where user_health_info.doctor_id=#{doctorId}
+        <if test="userName != null and userName != ''">
+            AND user_info.user_name like concat('%', #{userName} ,'%')
+        </if>
+        <if test="realName != null and realName != ''">
+            AND user_info.real_name like concat('%', #{realName} ,'%')
+        </if>
+        <if test="sex != null and sex != ''">
+            AND user_health_info.sex like concat('%', #{sex} ,'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            AND user_info.phone like concat('%', #{phone} ,'%')
+        </if>
+        ORDER BY user_info.user_id ASC
+    </select>
+
+    <update id="updateRoleAndPermission4Doctor">
+        update user_info
+        set role="doctor", permission="vip"
+        where user_id = #{userId}
+    </update>
+
+    <update id="setPushConnected">
+        update user_info
+        set push_connected=now()
+        where user_id = #{userId}
+    </update>
+
+</mapper>

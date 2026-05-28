@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.IpaqMapper">
+    <insert id="insert">
+        insert into ipaq
+        (user_id,q1_days,q1_hours,q1_minutes,q2_days,q2_hours,q2_minutes,q3_days,q3_hours,q3_minutes,
+         q4_hours,q4_minutes,q5_hours,q5_minutes,q6,q7,score,status,log_date)
+        values
+        (#{userId},#{q1Days},#{q1Hours},#{q1Minutes},#{q2Days},#{q2Hours},#{q2Minutes},#{q3Days},#{q3Hours},#{q3Minutes},
+         #{q4Hours},#{q4Minutes},#{q5Hours},#{q5Minutes},#{q6},#{q7},#{score},#{status},#{logDate})
+    </insert>
+
+    <update id="update">
+        update ipaq
+        set q1_days=#{q1Days},q1_hours=#{q1Hours},q1_minutes=#{q1Minutes},
+            q2_days=#{q2Days},q2_hours=#{q2Hours},q2_minutes=#{q2Minutes},
+            q3_days=#{q3Days},q3_hours=#{q3Hours},q3_minutes=#{q3Minutes},
+            q4_hours=#{q4Hours},q4_minutes=#{q4Minutes},
+            q5_hours=#{q5Hours},q5_minutes=#{q5Minutes},
+            q6=#{q6},q7=#{q7},score=#{score},status=#{status}
+        where user_id=#{userId} and log_date=#{logDate}
+    </update>
+
+    <select id="getListByPage" resultType="com.nwpu.healthsystem.backend.entity.scale.Ipaq">
+        select * from ipaq where user_id=#{userId} order by id desc
+    </select>
+
+    <select id="getToday" resultType="int">
+        select count(0) from ipaq where user_id=#{userId} and log_date=#{date}
+    </select>
+</mapper>

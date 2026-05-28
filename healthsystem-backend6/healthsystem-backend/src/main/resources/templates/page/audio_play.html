@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>file </title>
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+<body onload="setSrc()">
+<br>
+<br>
+<br>
+
+<!--<button type="button" class="layui-btn" id="test1">-->
+<!--    <i class="layui-icon">&#xe67c;</i>上传文件-->
+<!--</button>-->
+
+<br>
+获取音频
+<br>
+
+<!--<audio controls>-->
+<!--    &lt;!&ndash;            <source src="horse.ogg" type="audio/ogg">&ndash;&gt;-->
+<!--    <source src="/download?filePath=/mp3/1_mp3_20201130_a4a15cef-b943-4b14-bc2e-89f39b436e98.mp3"-->
+<!--            preload="none"-->
+<!--            type="audio/mpeg">-->
+<!--    您的浏览器不支持 audio 元素。-->
+<!--</audio>-->
+<!--        对应的值有3种：
+                none：默认不加载，等有需要的时候再加载。
+                metadata：元数据，默认不加载，但是可以提取该音频的元数据信息。
+                auto：自动加载，网页加载完就加载整个音频。-->
+
+<audio id="audioPlayer" controls>
+    <!--            <source src="horse.ogg" type="audio/ogg">-->
+    <!--    <source src="/download?filePath="+filePath+audioUrl-->
+    <source  src=""
+            preload="none"
+            type="audio/mpeg">
+    您的浏览器不支持 audio 元素。
+</audio>
+
+
+<script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<!-- 引入myjs -->
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use('upload', function(){
+        var upload = layui.upload;
+
+        let token = getToken();
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            ,url: '/upload/mp3' //上传接口
+            ,headers: {Authorization: token}
+            ,accept: 'file'
+            ,done: function(res){
+                //上传完毕回调
+                // shiro 认证异常， 重新登陆
+                if(res.code == 401) {
+                    reLoginForShiroExecption();
+                }
+            }
+            ,error: function(){
+                //请求异常回调
+
+            }
+        });
+
+
+    });
+    console.log("已audio_play.html进入页面");
+    // var audioUrl = window.location.search;
+
+    //获取链接地址中的audioUrl参数
+    function GetRequest() {
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            console.log(strs)
+            for(var i = 0; i < strs.length; i ++) {
+                theRequest[strs[i].split("=")[0]]=strs[i].split("=")[1];
+            }
+        }
+        return theRequest;
+    }
+
+    // 设置语音文件呢地址，该函数在页面加载时运行
+    function setSrc(){
+        //调用函数得到参数列表
+        var req=GetRequest();
+        //获取语音文件地址
+        var audioUrl = req.audioUrl;
+        console.log("url:"+audioUrl);
+
+        document.getElementById("audioPlayer").src = "/download?filePath="+audioUrl;
+    }
+</script>
+
+</body>
+</html>

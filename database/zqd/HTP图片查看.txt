@@ -1,0 +1,53 @@
+
+这个图片路径是存储在服务器上的相对路径，有两种方式可以访问：
+
+## 方式一：通过后端下载接口访问
+
+```
+http://localhost:8081/download?filePath=/htp/220_drawing_20260401_db83ff96-f80c-4101-a497-784e5c219597.png
+```
+
+直接在浏览器地址栏输入这个 URL 即可查看或下载图片。
+
+## 方式二：直接查看本地文件
+
+图片实际存储在本地目录：
+```
+E:\HealthSystemFiles\htp\220_drawing_20260401_db83ff96-f80c-4101-a497-784e5c219597.png
+```
+
+你可以直接用文件资源管理器打开这个路径查看图片。
+
+---
+
+## 在前端中显示图片
+
+前端 HTP.vue 中已经正确拼接了图片 URL：
+
+```javascript
+this.historyImgMap[index] = config.baseUrl + '/download?filePath=' + record.drawingImgUrl;
+```
+
+例如：
+```javascript
+// 假设 baseUrl 是 http://localhost:8081
+// 最终 URL: http://localhost:8081/download?filePath=/htp/220_drawing_20260401_xxx.png
+```
+
+---
+
+让我帮你确认文件是否已成功保存：
+✅ **图片已成功保存！**
+
+可以看到服务器上有两张图片：
+- `220_drawing_20260401_db83ff96-f80c-4101-a497-784e5c219597.png` (52KB)
+- `220_drawing_20260401_35a7bb55-49cc-4f90-9a9d-ab6b26f3af0e.png` (66KB)
+
+## 快速验证图片访问
+
+在浏览器中打开这个地址测试：
+```
+http://localhost:8081/download?filePath=/htp/220_drawing_20260401_db83ff96-f80c-4101-a497-784e5c219597.png
+```
+
+如果能正常显示图片，说明图片上传和访问功能都正常工作。

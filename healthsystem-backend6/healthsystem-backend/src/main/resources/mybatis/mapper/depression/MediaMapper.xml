@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.depression.MediaMapper">
+    <insert id="insertMedia" >
+        insert into media
+            (user_id,file_type,file_path,question_end_time)
+        values
+            (#{userId},#{fileType},#{filePath},#{questionEndTime})
+    </insert>
+
+    <update id="updateInference">
+        update media
+        set infer=#{infer},infer_cost=#{inferCost}
+        where file_path = #{filePath}
+    </update>
+
+    <select id="getList" resultType="Media">
+        select file_type, log_date, log_time, file_path ,infer, infer_cost
+        from media
+        where user_id=#{userId}
+        ORDER BY id DESC
+            LIMIT 5
+    </select>
+
+</mapper>

@@ -1,0 +1,102 @@
+Connecting to root@47.109.49.174...
+Connected successfully!
+
+============================================================
+Executing: systemctl status healthsystem --no-pager (Service_Status)
+============================================================
+● healthsystem.service - HealthSystem Spring Boot Backend Service
+   Loaded: loaded (/etc/systemd/system/healthsystem.service; enabled; vendor preset: disabled)
+   Active: active (running) since Fri 2026-05-22 07:16:24 CST; 32s ago
+ Main PID: 28833 (java)
+   CGroup: /system.slice/healthsystem.service
+           └─28833 /usr/bin/java -Xmx512m -Xms256m -jar /healthsystem-test/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=deploy
+
+May 22 07:16:24 iZ2vc3ieqpo1k12ti7kii5Z systemd[1]: Started HealthSystem Spring Boot Backend Service.
+
+
+
+============================================================
+Executing: ss -lntp | grep -E '8081|1443|443' (Listening_Ports)
+============================================================
+LISTEN     0      128          *:443                      *:*                   users:(("nginx",pid=27029,fd=7),("nginx",pid=27028,fd=7),("nginx",pid=12458,fd=7))
+LISTEN     0      100       [::]:1443                  [::]:*                   users:(("java",pid=28833,fd=25))
+LISTEN     0      100       [::]:8081                  [::]:*                   users:(("java",pid=28833,fd=19))
+
+
+
+============================================================
+Executing: curl -I http://127.0.0.1:8081/ (Curl_8081)
+============================================================
+HTTP/1.1 200 
+Access-Control-Allow-Methods: GET,POST,OPTIONS,PUT,DELETE
+Access-Control-Allow-Credentials: true
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Last-Modified: Thu, 21 May 2026 17:30:54 GMT
+Accept-Ranges: bytes
+Content-Type: text/html;charset=UTF-8
+Content-Language: en-US
+Content-Length: 11227
+Date: Thu, 21 May 2026 23:16:58 GMT
+
+
+STDERR:
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 11227    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+
+
+============================================================
+Executing: curl -k -I https://127.0.0.1:1443/ (Curl_1443)
+============================================================
+HTTP/1.1 200 
+Access-Control-Allow-Methods: GET,POST,OPTIONS,PUT,DELETE
+Access-Control-Allow-Credentials: true
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Last-Modified: Thu, 21 May 2026 17:30:54 GMT
+Accept-Ranges: bytes
+Content-Type: text/html;charset=UTF-8
+Content-Language: en-US
+Content-Length: 11227
+Date: Thu, 21 May 2026 23:17:00 GMT
+
+
+STDERR:
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 11227    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+
+
+============================================================
+Executing: curl -k -I https://www.nwpuhs.cn/ (Curl_Nginx)
+============================================================
+HTTP/1.1 200 
+Server: nginx/1.20.1
+Date: Thu, 21 May 2026 23:17:01 GMT
+Content-Type: text/html;charset=UTF-8
+Content-Length: 11227
+Connection: keep-alive
+Access-Control-Allow-Methods: GET,POST,OPTIONS,PUT,DELETE
+Access-Control-Allow-Credentials: true
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Last-Modified: Thu, 21 May 2026 17:30:54 GMT
+Accept-Ranges: bytes
+Content-Language: en-US
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Methods: GET, POST
+
+
+STDERR:
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 11227    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+
+

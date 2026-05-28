@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>file </title>
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+<body>
+<br>
+<br>
+<br>
+
+    <button type="button" class="layui-btn" id="test1">
+        <i class="layui-icon">&#xe67c;</i>上传文件
+    </button>
+
+    <br>
+    获取音频
+    <br>
+
+    <audio controls>
+        <!--            <source src="horse.ogg" type="audio/ogg">-->
+        <source src="/nwpu_health/download?filePath=/mp3/1_mp3_20201130_a4a15cef-b943-4b14-bc2e-89f39b436e98.mp3">
+                preload="none"
+                type="audio/mpeg">
+        您的浏览器不支持 audio 元素。
+    </audio>
+
+    <br>
+    获取视频
+    <br>
+
+    <video id="myPlayer" width="600" height="400"
+           src="/nwpu_health/download?filePath=/mp4/1_mp4_20201130_e6b38408-974a-40af-b23d-3d897feef77a.mkv"
+           controls="controls"
+           loop="loop">
+        你的浏览器不支持audio元素
+        <!-- MP4有3种编码，mpg4(xdiv),,mpg4(xvid)，avc(h264)，
+              只有h264才是公认的MP4标准编码 -->
+    </video>
+
+
+
+<script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<!-- 引入myjs -->
+<script src="/js/myjs/myscript.js"></script>
+<script>
+    layui.use('upload', function(){
+        var upload = layui.upload;
+
+        let token = getToken();
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            ,url: '/upload/mp3' //上传接口
+            ,headers: {Authorization: token}
+            ,accept: 'file'
+            ,done: function(res){
+                //上传完毕回调
+                // shiro 认证异常， 重新登陆
+                if(res.code == 401) {
+                    reLoginForShiroExecption();
+                }
+            }
+            ,error: function(){
+                //请求异常回调
+
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

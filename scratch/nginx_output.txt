@@ -1,0 +1,333 @@
+
+==================================================
+Executing: cat /etc/nginx/nginx.conf || true
+==================================================
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+user root;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+# Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 4096;
+client_max_body_size 500m;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+
+    #server {
+    #    listen       80;
+    #    listen       [::]:80;
+    #    server_name  _;
+    #    root         /usr/share/nginx/html;
+
+    #    # Load configuration files for the default server block.
+    #    include /etc/nginx/default.d/*.conf;
+
+    #    error_page 404 /404.html;
+    #    location = /404.html {
+    #    }
+
+    #    error_page 500 502 503 504 /50x.html;
+    #    location = /50x.html {
+    #    }
+    #}
+
+# Settings for a TLS enabled server.
+#
+	server{
+		listen 8082;
+		#server_name www.nwpuhs.com;
+		#rewrite ^(.*)$ https://${server_name}$1 permanent; 
+
+#       location ~* (.*.apk) {
+#            add_header  Content-Type    "application/octet-stream";
+#            if ( $args ~ ^filename=(.*) ) {
+#                add_header  Content-Disposition "attachment; filename=$1";
+#            }
+#            root /opt/apk;
+#        }
+
+
+		location /resource {
+            		alias /opt/apk;
+	#		 autoindex on;
+            		default_type application/vnd.android.package-archive;
+        	}
+
+	}
+
+    server {
+        listen       443 ssl ;
+        server_name  www.nwpuhs.cn;
+        #root         /usr/share/nginx/html;
+        #location / {
+        #    root   html;
+        #    index  index.html index.htm;
+        #}
+
+ location /PrivacyPolicy/ {
+        alias   /root/PrivacyPolicy/;
+        index  index.html;
+    }
+
+        location / {
+            proxy_pass http://localhost:8081/;
+#            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST';
+			#proxy_set_header   Host             $host;
+            proxy_set_header   X-Real-IP        $remote_addr;
+            proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        }
+
+           #ssl_session_cache    shared:SSL:1m;
+           #ssl_session_timeout  5m;
+           #ssl_ciphers  HIGH:!aNULL:!MD5;
+           #ssl_prefer_server_ciphers  on;
+                
+          #д֤ļ·
+     	ssl_certificate /etc/pki/nginx/www.nwpuhs.cn_cert_chain.pem;
+     	#д֤˽Կļ·
+     	ssl_certificate_key /etc/pki/nginx/private/www.nwpuhs.cn_key.key;
+     	#ssl_ciphers HIGH:!aNULL:!MD5;  # ׼
+
+
+
+
+ssl_protocols SSLv2 SSLv3 TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+ssl_ciphers ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS;
+
+
+
+#     	ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+#	    ssl_protocols SSLv2 SSLv3 TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+  
+#  ssl_certificate "/root/server.crt";
+#    ssl_certificate_key "/root/server.key.unsecure";
+   
+        #ssl_session_cache shared:SSL:10m;
+	     #ssl_session_timeout 15m;
+
+		 
+	     #ԶʹõTLSЭԼ׼ΪʾǷҪã
+	     #TLSЭ汾ԽߣHTTPSͨŵİȫԽߣڵͰ汾TLSЭ飬߰汾TLSЭļԽϲ
+	     #ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+	    # ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
+	     #ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+		 #ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+	     #ʾʹ÷˼׼ĬϿ
+	     #ssl_prefer_server_ciphers on;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+    }
+
+}
+
+
+==================================================
+Executing: find /www/server/panel/vhost/nginx/ -type f | xargs -I {} sh -c 'echo === {}; cat {}; echo' || true
+==================================================
+=== /www/server/panel/vhost/nginx/waf2monitor_data.conf
+map $http_host $waf2monitor_blocked {
+    default  "";
+}
+map $remote_addr $waf_ip_remote_addr {
+    default  "";
+}
+map $http_host $waf_status_infos {
+    default  "";
+}
+
+=== /www/server/panel/vhost/nginx/0.site_total_log_format.conf
+log_format site_total escape=json '{'
+            '"server_addr": "$server_addr",'
+            '"server_port": $server_port,'
+            '"host":"$http_host",'
+            '"x_forwarded_for":"$http_x_forwarded_for",'
+            '"x_real_ip":"$http_x_real_ip",'
+            '"x_forwarded":"$http_x_forwarded",'
+            '"forwarded_for":"$http_forwarded_for",'
+            '"forwarded":"$http_forwarded",'
+            '"true_client_ip":"$http_true_client_ip",'
+            '"client_ip":"$http_client_ip",'
+            '"ali_cdn_real_ip":"$http_ali_cdn_real_ip",'
+            '"cdn_src_ip":"$http_cdn_src_ip",'
+            '"cdn_real_ip":"$http_cdn_real_ip",'
+            '"cf_connecting_ip":"$http_cf_connecting_ip",'
+            '"x_cluster_client_ip":"$http_x_cluster_client_ip",'
+            '"wl_proxy_client_ip":"$http_wl_proxy_client_ip",'
+            '"proxy_client_ip":"$http_proxy_client_ip",'
+            '"remote_addr":"$remote_addr",'
+            '"remote_port":$remote_port,'
+            '"remote_user":"$remote_user",'
+            '"https":"$https",'
+            '"req_length":$request_length,'
+            '"method":"$request_method",'
+            '"uri":"$request_uri",'
+            '"request_filename":"$request_filename",'
+            '"status":$status,'
+            '"sent_bytes":$bytes_sent,'
+            '"body_bytes_sent":$body_bytes_sent,'
+            '"content_type":"$sent_http_content_type",'
+            '"content_encoding":"$sent_http_content_encoding",'
+            '"referer":"$http_referer",'
+            '"user_agent":"$http_user_agent",'
+            '"upstream_addr":"$upstream_addr",'
+            '"upstream_status":$upstream_status,'
+            '"upstream_response_time":$upstream_response_time,'
+            '"take_time":$request_time,'
+            '"msec":$msec,'
+            '"cookie":"$http_cookie",'
+            '"accept":"$http_accept",'
+            '"accept_language":"$http_accept_language",'
+            '"accept_encoding":"$http_accept_encoding"'
+        '}';
+=== /www/server/panel/vhost/nginx/0.default.conf
+server
+{
+    listen 80;
+    server_name _;
+    index index.html;
+    root /www/server/nginx/html;
+}
+=== /www/server/panel/vhost/nginx/phpfpm_status.conf
+server {
+    listen 80;
+    server_name 127.0.0.1;
+    allow 127.0.0.1;
+    location /nginx_status {
+        stub_status on;
+        access_log off;
+    }
+    location /phpfpm_52_status {
+        fastcgi_pass unix:/tmp/php-cgi-52.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_53_status {
+        fastcgi_pass unix:/tmp/php-cgi-53.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_54_status {
+        fastcgi_pass unix:/tmp/php-cgi-54.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_55_status {
+        fastcgi_pass unix:/tmp/php-cgi-55.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_56_status {
+        fastcgi_pass unix:/tmp/php-cgi-56.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_70_status {
+        fastcgi_pass unix:/tmp/php-cgi-70.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_71_status {
+        fastcgi_pass unix:/tmp/php-cgi-71.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_72_status {
+        fastcgi_pass unix:/tmp/php-cgi-72.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_73_status {
+        fastcgi_pass unix:/tmp/php-cgi-73.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_74_status {
+        fastcgi_pass unix:/tmp/php-cgi-74.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_75_status {
+        fastcgi_pass unix:/tmp/php-cgi-75.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_80_status {
+        fastcgi_pass unix:/tmp/php-cgi-80.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_81_status {
+        fastcgi_pass unix:/tmp/php-cgi-81.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_82_status {
+        fastcgi_pass unix:/tmp/php-cgi-82.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_83_status {
+        fastcgi_pass unix:/tmp/php-cgi-83.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_84_status {
+        fastcgi_pass unix:/tmp/php-cgi-84.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    location /phpfpm_85_status {
+        fastcgi_pass unix:/tmp/php-cgi-85.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+}
+
+=== /www/server/panel/vhost/nginx/0.fastcgi_cache.conf
+fastcgi_cache_key "$scheme$request_method$host$request_uri";
+fastcgi_cache_path /www/server/fastcgi_cache levels=1:2 keys_zone=WORDPRESS:100m inactive=60m max_size=1g;
+fastcgi_cache_use_stale error timeout invalid_header http_500;
+fastcgi_ignore_headers Cache-Control Expires Set-Cookie;
+=== /www/server/panel/vhost/nginx/0.websocket.conf
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''  close;
+}

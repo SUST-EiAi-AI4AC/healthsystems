@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重度抑郁详情</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .title{
+            font-size: 2.2em;
+            font-weight:bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="title">
+    重度抑郁详细信息
+</div>
+
+<div id="app">
+    <el-table :data="tableData" style="width: 100%">
+        <el-table-column type="index" label="序号"></el-table-column>
+        <el-table-column prop="username" label="用户名"></el-table-column>
+        <el-table-column prop="logDate" label="开始节点填报时间"></el-table-column>
+        <el-table-column prop="score" label="开始节点评估结果"></el-table-column>
+        <el-table-column prop="logDate2" label="中期节点填报时间"></el-table-column>
+        <el-table-column prop="score2" label="中期节点评估结果"></el-table-column>
+        <el-table-column prop="logDate3" label="结束节点填报时间"></el-table-column>
+        <el-table-column prop="score3" label="结束节点评估结果"></el-table-column>
+    </el-table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            tableHeaders: [],
+            tableData: []
+        },
+        mounted() {
+            this.fetchTableData();
+        },
+        methods: {
+            fetchTableData() {
+                axios.get('/page/whole/scale/phq9/getAllGdata')
+                    .then(response => {
+                        this.tableData = response.data.result.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching table data:', error);
+                    });
+            }
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.SdsMapper">
+    <insert id="insertSds" >
+        insert into sds
+        (user_id,q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,q12,q13,q14,q15,q16,q17,q18,q19,q20,score,log_date)
+        values
+        (#{userId},#{q1},#{q2},#{q3},#{q4},#{q5},#{q6},#{q7},#{q8},#{q9},#{q10},#{q11},#{q12},#{q13},#{q14},#{q15},#{q16},#{q17},#{q18},#{q19},#{q20},#{score},#{logDate})
+    </insert>
+
+    <!--    这里可以选择是否返回分数字段-->
+    <select id="getSdsListByPage" resultType="com.nwpu.healthsystem.backend.entity.scale.Sds">
+        select *
+        from sds
+        where user_id=#{userId}
+        ORDER BY id DESC
+    </select>
+
+    <select id="getToday" resultType="int">
+        select count(0)
+        from sds
+        where user_id=#{userId} and log_date=#{date}
+    </select>
+
+    <select id="getRecentInput" resultType="com.nwpu.healthsystem.backend.entity.scale.Sds">
+        select *
+        from sds
+        where user_id=#{userId} and yearweek(log_date,1) between yearweek(now(),1) - 1 and yearweek(now(),1)
+        order by  log_date desc limit 1
+    </select>
+
+    <update id="updateSds">
+        update sds
+        set q1=#{q1},q2=#{q2},q3=#{q3},q4=#{q4},q5=#{q5},q6=#{q6},q7=#{q7},q8=#{q8},q9=#{q9},q10=#{q10},q11=#{q11},q12=#{q12},q13=#{q13},q14=#{q14},q15=#{q15},q16=#{q16},q17=#{q17},q18=#{q18},q19=#{q19},q20=#{q20},score=#{score}
+        where user_id = #{userId} and log_date=#{logDate}
+    </update>
+
+    <select id="getRecentInputs" resultType="com.nwpu.healthsystem.backend.entity.scale.Sds">
+        select *
+        from sds
+        where yearweek(log_date,1) between yearweek(now(),1) - 1 and yearweek(now(),1)
+    </select>
+
+    <select id="getAllData" resultType="com.nwpu.healthsystem.backend.entity.scale.Sds">
+        select *,user_info.user_name as username
+        from sds
+        left join user_info  on sds.user_id = user_info.user_id
+    </select>
+
+
+</mapper>

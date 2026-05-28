@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日填报数据统计 - 近7天趋势</title>
+    <!-- 引入外部资源 -->
+    <script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+    <script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            padding: 20px;
+            background-color: #f5f7fa;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 卡片容器样式 */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media (max-width: 1200px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 数据卡片样式 */
+        .data-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .data-card:hover {
+            transform: translateY(-3px);
+        }
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .card-title i {
+            margin-right: 8px;
+            color: #1E88E5;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .chart-wrapper {
+            width: 100%;
+            height: 280px;
+            position: relative;
+        }
+
+        /* 加载与错误状态 */
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff8f8;
+            color: #f56c6c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            padding: 20px;
+            text-align: center;
+        }
+        /* 在现有样式中添加 */
+        .chart {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<h1 class="page-title">用户近7天每日填报</h1>
+
+<div class="stats-container">
+    <!-- 1. 今天早晨醒来后，你是？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-light"></i>早晨醒来状态</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="weakupStatusChart" class="chart"></div>
+                <div class="loading" id="weakupStatusLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 您是否规划了今天的时间？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-time-circle"></i>时间规划状态</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="timeManagementChart" class="chart"></div>
+                <div class="loading" id="timeManagementLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 你今天是否与他人有交流？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-group"></i>社交交流状态</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="socialExpressionChart" class="chart"></div>
+                <div class="loading" id="socialExpressionLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 您今天与他人交流的时长共计？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-chat"></i>社交交流时长</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="communicateTimeChart" class="chart"></div>
+                <div class="loading" id="communicateTimeLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. 今天的工作或学习中，你的状态如何？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-rate"></i>学习工作状态</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="studyOrWorkStateChart" class="chart"></div>
+                <div class="loading" id="studyOrWorkStateLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. 您今天学习或工作的时长共计？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-timeline"></i>学习工作时长</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="studyOrWorkTimeChart" class="chart"></div>
+                <div class="loading" id="studyOrWorkTimeLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. 今天的空闲时间，您做了什么？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-relax"></i>空闲时间活动</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="freeChart" class="chart"></div>
+                <div class="loading" id="freeLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. 在空闲时间，是否出现下列情况？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-warning"></i>空闲时间症状</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="freeSymptomChart" class="chart"></div>
+                <div class="loading" id="freeSymptomLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. 今天玩手机的时长共计？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-cellphone"></i>手机使用时长</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="phonePlayTimeChart" class="chart"></div>
+                <div class="loading" id="phonePlayTimeLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. 整体来看，您今天的食欲如何？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-food"></i>食欲状态</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="dietInfoChart" class="chart"></div>
+                <div class="loading" id="dietInfoLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. 您在睡觉前会做些什么来放松自己？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-smile"></i>情绪放松方式</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="yesterdayNightChart" class="chart"></div>
+                <div class="loading" id="yesterdayNightLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. 您对今天的整体感受如何？ -->
+    <div class="data-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="layui-icon layui-icon-heart"></i>整体感受状态</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-wrapper">
+                <div id="yesterdayEndFeelChart" class="chart"></div>
+                <div class="loading" id="yesterdayEndFeelLoading">
+                    <i class="layui-icon layui-icon-loading layui-icon-loading-1"></i> 加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    layui.use(['jquery', 'layer'], function() {
+        const $ = layui.jquery;
+        const layer = layui.layer;
+
+        // 全局配置
+        const config = {
+            period: 7,
+            userId : parent.userInfo.userId,
+            token: getToken(),
+            apiUrl: '/answer/getByUserId' // 修改为获取问卷数据的接口
+        };
+
+        // 图表实例存储
+        const charts = {};
+
+        // 指标配置：严格对应12个问题，包含映射关系和tooltip格式化
+        const indicatorConfig = {
+            weakupStatus: {
+                label: '早晨醒来状态',
+                chartDom: 'weakupStatusChart',
+                loadingDom: 'weakupStatusLoading',
+                type: 'text',
+                options: [
+                    '立刻起床', '伸个懒腰，稍作休息后起床',
+                    '继续躺在床上，查看手机或社交媒体', '感到毫无动力起床',
+                    '继续躺在床上，多睡一会儿'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>状态: ${value === -1 ? '未填报' : value}`
+            },
+            timeManagement: {
+                label: '时间规划状态',
+                chartDom: 'timeManagementChart',
+                loadingDom: 'timeManagementLoading',
+                type: 'text',
+                options: [
+                    '制定了清晰的时间表并按时执行', '制定了清晰的时间表但改变了',
+                    '有一定的计划', '没有制定计划，随心情行动',
+                    '不知道该如何安排时间'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>状态: ${value === -1 ? '未填报' : value}`
+            },
+            socialExpression: {
+                label: '社交交流状态',
+                chartDom: 'socialExpressionChart',
+                loadingDom: 'socialExpressionLoading',
+                type: 'text',
+                options: [
+                    '积极参与交流，享受互动时光', '积极参与交流，但感觉有些吃力',
+                    '尝试与他人进行交流，享受互动时光', '尝试与他人进行交流，但感觉有些吃力',
+                    '较少参与交流活动，更喜欢独处', '对交流行为感到抵触，不愿与人接触'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>状态: ${value === -1 ? '未填报' : value}`
+            },
+            communicateTime: {
+                label: '社交交流时长',
+                chartDom: 'communicateTimeChart',
+                loadingDom: 'communicateTimeLoading',
+                type: 'text', // 从duration改为text
+                options: [
+                    '少于30分钟', '30分钟-1小时',
+                    '1-1.5小时', '1.5-2小时', '超过2小时'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>时长: ${value === -1 ? '未填报' : value}`
+            },
+            studyOrWorkState: {
+                label: '学习工作状态',
+                chartDom: 'studyOrWorkStateChart',
+                loadingDom: 'studyOrWorkStateLoading',
+                type: 'text',
+                options: [
+                    '未工作或学习', '持续专注且高效',
+                    '大多数时候能集中注意力，但不够高效', '感觉很疲惫，不想工作或学习',
+                    '难以集中注意力，经常分心', '几乎无法工作或学习'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>状态: ${value === -1 ? '未填报' : value}`
+            },
+            studyOrWorkTime: {
+                label: '学习工作时长',
+                chartDom: 'studyOrWorkTimeChart',
+                loadingDom: 'studyOrWorkTimeLoading',
+                type: 'text', // 从duration改为text
+                options: [
+                    '少于1小时', '1-3小时',
+                    '3-5小时', '5-8小时', '超过8小时'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>时长: ${value === -1 ? '未填报' : value}`
+            },
+            free: {
+                label: '空闲时间活动',
+                chartDom: 'freeChart',
+                loadingDom: 'freeLoading',
+                type: 'text',
+                options: [
+                    '参加喜欢的社交活动', '休息或放松，做一些简单的娱乐',
+                    '感到无聊或空虚，不知如何打发时间', '几乎不让自己有空闲时间，空闲时间只会让我感到更加沮丧'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>活动: ${value === -1 ? '未填报' : value}`
+            },
+            freeSymptom: {
+                label: '空闲时间症状',
+                chartDom: 'freeSymptomChart',
+                loadingDom: 'freeSymptomLoading',
+                type: 'text',
+                options: [
+                    '都没有', '有些心神不宁',
+                    '明显心神不宁或小动作多', '极度心神不宁，焦虑不安'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>症状: ${value === -1 ? '未填报' : value}`
+            },
+            phonePlayTime: {
+                label: '手机使用时长',
+                chartDom: 'phonePlayTimeChart',
+                loadingDom: 'phonePlayTimeLoading',
+                type: 'text', // 从duration改为text
+                options: [
+                    '少于30分钟', '30分钟-1小时',
+                    '1-1.5小时', '1.5-2小时', '超过2小时'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>时长: ${value === -1 ? '未填报' : value}`
+            },
+            dietInfo: {
+                label: '食欲状态',
+                chartDom: 'dietInfoChart',
+                loadingDom: 'dietInfoLoading',
+                type: 'text',
+                options: [
+                    '按时吃饭，食欲正常', '偶尔错过一餐，但总体还好',
+                    '经常忘记吃饭或吃得很少', '几乎不想吃东西',
+                    '完全没有食欲'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>状态: ${value === -1 ? '未填报' : value}`
+            },
+            yesterdayNight: {
+                label: '情绪放松方式',
+                chartDom: 'yesterdayNightChart',
+                loadingDom: 'yesterdayNightLoading',
+                type: 'text',
+                options: [
+                    '阅读书籍或杂志', '听音乐或看电影',
+                    '与家人或朋友聊天', '玩电子游戏或上网冲浪',
+                    '感到焦虑或不安，难以放松', '直接睡觉'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>方式: ${value === -1 ? '未填报' : value}`
+            },
+            yesterdayEndFeel: {
+                label: '整体感受状态',
+                chartDom: 'yesterdayEndFeelChart',
+                loadingDom: 'yesterdayEndFeelLoading',
+                type: 'text',
+                options: [
+                    '感到充实和满足', '感到一般，但还可以',
+                    '感到些许沮丧或失望', '感到有点绝望，对明天毫无期待'
+                ],
+                tooltipFormatter: (name, value) =>
+                    `日期: ${name}<br>感受: ${value === -1 ? '未填报' : value}`
+            }
+        };
+
+        // 初始化
+        init();
+
+        // 初始化函数
+        function init() {
+            if (!config.userId) {
+                showErrorAll('用户信息获取失败，请刷新页面重试');
+                return;
+            }
+            fetchData();
+        }
+
+        // 获取最近7天的日期范围（包括今天）
+        function getLast7Days() {
+            const dates = [];
+            const today = new Date();
+
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                dates.push(formatDateForApi(date));
+            }
+
+            return dates;
+        }
+
+        // 格式化日期为YYYY-MM-DD（用于API请求）
+        function formatDateForApi(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function fetchData() {
+            const dateRange = getLast7Days();
+            const startDate = dateRange[0];
+            const endDate = dateRange[dateRange.length - 1];
+
+            // 构建请求参数 - 请求指定日期范围内的数据
+            const params = {
+                userId: config.userId,
+                startDate: startDate,
+                endDate: endDate
+            };
+
+            // 设置请求头（包含 Token）
+            const headers = {
+                'Authorization': getToken() || '',
+                'Content-Type': 'application/json'
+            };
+
+            // Axios GET 请求
+            axios.get(config.apiUrl, { params, headers })
+                .then(response => {
+                    const res = response.data;
+                    if (res.code === 200) {
+                        // 处理数据，即使结果为空
+                        processData(res.result || [], dateRange);
+                    } else if (res.code === 400 && res.result && res.result.includes('未查询到')) {
+                        // 没有数据但请求成功
+                        processData([], dateRange);
+                    } else {
+                        showErrorAll(`数据获取失败: ${res.result || res.message || '未知错误'}`);
+                    }
+                })
+                .catch(error => {
+                    // 捕获请求错误（网络错误、服务器错误等）
+                    let errorMsg = '网络错误，请检查网络连接';
+                    if (error.response) {
+                        // 服务器返回错误状态码（如 404、500 等）
+                        errorMsg = `请求失败: ${error.response.statusText || '服务器错误'}`;
+                    } else if (error.request) {
+                        // 请求发出但无响应
+                        errorMsg = '请求超时，未收到服务器响应';
+                    }
+                    showErrorAll(errorMsg);
+                    console.error('请求错误详情:', error); // 控制台打印详细错误
+                });
+        }
+
+        // 处理数据：合并实际数据与日期范围
+        function processData(rawData, dateRange) {
+            // 将原始数据转换为按日期映射的对象
+            const dataByDate = {};
+            rawData.forEach(item => {
+                // 标准化日期格式，确保能正确匹配
+                const standardizedDate = formatDateForApi(new Date(item.logDate));
+                dataByDate[standardizedDate] = item;
+            });
+
+            // 创建完整的7天数据数组，缺失的日期用-1标记
+            const fullData = dateRange.map(date => {
+                return dataByDate[date] || { logDate: date };
+            });
+
+            // 处理并绘制图表
+            const processedData = {
+                dates: dateRange.map(date => formatDateForDisplay(date))
+            };
+
+            Object.keys(indicatorConfig).forEach(indicator => {
+                processedData[indicator] = processEachIndicator(fullData, dateRange, indicator);
+            });
+
+            drawAllCharts(processedData);
+        }
+
+        // 格式化日期为MM-DD（用于显示）
+        function formatDateForDisplay(dateStr) {
+            const date = new Date(dateStr);
+            return `${date.getMonth() + 1}-${date.getDate()}`;
+        }
+
+        // 处理单个指标数据
+        function processEachIndicator(fullData, dateRange, indicator) {
+            const cfg = indicatorConfig[indicator];
+            const data = fullData.map(item => {
+                // 检查是否有该指标的数据，没有则标记为-1（未填报）
+                const value = item[indicator] !== undefined && item[indicator] !== null
+                    ? item[indicator]
+                    : -1;
+                return value;
+            });
+
+            return {
+                data,
+                extremes: getExtremes(data, dateRange.map(date => formatDateForDisplay(date)))
+            };
+        }
+
+        // 绘制所有图表
+        function drawAllCharts(processedData) {
+            Object.keys(indicatorConfig).forEach(indicator => {
+                drawChart(indicator, processedData);
+            });
+        }
+
+        function drawChart(indicator, data) {
+            const cfg = indicatorConfig[indicator];
+            const chartData = data[indicator];
+            const chartDom = document.getElementById(cfg.chartDom);
+
+            // 隐藏加载状态
+            $(`#${cfg.loadingDom}`).hide();
+
+            // 初始化图表
+            if (charts[indicator]) {
+                charts[indicator].dispose(); // 销毁已有实例
+            }
+            charts[indicator] = echarts.init(chartDom);
+
+            // 线图指标
+            const lineChartIndicators = ['communicateTime', 'studyOrWorkTime', 'phonePlayTime'];
+            const chartType = lineChartIndicators.includes(indicator) ? 'line' : 'bar';
+
+            // 图表配置
+            const option = {
+                title: {
+                    text: cfg.label,
+                    left: 'center',
+                    textStyle: {color: '#333'}
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {type: 'shadow'},
+                    formatter: (params) => {
+                        const param = params[0];
+                        return cfg.tooltipFormatter(param.name, param.value, cfg);
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '5%', // 恢复正常底部边距
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: data.dates,
+                    axisLabel: {
+                        interval: 0,
+                        rotate: -30,
+                        color: '#666'
+                    },
+                    axisLine: {lineStyle: {color: '#ddd'}}
+                },
+                yAxis: {
+                    type: 'category',
+                    data: cfg.options,
+                    name: lineChartIndicators.includes(indicator) ? '时长' : '',
+                    nameTextStyle: {color: '#666'},
+                    axisLabel: {color: '#666'},
+                    axisLine: {lineStyle: {color: '#ddd'}},
+                    splitLine: {show: chartType === 'line'},
+                    boundaryGap: [0, 0]
+                },
+                series: [{
+                    name: cfg.label,
+                    type: chartType,
+                    smooth: chartType === 'line',
+                    symbol: chartType === 'line' ? 'circle' : 'none',
+                    symbolSize: 8,
+                    lineStyle: chartType === 'line' ? {width: 2, color: '#1E88E5'} : undefined,
+                    itemStyle: {
+                        color: chartType === 'line' ? '#1E88E5' : '#42A5F5',
+                        // 未填报数据隐藏图形
+                        opacity: (value) => value.data === -1 ? 0 : 1
+                    },
+                    data: chartData.data,
+                    barWidth: '60%',
+                    barCategoryGap: '20%'
+                }]
+                // 已移除graphic配置（红点和未填报文字）
+            };
+
+            // 设置配置并渲染
+            charts[indicator].setOption(option);
+
+            // 监听窗口大小变化，重绘图表
+            window.addEventListener('resize', () => {
+                charts[indicator].resize();
+            });
+        }
+
+        // 工具函数：获取Token
+        function getToken() {
+            try {
+                const healthSystem = JSON.parse(localStorage.getItem('HealthSystem') || '{}');
+                return healthSystem.Authorization || '';
+            } catch (e) {
+                console.error('解析 Token 失败:', e);
+                return '';
+            }
+        }
+
+        // 工具函数：获取异常点（未填报）
+        function getExtremes(dataArray, dates) {
+            return dataArray.reduce((res, value, index) => {
+                if (value === -1) {
+                    res.push({
+                        name: dates[index],
+                        value: value,
+                        xAxis: index,
+                        yAxis: value
+                    });
+                }
+                return res;
+            }, []);
+        }
+
+        // 工具函数：显示所有图表错误
+        function showErrorAll(message) {
+            Object.values(indicatorConfig).forEach(cfg => {
+                $(`#${cfg.loadingDom}`).hide();
+                $(`#${cfg.chartDom}`).html(`<div class="error">${message}</div>`);
+            });
+        }
+    });
+</script>
+</body>
+</html>

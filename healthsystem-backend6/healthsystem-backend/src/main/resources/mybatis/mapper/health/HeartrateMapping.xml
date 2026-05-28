@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--(user_id加在heart_rate中）-->
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.health.HeartrateMapper">
+    <select id="findByUserIdAndDate" resultType="com.nwpu.healthsystem.backend.entity.health.Heartrate">
+        select *
+        from heart_rate
+        where user_id = #{userId}
+        and calendarDate = #{sqlDate}
+        ORDER BY calendarDate DESC  <!-- 使用calendarDate进行排序 -->
+        limit 1
+    </select>
+</mapper>

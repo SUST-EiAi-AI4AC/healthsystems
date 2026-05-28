@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.scale.HtpDrawingMapper">
+
+    <!-- ==================== ResultMap ==================== -->
+    <resultMap id="HtpDrawingRecordMap" type="com.nwpu.healthsystem.backend.entity.scale.HtpDrawingRecord">
+        <id     column="id"             property="id"/>
+        <result column="user_id"        property="userId"/>
+        <result column="log_date"       property="logDate"/>
+        <result column="add_timestamp"  property="addTimestamp"/>
+        <result column="score"          property="score"/>
+        <result column="report_content" property="reportContent"/>
+        <result column="drawing_img_url" property="drawingImgUrl"/>
+        <result column="username"       property="username"/>
+    </resultMap>
+
+    <!-- ==================== 动态条件片段 ==================== -->
+    <sql id="conditionWhere">
+        WHERE user_id = #{userId}
+        <if test="startDate != null">
+            AND log_date &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND log_date &lt;= #{endDate}
+        </if>
+        <if test="minScore != null">
+            AND score &gt;= #{minScore}
+        </if>
+        <if test="maxScore != null">
+            AND score &lt;= #{maxScore}
+        </if>
+    </sql>
+
+    <!-- ==================== 新增记录 ==================== -->
+    <insert id="insertRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO htp_drawing_record
+        (user_id, log_date, score, report_content, drawing_img_url)
+        VALUES
+        (#{userId}, #{logDate}, #{score}, #{reportContent}, #{drawingImgUrl})
+    </insert>
+
+    <!-- ==================== 更新全部字段 ==================== -->
+    <update id="updateRecord">
+        UPDATE htp_drawing_record
+        SET score           = #{score},
+            report_content  = #{reportContent},
+            drawing_img_url = #{drawingImgUrl}
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </update>
+
+    <!-- ==================== 仅更新图片路径（图片上传后回填） ==================== -->
+    <update id="updateImageUrl">
+        UPDATE htp_drawing_record
+        SET drawing_img_url = #{drawingImgUrl}
+        WHERE id = #{id}
+    </update>
+
+    <!-- ==================== 分页 + 多条件查询（当前用户） ==================== -->
+    <!-- 注意：分页由 PageInterceptor 自动处理，此处不需要写 LIMIT -->
+    <select id="getListByPage" resultMap="HtpDrawingRecordMap">
+        SELECT *
+        FROM htp_drawing_record
+        <include refid="conditionWhere"/>
+        ORDER BY log_date DESC, id DESC
+    </select>
+
+    <!-- ==================== 统计满足条件总记录数（配合分页） ==================== -->
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(0)
+        FROM htp_drawing_record
+        <include refid="conditionWhere"/>
+    </select>
+
+    <!-- ==================== 根据ID查询单条记录 ==================== -->
+    <select id="getById" resultMap="HtpDrawingRecordMap">
+        SELECT r.*, ui.user_name AS username
+        FROM htp_drawing_record r
+        LEFT JOIN user_info ui ON r.user_id = ui.user_id
+        WHERE r.id = #{id}
+    </select>
+
+    <!-- ==================== 医生端：查询全量数据（含用户名） ==================== -->
+    <select id="getAllData" resultMap="HtpDrawingRecordMap">
+        SELECT r.*, ui.user_name AS username
+        FROM htp_drawing_record r
+        LEFT JOIN user_info ui ON r.user_id = ui.user_id
+        ORDER BY r.add_timestamp DESC
+    </select>
+
+</mapper>

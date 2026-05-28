@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div>
+    <div class="head">
+        <div class="greet" id="userName">
+
+        </div>
+        <div class="greet">
+            的记录
+        </div>
+        <br>
+        <img src="/images/chartmain.svg"/>
+    </div>
+
+    <div class="title">每日填报记录</div>
+
+    <div class="content">
+        <div onclick="DailyReportChart()" class="box hover" id="dailyReport">
+            <div class="box-content">
+                <div class="box-title">日常状态</div>
+            </div>
+        </div>
+
+        <div onclick="PAMChart();" class="box hover" id="ema">
+            <div class="box-content">
+                <div class="box-title">情绪</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="title">自测量表记录</div>
+
+    <div class="content">
+        <div onclick="PHQ9Chart()" class="box hover" id="phq">
+            <div class="box-content">
+                <div class="box-title">抑郁</div>
+            </div>
+        </div>
+
+        <div onclick="PSSChart()" class="box hover" id="pss">
+            <div class="box-content">
+                <div class="box-title">压力</div>
+            </div>
+        </div>
+
+        <div onclick="SASChart()" class="box hover" id="sas">
+            <div class="box-content">
+                <div class="box-title">焦虑</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="title">个人资料</div>
+
+    <div class="content">
+        <div onclick="InfoChart()" class="box hover" id="info">
+            <div class="box-content">
+                <div class="box-title">个人信息</div>
+            </div>
+        </div>
+    </div>
+
+<!--    <div class="title">音视频记录</div>-->
+
+<!--    <div class="content">-->
+<!--        <div onclick="AudioList()" class="box hover" id="audiolist">-->
+<!--            <div class="box-content">-->
+<!--                <div class="box-title">语音记录</div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div onclick="VideoList()" class="box hover" id="videolist">-->
+<!--            <div class="box-content">-->
+<!--                <div class="box-title">视频记录</div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    隐藏按钮，用于初始化-->
+    <div id="isChartMain" hidden></div>
+
+</div>
+
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<!--    区域选择器需要引入下面这一行-->
+<script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<!-- 引入myjs -->
+<script src="/js/myjs/myscript.js"></script>
+
+<script>
+
+    // 先执行下面，才会继续success回调
+    layui.use(['jquery'], function () {
+        var $ = layui.jquery;
+
+        // 最后还是用了它：因为修改了一点：不能同时打开多个窗口，一次只能查看一个用户
+        userInfo = parent.userInfo;
+        console.log(userInfo);
+        console.log('11111');
+        $("#userName").text(userInfo.userName);
+
+    });
+
+    function PAMChart() {
+        window.location ='PAMChart.html';
+    };
+
+    function DailyReportChart() {
+        window.location ='DailyReportChart.html';
+    }
+
+    function PHQ9Chart() {
+        window.location ='PHQ9Chart.html';
+    }
+
+    function PSSChart() {
+        window.location ='PSSChart.html';
+    }
+
+    function SASChart() {
+        window.location ='SASChart.html';
+    }
+
+    function InfoChart() {
+        window.location ='InfoChart.html';
+    }
+
+    function AudioList() {
+        window.location='AudioList.html';
+    }
+    function VideoList() {
+        window.location='VideoList.html';
+    }
+
+</script>
+
+<!-- css 有改动  -->
+
+<style lang="scss" scoped>
+
+    .head {
+        height: 25vh;
+        width: 100%;
+        z-index: 1;
+        position: relative;
+        background: #007AFF;
+        border-radius: 10px;
+    }
+
+    .head img {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 60%;
+        height: 72%;
+    }
+
+    .head .greet {
+        padding: 16px 0;
+        font-size: 1.5em;
+        margin-left: 20px;
+        font-weight: bold;
+        color: white;
+    }
+
+    /*分割线的样式*/
+    .title {
+        /*上右下左（顺时针）*/
+        padding: 2px 0 2px 10px; /*// 文字*/
+        margin: 8px auto;
+        border-left: 8px solid #3478F6;
+        font-size: 1.2em;
+        color: #696969;
+    }
+
+    .content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-content: flex-start; /* 换行紧贴 */
+        flex-wrap: wrap; /* 换行 */
+    }
+
+    .box {
+        width: 160px;
+        height: 50px;
+        position: relative;
+        flex: 1 0 30%;
+        border-radius: 10px;
+        margin: 8px 10px 0 10px;
+        padding: 15px 0 0 0; /*// 文字，top padding 30px,实现垂直居中，因为height=60px是群定的，所以可以这么写*/
+        color: white;
+        text-align: center;
+    }
+
+    .box-content {
+        width: 100%;
+        height: 100%;
+    }
+
+    .box-title {
+        font-size: 1.2em;
+    }
+
+    .box-data {
+        margin-top: 15px;
+    }
+
+    .box-data span {
+        font-size: 0.8em;
+    }
+
+    /*
+    十六进制颜色码转换成RGB颜色值：
+    https://www.sioe.cn/yingyong/yanse-rgb-16/
+    */
+    /*
+    每一行两个按钮，但最后一行会出现只有1个按钮，
+    这时候为了保持一行两个按钮的布局，
+    添加一个空元素占位
+    */
+    .empty {
+        background: rgb(255, 255, 255);
+    }
+
+    /*// 每日填报那一栏*/
+       #dailyReport, #pss, #audiolist {
+           background: rgb(0, 100, 255);
+       }
+
+    #ema, #phq, #sas, #info, #videolist{
+        background: rgb(234, 129, 87);
+    }
+
+
+    /*// 量表第二栏*/
+       #fs {
+           background: rgb(60, 108, 240);
+       }
+
+    #ucla {
+        background: rgb(234, 129, 87);
+    }
+
+    /*// 量表第三栏*/
+       #gad {
+           background: rgb(234, 129, 87);
+       }
+
+    /*// 其他*/
+       #chart {
+           background: rgb(85, 156, 255);
+
+       }
+
+    #modify {
+        background: rgb(234, 129, 87);
+
+    }
+
+    .hover:hover {
+        cursor: pointer;
+    }
+</style>
+</body>
+</html>

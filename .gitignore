@@ -1,0 +1,29 @@
+# Build outputs
+**/target/
+**/unpackage/
+*.jar
+*.war
+*.apk
+*.class
+
+# Node.js
+**/node_modules/
+
+# Python
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDEs
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db

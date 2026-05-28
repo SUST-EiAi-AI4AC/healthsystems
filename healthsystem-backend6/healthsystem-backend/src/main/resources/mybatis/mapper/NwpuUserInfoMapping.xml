@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nwpu.healthsystem.backend.mapper.NwpuUserInfoMapper">
+    <select id="getNwpuUserInfoByUserId" resultType="NwpuUserInfo">
+        select *
+        from nwpu_user_info
+        where user_id = #{userId}
+        ORDER BY id DESC
+    </select>
+
+    <insert id="insertNwpuUserInfo">
+        insert into nwpu_user_info
+        (user_id, nwpu_id, college, grade, type)
+        values
+        (#{userId},#{nwpuId},#{college},#{grade},#{type})
+    </insert>
+
+    <update id="updateNwpuUserInfo">
+        update nwpu_user_info
+        set nwpu_id=#{nwpuId},college=#{college},grade=#{grade},type=#{type}
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteNwpuUserInfoById">
+        delete from nwpu_user_info
+        where user_id=#{userId}
+    </delete>
+</mapper>
