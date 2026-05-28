@@ -10,8 +10,8 @@
 
 ## 📋 项目简介
 
-1. 官网页：z.playe.top
-2. H5版本：h.playe.top
+1. 官网页：https://z.playe.top
+2. H5版本：https://h.playe.top
 3. 后台管理系统：https://www.nwpuhs.cn/
 4. 移动端：https://xiaoye66.lanzoum.com/iRh6S3qbcv9i
 5. 简介：健康关怀系统是一个集成了移动端跨平台 App /H5与 Web 管理后台的心理健康检测管理平台。系统旨在通过多维度的数据采集与分析，帮助用户自我调节并辅助医护人员更好地评估、管理患者的心理与生理健康状况。
