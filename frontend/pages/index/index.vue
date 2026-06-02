@@ -30,7 +30,7 @@
 								<text class="qe-small-icon">♡</text>
 							</div>
 							<div class="qe-small-title">健康评估</div>
-							<div class="qe-small-desc">10大科学心理量表</div>
+							<div class="qe-small-desc">7+科学心理量表</div>
 						</div>
 						<div class="qe-circle qe-circle-s1"></div>
 					</div>
@@ -268,7 +268,7 @@
 
 			// 快捷功能入口
 			goAIAssess() {
-				uni.setStorageSync('aiassessInitTab', 0);
+				uni.setStorageSync('aiassessInitTab', 2);
 				uni.switchTab({
 					url: '/pages/aiassess/aiassess'
 				});
@@ -288,7 +288,7 @@
 			},
 
 			goHealthAssess() {
-				uni.setStorageSync('aiassessInitTab', 0);
+				uni.setStorageSync('aiassessInitTab', 2);
 				uni.switchTab({
 					url: '/pages/aiassess/aiassess'
 				});

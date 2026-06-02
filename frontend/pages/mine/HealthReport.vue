@@ -50,7 +50,7 @@
 					</view>
 					<text class="section-title">6维度健康雷达图</text>
 				</view>
-				<view class="radar-wrap">
+				<view class="radar-wrap" v-if="!showHistory && !showHistoryDetail">
 					<l-echart ref="radarChart" class="radar-chart" @finished="initRadar"></l-echart>
 				</view>
 				<view class="radar-legend">
@@ -353,6 +353,10 @@
 						</view>
 						<view class="history-item-footer">
 							<text class="data-sources-tag">数据来源：{{ report.dataSources && report.dataSources.length > 0 ? report.dataSources.join('、') : '健康数据' }}</text>
+							<view class="history-delete-btn" @click.stop="deleteHistoryReport(report)">
+								<text class="delete-icon">🗑️</text>
+								<text class="delete-text">删除</text>
+							</view>
 						</view>
 					</view>
 				</scroll-view>
@@ -633,7 +637,7 @@
 						let docCount = 0
 						this.doctorScales.forEach(s => {
 							const d = latestMap[s.key]
-							if (d) { s.scoreText = d.scoreText || String(d.totalScore || '--'); s.level = d.level || '--'; s.color = this._getLevelColor(s.level); docCount++ }
+							if (d) { s.scoreText = d.scoreText || String(d.totalScore || '--'); s.level = d.level || '--'; s.color = this.getLevelColor(s.level); docCount++ }
 						})
 						if (docCount > 0) { this.doctorHasData = true; this.doctorSummary = `已完成 ${docCount}/3 项医评量表。` }
 					} catch (e) {}
@@ -666,25 +670,31 @@
 			},
 
 			computeRadar() {
+				const parseScore = (text, def = 60) => {
+					if (!text || text === '--') return def;
+					const val = parseFloat(String(text).replace(/[^\d.]/g, ''));
+					return isNaN(val) ? def : val;
+				};
 				const sds = this.doctorScales.find(s => s.key === 'SDS')
-				this.radarDims[0].value = (sds && sds.scoreText !== '--') ? Math.max(0, Math.round(100 - ((parseFloat(sds.scoreText) - 25) / 75) * 100)) : (this.htpHasData && this.htpLatest ? Math.min(100, Math.round(this.htpLatest.score || 60)) : 60)
+				this.radarDims[0].value = (sds && sds.scoreText !== '--') ? Math.max(0, Math.round(100 - ((parseScore(sds.scoreText, 50) - 25) / 75) * 100)) : (this.htpHasData && this.htpLatest ? Math.min(100, Math.round(this.htpLatest.score || 60)) : 60)
 				const pss = this.doctorScales.find(s => s.key === 'PSS')
-				this.radarDims[1].value = (pss && pss.scoreText !== '--') ? Math.max(0, Math.round(100 - (parseFloat(pss.scoreText) / 56) * 100)) : 60
+				this.radarDims[1].value = (pss && pss.scoreText !== '--') ? Math.max(0, Math.round(100 - (parseScore(pss.scoreText, 20) / 56) * 100)) : 60
 				const sas = this.doctorScales.find(s => s.key === 'SAS')
-				this.radarDims[2].value = (sas && sas.scoreText !== '--') ? Math.max(0, Math.round(100 - ((parseFloat(sas.scoreText) - 25) / 75) * 100)) : 60
+				this.radarDims[2].value = (sas && sas.scoreText !== '--') ? Math.max(0, Math.round(100 - ((parseScore(sas.scoreText, 50) - 25) / 75) * 100)) : 60
 				const ipaq = this.selfScales.find(s => s.key === 'IPAQ')
 				const pars3 = this.selfScales.find(s => s.key === 'PARS-3')
 				this.radarDims[3].value = (ipaq && ipaq.level !== '--') ? (ipaq.level.includes('高') ? 88 : ipaq.level.includes('中') ? 65 : 35) : (pars3 && pars3.level !== '--') ? (pars3.level.includes('高') ? 85 : pars3.level.includes('中') ? 60 : 35) : 60
 				const psqi = this.selfScales.find(s => s.key === 'PSQI')
 				const slMetric = this.braceletMetrics[1]
-				this.radarDims[4].value = (psqi && psqi.scoreText !== '--') ? Math.max(0, Math.round(100 - (parseFloat(psqi.scoreText) / 21) * 100)) : (slMetric.value !== '--' ? Math.min(100, Number(slMetric.value) || 60) : 60)
+				this.radarDims[4].value = (psqi && psqi.scoreText !== '--') ? Math.max(0, Math.round(100 - (parseScore(psqi.scoreText, 7) / 21) * 100)) : (slMetric.value !== '--' ? Math.min(100, Number(slMetric.value) || 60) : 60)
 				const cdrisc = this.selfScales.find(s => s.key === 'CD-RISC')
-				this.radarDims[5].value = (cdrisc && cdrisc.scoreText !== '--') ? Math.min(100, Math.round(parseFloat(cdrisc.scoreText))) : 60
+				this.radarDims[5].value = (cdrisc && cdrisc.scoreText !== '--') ? Math.min(100, Math.round(parseScore(cdrisc.scoreText, 60))) : 60
 			},
 
 			computeOverall() {
 				const w = [0.2, 0.2, 0.2, 0.15, 0.15, 0.1]
-				this.overallScore = Math.round(this.radarDims.reduce((s, d, i) => s + d.value * w[i], 0))
+				const sum = this.radarDims.reduce((s, d, i) => s + (Number(d.value) || 0) * w[i], 0);
+				this.overallScore = Math.round(sum) || 60;
 				const sources = []
 				if (this.htpHasData)     sources.push('HTP画画')
 				if (this.selfHasData)    sources.push('自助量表')
@@ -769,7 +779,7 @@
 						else doctorList.push({ icon: '😊', iconBg: 'linear-gradient(135deg,#fa709a,#fee140)', title: '抑郁风险较低', desc: 'SDS结果正常，情绪状态良好，坚持运动和规律作息能维持良好心理状态。', source: '来源：SDS量表' })
 					}
 				} else {
-					doctorList.push({ icon: '🏥', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: '尚未完成健康评估量表', desc: '前往「AI评估 → 测评」完成SDS、PSS、SAS三项医评量表，获取专业建议。', source: '系统提示' })
+					doctorList.push({ icon: '🏥', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: '尚未完成健康评估量表', desc: '前往「AI评估 → 评估」完成SDS、PSS、SAS三项医评量表，获取专业建议。', source: '系统提示' })
 				}
 
 				// 手环建议
@@ -824,7 +834,7 @@
 				})
 			},
 
-			_getLevelColor(level) {
+			getLevelColor(level) {
 				if (!level || level === '--') return '#999'
 				if (level.includes('重度') || level.includes('高压') || level.includes('阳性')) return '#e74c3c'
 				if (level.includes('中度') || level.includes('中等') || level.includes('轻度')) return '#f39c12'
@@ -898,25 +908,33 @@
 				try {
 					const history = uni.getStorageSync('health_report_history') || []
 					
+					// 修复历史数据中可能存在的 NaN/null 分数
+					const repairedHistory = history.map(r => {
+						if (r.overallScore === null || r.overallScore === undefined || isNaN(r.overallScore)) {
+							r.overallScore = 60; // 默认给 60 分
+						}
+						return r;
+					});
+
 					// 根据筛选条件过滤
-					let filtered = [...history]
+					let filtered = [...repairedHistory]
 					const now = new Date()
 					
 					if (this.activeFilter === 'day') {
 						// 显示最近 7 天
 						const sevenDaysAgo = new Date()
 						sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-						filtered = history.filter(r => new Date(r.date) >= sevenDaysAgo)
+						filtered = repairedHistory.filter(r => new Date(r.date) >= sevenDaysAgo)
 					} else if (this.activeFilter === 'week') {
 						// 按周分组（显示最近 4 周）
 						const fourWeeksAgo = new Date()
 						fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28)
-						filtered = history.filter(r => new Date(r.date) >= fourWeeksAgo)
+						filtered = repairedHistory.filter(r => new Date(r.date) >= fourWeeksAgo)
 					} else if (this.activeFilter === 'month') {
 						// 按月分组（显示最近 3 个月）
 						const threeMonthsAgo = new Date()
 						threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
-						filtered = history.filter(r => new Date(r.date) >= threeMonthsAgo)
+						filtered = repairedHistory.filter(r => new Date(r.date) >= threeMonthsAgo)
 					}
 					
 					this.historyReports = filtered
@@ -929,6 +947,31 @@
 			viewHistoryDetail(report) {
 				this.currentHistoryReport = report
 				this.showHistoryDetail = true
+			},
+
+			// 删除指定历史报告
+			deleteHistoryReport(report) {
+				uni.showModal({
+					title: '确认删除',
+					content: `确定要删除 ${report.reportDate} 的健康报告吗？`,
+					confirmColor: '#e74c3c',
+					success: (res) => {
+						if (res.confirm) {
+							try {
+								const history = uni.getStorageSync('health_report_history') || []
+								const updated = history.filter(r => r.date !== report.date)
+								uni.setStorageSync('health_report_history', updated)
+								this.loadHistoryReports()
+								uni.showToast({
+									title: '已删除',
+									icon: 'success'
+								})
+							} catch (e) {
+								console.error('删除报告失败:', e)
+							}
+						}
+					}
+				})
 			},
 
 			// 获取星期几
@@ -1195,7 +1238,7 @@ ${(report.advice || []).map((a, i) => `${i + 1}. ${a}`).join('\n')}
 	right: 0;
 	bottom: 0;
 	background: rgba(0,0,0,0.5);
-	z-index: 1000;
+	z-index: 900;
 	display: flex;
 	align-items: flex-end;
 	justify-content: center;
@@ -1370,10 +1413,30 @@ ${(report.advice || []).map((a, i) => `${i + 1}. ${a}`).join('\n')}
 .history-item-footer {
 	border-top: 1rpx solid #e8eaed;
 	padding-top: 12rpx;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 .data-sources-tag {
 	font-size: 20rpx;
 	color: #999;
+}
+.history-delete-btn {
+	display: flex;
+	align-items: center;
+	gap: 4rpx;
+	font-size: 20rpx;
+	color: #e74c3c;
+	padding: 4rpx 12rpx;
+	border-radius: 8rpx;
+	background: rgba(231, 76, 60, 0.08);
+	transition: all 0.2s;
+}
+.history-delete-btn:active {
+	background: rgba(231, 76, 60, 0.2);
+}
+.delete-icon {
+	font-size: 22rpx;
 }
 
 /* ========== 历史详情弹窗样式 ========== */
@@ -1384,7 +1447,7 @@ ${(report.advice || []).map((a, i) => `${i + 1}. ${a}`).join('\n')}
 	right: 0;
 	bottom: 0;
 	background: rgba(0,0,0,0.5);
-	z-index: 1001;
+	z-index: 901;
 	display: flex;
 	align-items: center;
 	justify-content: center;

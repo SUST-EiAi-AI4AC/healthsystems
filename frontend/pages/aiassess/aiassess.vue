@@ -2,62 +2,54 @@
 	<view class="page-container">
 		<!-- 顶部切换按钮 -->
 		<view class="tab-header">
-			<view class="tab-btn" :class="{ active: currentTab === 0 }" @click="switchTab(0)">🧠 评估</view>
+			<view class="tab-btn" :class="{ active: currentTab === 0 }" @click="switchTab(0)">🎨 画画</view>
 			<view class="tab-btn" :class="{ active: currentTab === 1 }" @click="switchTab(1)">📋 测评</view>
-			<view class="tab-btn" :class="{ active: currentTab === 2 }" @click="switchTab(2)">🎨 画画</view>
+			<view class="tab-btn" :class="{ active: currentTab === 2 }" @click="switchTab(2)">🧠 评估</view>
 		</view>
 
 		<!-- swiper 内容区域 -->
 		<swiper class="swiper-box" :current="currentTab" @change="onSwiperChange" :duration="300">
-			<!-- 评估 Tab -->
+			<!-- 画画 Tab -->
 			<swiper-item>
 				<scroll-view scroll-y class="scroll-content">
-					<view class="section-title">心理健康评估</view>
-					<view class="section-desc">以下量表与医生线下访谈时填写，建议每两周填写一次</view>
-
-					<view class="scale-list">
-						<view class="scale-card-wide" id="sds" @click="goTo('/pages/Scale/SDS')">
-							<view class="card-left">
-								<view class="card-title">SDS</view>
-								<view class="card-subtitle">心理自测量表</view>
-								<view class="card-subtitle-en">Self-rating Depression Scale</view>
-								<view class="card-divider"></view>
-								<view class="card-info">20个问题 · 每两周填写一次</view>
+					<view class="htp-banner" @click="goTo('/pages/Scale/HTP')">
+						<view class="htp-banner-left">
+							<text class="htp-banner-emoji">🎨</text>
+							<view class="htp-banner-text">
+								<text class="htp-banner-title">房树人心理测验</text>
+								<text class="htp-banner-sub">HTP Test · House · Tree · Person</text>
 							</view>
-							<view class="card-arrow">»</view>
 						</view>
+						<text class="htp-banner-arrow">»</text>
+					</view>
 
-						<view class="scale-card-wide" id="pss" @click="goTo('/pages/Scale/PSS')">
-							<view class="card-left">
-								<view class="card-title">PSS</view>
-								<view class="card-subtitle">压力自测量表</view>
-								<view class="card-subtitle-en">Perceived Stress Scale</view>
-								<view class="card-divider"></view>
-								<view class="card-info">14个问题 · 每两周填写一次</view>
-							</view>
-							<view class="card-arrow">»</view>
-						</view>
+					<view class="htp-intro-card">
+						<view class="htp-intro-title">✨ 关于 HTP 测验</view>
+						<view class="htp-intro-text">房树人测验（House-Tree-Person Test）是一种投射性心理测验。通过分析您自由绘制的房屋、树木和人物，从色彩运用、笔触特征、画面构图和叙事逻辑等多个维度，综合评估您的心理健康状态、情商水平及生活满意度。</view>
+					</view>
 
-						<view class="scale-card-wide" id="sas" @click="goTo('/pages/Scale/SAS')">
-							<view class="card-left">
-								<view class="card-title">SAS</view>
-								<view class="card-subtitle">焦虑自测量表</view>
-								<view class="card-subtitle-en">Self-rating Anxiety Scale</view>
-								<view class="card-divider"></view>
-								<view class="card-info">20个问题 · 每两周填写一次</view>
-							</view>
-							<view class="card-arrow">»</view>
+					<view class="htp-dim-grid">
+						<view v-for="dim in htpDims" :key="dim.name" class="htp-dim-item">
+							<text class="htp-dim-icon">{{ dim.icon }}</text>
+							<text class="htp-dim-name">{{ dim.name }}</text>
+							<text class="htp-dim-desc">{{ dim.desc }}</text>
 						</view>
 					</view>
 
-					<!-- 历史记录入口按鈕 -->
-					<view class="scale-history-btn" @click="openScaleHistory">
-						<text class="scale-history-btn-icon">📜</text>
-						<text class="scale-history-btn-text">历史记录</text>
-						<text class="scale-history-btn-arrow">›</text>
+					<view class="htp-start-btn" @click="goTo('/pages/Scale/HTP')">
+						<!-- 笔尾圆头（左侧） -->
+						<view class="brush-cap"></view>
+						<!-- 笔杆 + 文字 -->
+						<view class="brush-handle">
+							<text class="brush-text">开始绘画测验</text>
+						</view>
+						<!-- 金属笔箋 -->
+						<view class="brush-ferrule"></view>
+						<!-- 笔尖（右侧尖头） -->
+						<view class="brush-tip"></view>
 					</view>
 
-					<view class="footer-tip">{{ warmText }}</view>
+					<view class="footer-tip">拿起画笔，让内心说话。</view>
 				</scroll-view>
 			</swiper-item>
 
@@ -150,47 +142,55 @@
 				</scroll-view>
 			</swiper-item>
 
-			<!-- 画画 Tab -->
+			<!-- 评估 Tab -->
 			<swiper-item>
 				<scroll-view scroll-y class="scroll-content">
-					<view class="htp-banner" @click="goTo('/pages/Scale/HTP')">
-						<view class="htp-banner-left">
-							<text class="htp-banner-emoji">🎨</text>
-							<view class="htp-banner-text">
-								<text class="htp-banner-title">房树人心理测验</text>
-								<text class="htp-banner-sub">HTP Test · House · Tree · Person</text>
+					<view class="section-title">心理健康评估</view>
+					<view class="section-desc">以下量表与医生线下访谈时填写，建议每两周填写一次</view>
+
+					<view class="scale-list">
+						<view class="scale-card-wide" id="sds" @click="goTo('/pages/Scale/SDS')">
+							<view class="card-left">
+								<view class="card-title">SDS</view>
+								<view class="card-subtitle">心理自测量表</view>
+								<view class="card-subtitle-en">Self-rating Depression Scale</view>
+								<view class="card-divider"></view>
+								<view class="card-info">20个问题 · 每两周填写一次</view>
 							</view>
+							<view class="card-arrow">»</view>
 						</view>
-						<text class="htp-banner-arrow">»</text>
-					</view>
 
-					<view class="htp-intro-card">
-						<view class="htp-intro-title">✨ 关于 HTP 测验</view>
-						<view class="htp-intro-text">房树人测验（House-Tree-Person Test）是一种投射性心理测验。通过分析您自由绘制的房屋、树木和人物，从色彩运用、笔触特征、画面构图和叙事逻辑等多个维度，综合评估您的心理健康状态、情商水平及生活满意度。</view>
-					</view>
+						<view class="scale-card-wide" id="pss" @click="goTo('/pages/Scale/PSS')">
+							<view class="card-left">
+								<view class="card-title">PSS</view>
+								<view class="card-subtitle">压力自测量表</view>
+								<view class="card-subtitle-en">Perceived Stress Scale</view>
+								<view class="card-divider"></view>
+								<view class="card-info">14个问题 · 每两周填写一次</view>
+							</view>
+							<view class="card-arrow">»</view>
+						</view>
 
-					<view class="htp-dim-grid">
-						<view v-for="dim in htpDims" :key="dim.name" class="htp-dim-item">
-							<text class="htp-dim-icon">{{ dim.icon }}</text>
-							<text class="htp-dim-name">{{ dim.name }}</text>
-							<text class="htp-dim-desc">{{ dim.desc }}</text>
+						<view class="scale-card-wide" id="sas" @click="goTo('/pages/Scale/SAS')">
+							<view class="card-left">
+								<view class="card-title">SAS</view>
+								<view class="card-subtitle">焦虑自测量表</view>
+								<view class="card-subtitle-en">Self-rating Anxiety Scale</view>
+								<view class="card-divider"></view>
+								<view class="card-info">20个问题 · 每两周填写一次</view>
+							</view>
+							<view class="card-arrow">»</view>
 						</view>
 					</view>
 
-					<view class="htp-start-btn" @click="goTo('/pages/Scale/HTP')">
-						<!-- 笔尾圆头（左侧） -->
-						<view class="brush-cap"></view>
-						<!-- 笔杆 + 文字 -->
-						<view class="brush-handle">
-							<text class="brush-text">开始绘画测验</text>
-						</view>
-						<!-- 金属笔箋 -->
-						<view class="brush-ferrule"></view>
-						<!-- 笔尖（右侧尖头） -->
-						<view class="brush-tip"></view>
+					<!-- 历史记录入口按鈕 -->
+					<view class="scale-history-btn" @click="openScaleHistory">
+						<text class="scale-history-btn-icon">📜</text>
+						<text class="scale-history-btn-text">历史记录</text>
+						<text class="scale-history-btn-arrow">›</text>
 					</view>
 
-					<view class="footer-tip">拿起画笔，让内心说话。</view>
+					<view class="footer-tip">{{ warmText }}</view>
 				</scroll-view>
 			</swiper-item>
 		</swiper>
@@ -342,7 +342,11 @@
 			// 通过 Storage 接收来自首页的指定 tab
 			const tab = uni.getStorageSync('aiassessInitTab');
 			if (tab !== '' && tab !== undefined) {
-				this.currentTab = Number(tab);
+				this.$nextTick(() => {
+					setTimeout(() => {
+						this.currentTab = Number(tab);
+					}, 50);
+				});
 				uni.removeStorageSync('aiassessInitTab');
 			}
 			// 每次显示时刷新历史记录
@@ -642,7 +646,7 @@
 	}
 
 	/* 画画 Tab 测验活动样式 */
-	.tab-btn:last-child.active {
+	.tab-btn:first-child.active {
 		color: #f7971e;
 		border-bottom-color: #f7971e;
 	}
