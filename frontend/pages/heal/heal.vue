@@ -631,7 +631,7 @@ export default {
 		
 		// 调用 MiniMax-M2.5 AI 模型
 		async callMiniMaxAI(userMessage) {
-			const apiKey = 'ms-80675032-298f-41ee-a768-8b6e2be32c98';
+			const apiKey = 'ms-86a24592-f1d5-422c-bfcb-3154818e4419';
 			const apiUrl = 'https://api-inference.modelscope.cn/v1/chat/completions';
 
 			const recentMessages = this.chatMessages
