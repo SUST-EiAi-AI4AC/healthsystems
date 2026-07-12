@@ -564,32 +564,37 @@
 	::v-deep .u-radio-group {
 		display: flex; // 假设你想让它以flex布局显示  
 		flex-direction: column; // 已经是column了，但这里只是示例  
-		// border: 2px solid #00aa00;
+		width: 100%;
 		margin-top: 10px;
 	} 
 	
 	::v-deep .u-radio {  
 		// 修改单选按钮的样式  
-		// width: 160px;
+		width: 100% !important;
+		box-sizing: border-box !important;
 		height: 60px;
-		// margin: 20px 10px 0 0; // 修改垂直间距  
 		padding: 5px 0 5px 15px; // 假设有内边距  
 		border-radius: 10px; // 圆角  
-		// border: 2px solid #00ff00;
 		background-color: #ffffff;
 		box-shadow: 1px 2px 5px #e2e2e2;
 		font-weight: bold;
 	}  
 	
+	::v-deep .u-radio__text,
+	::v-deep .u-radio__label {
+		flex: 1 !important;
+		width: 100% !important;
+		height: 100% !important;
+		display: flex !important;
+		align-items: center !important;
+	}
+	
 	.all-button{
 		width: 100%;
 		display: flex;
 		justify-content: center;
-		position: absolute;
-		bottom: 0;
-		margin-bottom: 20px;
-		// border: 2px solid #ff55ff;
-		// padding: 10px;
+		margin-top: 30px;
+		margin-bottom: 40px;
 	}
 	.button {
 		width: 160px;

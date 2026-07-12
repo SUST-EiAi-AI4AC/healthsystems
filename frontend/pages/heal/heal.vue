@@ -27,7 +27,7 @@
 				<view class="chat-wrapper">
 					<!-- 顶部横幅 -->
 					<view class="chat-banner">
-						<image class="chat-banner-avatar" src="https://www.keaitupian.cn/cjpic/frombd/1/253/56496682/3498759028.jpg" mode="aspectFill" />
+						<image class="chat-banner-avatar" src="https://img2.baidu.com/it/u=2073205204,3558835398&fm=253&app=138&f=JPEG?w=380&h=380" mode="aspectFill" />
 						<view class="chat-banner-info">
 							<view class="chat-banner-title-row">
 								<text class="chat-banner-name">心晴</text>
@@ -36,6 +36,10 @@
 								<view class="chat-banner-status-inline">
 									<view class="chat-banner-dot online"></view>
 									<text class="chat-banner-online-text">在线</text>
+								</view>
+								<!-- 音量开启/关闭按钮 -->
+								<view class="chat-banner-volume" @click.stop="toggleVolume">
+									<text class="volume-icon">{{ isVolumeEnabled ? '🔊 音量开' : '🔇 音量关' }}</text>
 								</view>
 							</view>
 							<text class="chat-banner-desc">24h专业倾听，温暖陪伴，随时为你解忧 🌸</text>
@@ -59,7 +63,7 @@
 							<image
 								v-if="msg.role === 'ai'"
 								class="avatar ai-avatar"
-								src="https://www.keaitupian.cn/cjpic/frombd/1/253/56496682/3498759028.jpg"
+								src="https://img2.baidu.com/it/u=2073205204,3558835398&fm=253&app=138&f=JPEG?w=380&h=380"
 								mode="aspectFill"
 							/>
 							<!-- 消息气泡 -->
@@ -459,6 +463,8 @@ export default {
 			currentTab: 0,
 
 			// --- 聊天 ---
+			isVolumeEnabled: uni.getStorageSync('isVolumeEnabled') !== false, // 默认开启音量
+			innerAudioContext: null,
 			inputText: '',
 			scrollTop: 0,
 			showEmojiPanel: false,
@@ -573,12 +579,20 @@ export default {
 			this.$nextTick(() => { this.scrollToBottom(); });
 			
 			try {
-				const aiResponse = await this.callMiniMaxAI(text);
 				// 思考结束，切换成打字现场
 				this.chatMessages[thinkingMsgIndex].isThinking = false;
 				this.chatMessages[thinkingMsgIndex].isTyping = true;
 				this.chatMessages[thinkingMsgIndex].text = '';
-				await this.typewriterEffect(thinkingMsgIndex, aiResponse);
+
+				const aiResponse = await this.callMiniMaxAI(text, (chunk) => {
+					this.chatMessages[thinkingMsgIndex].text += chunk;
+					this.$nextTick(() => { this.scrollToBottom(); });
+				});
+
+				this.chatMessages[thinkingMsgIndex].isTyping = false;
+				// 文字转语音播放
+				this.playVoiceTTS(aiResponse);
+
 				// 如果当前已有保存的会话，自动将最新一问一答追加保存
 				if (this.currentSessionId) {
 					this.appendMessagesToSession([
@@ -630,24 +644,55 @@ export default {
 		},
 		
 		// 调用 MiniMax-M2.5 AI 模型
-		async callMiniMaxAI(userMessage) {
+		async callMiniMaxAI(userMessage, onChunk) {
 			const apiKey = 'ms-86a24592-f1d5-422c-bfcb-3154818e4419';
 			const apiUrl = 'https://api-inference.modelscope.cn/v1/chat/completions';
 
-			const recentMessages = this.chatMessages
-				.filter(msg => msg.role === 'user' || msg.role === 'ai')
-				.slice(-6);
+			// 过滤掉未完成的思考中/输入中的消息，以及空消息
+			const completedMessages = this.chatMessages.filter(msg => 
+				(msg.role === 'user' || msg.role === 'ai') && 
+				!msg.isThinking && 
+				!msg.isTyping && 
+				msg.text && 
+				msg.text.trim() !== ''
+			);
+
+			// 构建严格符合 OpenAI 规范的交替对话列表（以 user 开车，交替排列，且合并同角色连续发言）
+			const formattedHistory = [];
+			let lastRole = null;
+			for (const msg of completedMessages) {
+				const role = msg.role === 'user' ? 'user' : 'assistant';
+				if (role === 'user') {
+					if (lastRole === 'user') {
+						formattedHistory[formattedHistory.length - 1].content += '\n' + msg.text;
+					} else {
+						formattedHistory.push({ role: 'user', content: msg.text });
+						lastRole = 'user';
+					}
+				} else if (role === 'assistant') {
+					if (lastRole !== null) { // 历史对话必须以 user 消息作为首条
+						if (lastRole === 'assistant') {
+							formattedHistory[formattedHistory.length - 1].content += '\n' + msg.text;
+						} else {
+							formattedHistory.push({ role: 'assistant', content: msg.text });
+							lastRole = 'assistant';
+						}
+					}
+				}
+			}
+
+			// 截取最新的历史上下文（取最后 6 条），并再次检查确保首条为 user 消息
+			let recentMessages = formattedHistory.slice(-6);
+			if (recentMessages.length > 0 && recentMessages[0].role === 'assistant') {
+				recentMessages = recentMessages.slice(1);
+			}
 
 			const messages = [
 				{
 					role: 'system',
-					content: '你是专业的心理健康助手心晴，擅长共情和安抚对话。回复要温暖贴心，带适当表情符号，控制在 200 字以内。理解用户的情感状态，给予支持和鼓励。'
+					content: '你是专业的心理健康助手心晴，擅长共情和安抚对话。回复要温暖贴心，带适当表情符号。控制在 100 字左右，回复要自然、有人情味，避免过度冗长。'
 				},
-				...recentMessages.map(msg => ({
-					role: msg.role === 'user' ? 'user' : 'assistant',
-					content: msg.text
-				})),
-				{ role: 'user', content: userMessage }
+				...recentMessages
 			];
 
 			try {
@@ -658,11 +703,11 @@ export default {
 						'Authorization': `Bearer ${apiKey}`
 					},
 					body: JSON.stringify({
-						model: 'MiniMax/MiniMax-M2.5',
+						model: 'MiniMax/MiniMax-M2.5:DashScope',
 						messages: messages,
 						max_tokens: 300,
 						temperature: 0.7,
-						stream: false
+						stream: true
 					})
 				});
 
@@ -672,10 +717,54 @@ export default {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
 
-				const data = await response.json();
-				const aiContent = data.choices?.[0]?.message?.content || '我在听，请继续说 🌿';
+				// 检查流式读取器是否可用
+				if (!response.body || typeof response.body.getReader !== 'function') {
+					const data = await response.json();
+					const aiContent = data.choices?.[0]?.message?.content || '我在听，请继续说 🌿';
+					let cleanedContent = aiContent.trim();
+					cleanedContent = cleanedContent.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}\u{1F300}-\u{1F9FF}\u{2300}-\u{23FF}]+$/u, '').trimEnd();
+					if (cleanedContent.length > 200) {
+						cleanedContent = cleanedContent.substring(0, 200) + '...';
+					}
+					onChunk(cleanedContent);
+					return cleanedContent;
+				}
 
-				let cleanedContent = aiContent.trim();
+				const reader = response.body.getReader();
+				const decoder = new TextDecoder('utf-8');
+				let buffer = '';
+				let fullContent = '';
+
+				while (true) {
+					const { done, value } = await reader.read();
+					if (done) break;
+
+					buffer += decoder.decode(value, { stream: true });
+					const lines = buffer.split('\n');
+					buffer = lines.pop(); // 最后一项可能不完整，保留
+
+					for (const line of lines) {
+						const cleanedLine = line.trim();
+						if (!cleanedLine) continue;
+						if (cleanedLine === 'data: [DONE]') continue;
+
+						if (cleanedLine.startsWith('data:')) {
+							const jsonStr = cleanedLine.slice(5).trim();
+							try {
+								const parsed = JSON.parse(jsonStr);
+								const delta = parsed.choices?.[0]?.delta?.content || '';
+								if (delta) {
+									fullContent += delta;
+									onChunk(delta);
+								}
+							} catch (e) {
+								// 忽略单行 JSON 解析错误
+							}
+						}
+					}
+				}
+
+				let cleanedContent = fullContent.trim();
 				cleanedContent = cleanedContent.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}\u{1F300}-\u{1F9FF}\u{2300}-\u{23FF}]+$/u, '').trimEnd();
 				if (cleanedContent.length > 200) {
 					cleanedContent = cleanedContent.substring(0, 200) + '...';
@@ -685,6 +774,66 @@ export default {
 			} catch (error) {
 				console.error('MiniMax API 调用错误:', error);
 				throw error;
+			}
+		},
+		toggleVolume() {
+			this.isVolumeEnabled = !this.isVolumeEnabled;
+			uni.setStorageSync('isVolumeEnabled', this.isVolumeEnabled);
+			if (!this.isVolumeEnabled) {
+				this.stopVoiceTTS();
+			}
+		},
+		async playVoiceTTS(text) {
+			if (!this.isVolumeEnabled || !text) return;
+			this.stopVoiceTTS();
+			try {
+				const apiKey = '4EDctG0RQZrjTwF9UmDsXr56OmZOeLbrBKq7JKlrXyRZ4P2gd7sFWPboQvzaJ3J6W';
+				const apiUrl = 'https://api.stepfun.com/step_plan/v1/audio/speech';
+				const response = await fetch(apiUrl, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${apiKey}`
+					},
+					body: JSON.stringify({
+						model: 'stepaudio-2.5-tts',
+						input: text,
+						voice: 'linjiajiejie',
+						response_format: 'mp3'
+					})
+				});
+				if (!response.ok) {
+					const errorText = await response.text();
+					console.error(`StepFun TTS Error: ${response.status} - ${errorText}`);
+					return;
+				}
+				const audioBlob = await response.blob();
+				const audioUrl = URL.createObjectURL(audioBlob);
+				this.innerAudioContext = uni.createInnerAudioContext();
+				this.innerAudioContext.autoplay = true;
+				this.innerAudioContext.src = audioUrl;
+				this.innerAudioContext.onPlay(() => {
+					console.log('开始播放语音回复');
+				});
+				this.innerAudioContext.onError((res) => {
+					console.error('音频播放错误', res.errMsg, res.errCode);
+				});
+				this.innerAudioContext.onEnded(() => {
+					this.stopVoiceTTS();
+				});
+			} catch (e) {
+				console.error('语音合成或播放失败', e);
+			}
+		},
+		stopVoiceTTS() {
+			if (this.innerAudioContext) {
+				try {
+					this.innerAudioContext.stop();
+					this.innerAudioContext.destroy();
+				} catch (e) {
+					console.warn(e);
+				}
+				this.innerAudioContext = null;
 			}
 		},
 		scrollToBottom() {
@@ -1561,6 +1710,7 @@ export default {
 		if (this.typingTimer) {
 			clearInterval(this.typingTimer);
 		}
+		this.stopVoiceTTS();
 	}
 };
 </script>
@@ -1721,6 +1871,27 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: 3px;
+}
+.chat-banner-volume {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px 8px;
+	background: rgba(255, 255, 255, 0.22);
+	border-radius: 12px;
+	margin-left: 8px;
+	cursor: pointer;
+	transition: background 0.15s;
+	border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.chat-banner-volume:active {
+	background: rgba(255, 255, 255, 0.4);
+}
+.volume-icon {
+	font-size: 0.72em;
+	color: #fff;
+	font-weight: 500;
+	letter-spacing: 0.5px;
 }
 .chat-banner-status {
 	display: flex;

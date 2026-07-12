@@ -30,7 +30,7 @@
 								<text class="qe-small-icon">♡</text>
 							</div>
 							<div class="qe-small-title">健康评估</div>
-							<div class="qe-small-desc">7+科学心理量表</div>
+							<div class="qe-small-desc">3大科学心理量表</div>
 						</div>
 						<div class="qe-circle qe-circle-s1"></div>
 					</div>
