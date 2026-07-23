@@ -1,0 +1,290 @@
+[
+  {
+    "date": "2026-07-14",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 40.013737574119745,
+      "achievableFitnessAge": 35.38654477840031,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 0.0,
+          "targetValue": 3,
+          "potentialAge": 39.267458692389596,
+          "priority": 3,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 50,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 1.5,
+          "targetValue": 75,
+          "potentialAge": 39.267458692389596,
+          "priority": 2,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 28.8,
+          "targetValue": 21.3,
+          "improvementValue": 7.5,
+          "potentialAge": 37.89852598815167,
+          "priority": 1,
+          "stale": false,
+          "lastMeasurementDate": "2025-09-25"
+        }
+      },
+      "lastUpdated": "2026-07-14T00:00:00.0"
+    }
+  },
+  {
+    "date": "2026-07-15",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 32.98505659317996,
+      "achievableFitnessAge": 35.38654477840031,
+      "previousFitnessAge": 40.013737574119745,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 0.1,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 50,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 13.8,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 15.6,
+          "stale": false,
+          "lastMeasurementDate": "2026-07-15"
+        }
+      },
+      "lastUpdated": "2026-07-15T00:00:00.0"
+    }
+  },
+  {
+    "date": "2026-07-16",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 32.98505659317996,
+      "achievableFitnessAge": 35.38654477840031,
+      "previousFitnessAge": 32.98505659317996,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 0.1,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 50,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 14.8,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 15.6,
+          "stale": false,
+          "lastMeasurementDate": "2026-07-15"
+        }
+      },
+      "lastUpdated": "2026-07-16T00:00:00.0"
+    }
+  },
+  {
+    "date": "2026-07-17",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 32.98505659317996,
+      "achievableFitnessAge": 35.38654477840031,
+      "previousFitnessAge": 32.98505659317996,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 0.1,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 50,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 23.6,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 15.6,
+          "stale": false,
+          "lastMeasurementDate": "2026-07-15"
+        }
+      },
+      "lastUpdated": "2026-07-17T00:00:00.0"
+    }
+  },
+  {
+    "date": "2026-07-18",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 32.98505659317996,
+      "achievableFitnessAge": 35.38654477840031,
+      "previousFitnessAge": 32.98505659317996,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 0.5,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 51,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 30.1,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 15.6,
+          "stale": false,
+          "lastMeasurementDate": "2026-07-15"
+        }
+      },
+      "lastUpdated": "2026-07-18T00:00:00.0"
+    }
+  },
+  {
+    "date": "2026-07-19",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 32.98505659317996,
+      "achievableFitnessAge": 35.38654477840031,
+      "previousFitnessAge": 32.98505659317996,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 0.6,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 51,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 38.0,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 15.6,
+          "stale": false,
+          "lastMeasurementDate": "2026-07-15"
+        }
+      },
+      "lastUpdated": "2026-07-19T00:00:00.0"
+    }
+  },
+  {
+    "date": "2026-07-20",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 32.98505659317996,
+      "achievableFitnessAge": 35.38654477840031,
+      "previousFitnessAge": 32.98505659317996,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 0.8,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 51,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 39.8,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 15.6,
+          "stale": false,
+          "lastMeasurementDate": "2026-07-15"
+        }
+      },
+      "lastUpdated": "2026-07-20T00:00:00.0"
+    }
+  },
+  {
+    "date": "2026-07-21",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 32.98505659317996,
+      "achievableFitnessAge": 35.38654477840031,
+      "previousFitnessAge": 32.98505659317996,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 1.0,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 51,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 50.1,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 15.6,
+          "stale": false,
+          "lastMeasurementDate": "2026-07-15"
+        }
+      },
+      "lastUpdated": "2026-07-21T00:00:00.0"
+    }
+  },
+  {
+    "date": "2026-07-22",
+    "data": {
+      "chronologicalAge": 41,
+      "fitnessAge": 32.98505659317996,
+      "achievableFitnessAge": 35.38654477840031,
+      "previousFitnessAge": 32.98505659317996,
+      "components": {
+        "vigorousDaysAvg": {
+          "value": 1.0,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "rhr": {
+          "value": 51,
+          "stale": false
+        },
+        "vigorousMinutesAvg": {
+          "value": 51.3,
+          "stale": false,
+          "numOfWeeksForIm": 6
+        },
+        "bmi": {
+          "value": 15.6,
+          "stale": false,
+          "lastMeasurementDate": "2026-07-15"
+        }
+      },
+      "lastUpdated": "2026-07-22T00:00:00.0"
+    }
+  }
+]

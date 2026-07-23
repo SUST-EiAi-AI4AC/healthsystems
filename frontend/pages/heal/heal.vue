@@ -423,7 +423,7 @@
 					</view>
 					<view v-else-if="historySessionList.length === 0" class="history-empty">
 						<text>暂无历史对话</text>
-						<text class="history-empty-hint">点击下方“保存当前对话”保存记录</text>
+						<text class="history-empty-hint">发送消息时将自动实时保存记录 🌸</text>
 					</view>
 					<view
 						v-for="s in historySessionList"
@@ -440,8 +440,8 @@
 					</view>
 				</scroll-view>
 				<view class="history-panel-footer">
-					<view class="history-save-btn" @click="saveCurrentSession">
-						<text>💾 保存当前对话</text>
+					<view class="history-autosave-tip">
+						<text>✨ 对话内容实时自动保存中</text>
 					</view>
 				</view>
 			</view>
@@ -593,18 +593,29 @@ export default {
 				// 文字转语音播放
 				this.playVoiceTTS(aiResponse);
 
-				// 如果当前已有保存的会话，自动将最新一问一答追加保存
-				if (this.currentSessionId) {
-					this.appendMessagesToSession([
+				// 实时自动创建/获取会话，并将最新一问一答追加保存至数据库
+				const sessionId = await this.ensureCurrentSession();
+				if (sessionId) {
+					await this.appendMessagesToSession([
 						{ role: 'user', content: text, msgType: 'text' },
 						{ role: 'ai', content: aiResponse, msgType: 'text' }
 					]);
 				}
 			} catch (error) {
 				console.error('AI 调用失败:', error);
+				const errorResponse = '抱歉，我现在有些不舒服，稍后再聊好吗？🌸';
 				this.chatMessages[thinkingMsgIndex].isThinking = false;
 				this.chatMessages[thinkingMsgIndex].isTyping = false;
-				this.chatMessages[thinkingMsgIndex].text = '抱歉，我现在有些不舒服，稍后再聊好吗？🌸';
+				this.chatMessages[thinkingMsgIndex].text = errorResponse;
+
+				// 即使 AI 调用出错，也实时保存记录
+				const sessionId = await this.ensureCurrentSession();
+				if (sessionId) {
+					await this.appendMessagesToSession([
+						{ role: 'user', content: text, msgType: 'text' },
+						{ role: 'ai', content: errorResponse, msgType: 'text' }
+					]);
+				}
 			} finally {
 				this.isSending = false;
 			}
@@ -882,6 +893,25 @@ export default {
 			}
 		},
 
+		// 确保当前存在有效会话，不存在则自动在后端创建新会话
+		async ensureCurrentSession() {
+			if (this.currentSessionId) {
+				return this.currentSessionId;
+			}
+			const token = this.getToken();
+			if (!token) return null;
+			try {
+				const createData = await this.uniRequest('POST', '/ai-chat/session/create', null);
+				if (createData && createData.code === 200 && createData.result) {
+					this.currentSessionId = createData.result;
+					return this.currentSessionId;
+				}
+			} catch (e) {
+				console.error('[AiChat] ensureCurrentSession error', e);
+			}
+			return null;
+		},
+
 		// 保存当前对话：先创建会话，再批量写入消息
 		async saveCurrentSession() {
 			const token = this.getToken();
@@ -1087,16 +1117,26 @@ export default {
 					
 					// AI 对图片的回复
 					setTimeout(async () => {
+						let aiResponse = '';
 						try {
-							const aiResponse = await this.callMiniMaxAI('我分享了一张图片给你');
+							aiResponse = await this.callMiniMaxAI('我分享了一张图片给你');
 							this.chatMessages[thinkingMsgIndex].isThinking = false;
 							this.chatMessages[thinkingMsgIndex].isTyping = true;
 							this.chatMessages[thinkingMsgIndex].text = '';
 							await this.typewriterEffect(thinkingMsgIndex, aiResponse);
 						} catch (error) {
+							aiResponse = '我看到你分享的图片了 👀 有什么想说的吗？';
 							this.chatMessages[thinkingMsgIndex].isThinking = false;
 							this.chatMessages[thinkingMsgIndex].isTyping = false;
-							this.chatMessages[thinkingMsgIndex].text = '我看到你分享的图片了 👀 有什么想说的吗？';
+							this.chatMessages[thinkingMsgIndex].text = aiResponse;
+						}
+						// 实时保存图片聊天记录
+						const sessionId = await this.ensureCurrentSession();
+						if (sessionId) {
+							await this.appendMessagesToSession([
+								{ role: 'user', content: '[[图片]]', msgType: 'image' },
+								{ role: 'ai', content: aiResponse, msgType: 'text' }
+							]);
 						}
 						this.$nextTick(() => { this.scrollToBottom(); });
 					}, 600);
@@ -2947,5 +2987,18 @@ export default {
 }
 .history-save-btn:active {
 	opacity: 0.85;
+}
+.history-autosave-tip {
+	width: 100%;
+	padding: 10px 0;
+	background: rgba(102, 187, 106, 0.12);
+	color: #2e7d32;
+	border-radius: 14px;
+	text-align: center;
+	font-size: 0.88em;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 </style>

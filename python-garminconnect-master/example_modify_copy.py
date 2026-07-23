@@ -249,16 +249,16 @@ def get_unhandled_null_records(user_email: str) -> list:
 # -------------------------- 新增：命令行参数解析 --------------------------
 parser = argparse.ArgumentParser(description="Garmin Connect API 数据获取工具")
 parser.add_argument(
-    "--email", help="Garmin账号邮箱（优先于环境变量）", default="ccceee00011@163.com"
+    "--email", help="Garmin账号邮箱（优先于环境变量）", default="ccceee00022@163.com"
 )
 parser.add_argument(
-    "--password", help="Garmin账号密码（优先于环境变量）", default="Forest58312"
+    "--password", help="Garmin账号密码（优先于环境变量）", default="Abc123Abc123@"
 )
 parser.add_argument(
-    "--start-date", help="开始日期（格式：YYYY-MM-DD）", default="2025-12-27"
+    "--start-date", help="开始日期（格式：YYYY-MM-DD）", default="2026-07-14"
 )
 parser.add_argument(
-    "--end-date", help="结束日期（格式：YYYY-MM-DD）", default="2026-01-10"
+    "--end-date", help="结束日期（格式：YYYY-MM-DD）", default="2026-07-22"
 )
 parser.add_argument(
     "--option", help='操作选项（如"c"获取睡眠数据，"9"获取心率数据）', default="*"
