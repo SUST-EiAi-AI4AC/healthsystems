@@ -1,8 +1,7 @@
 # 💖健康关怀系统 (Health Care System)
-
 <div align="center">
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.3.4-green?logo=springboot&logoColor=white)](https://spring.io/) [![Vue.js](https://img.shields.io/badge/Vue.js-2.x-brightgreen?logo=vue.js&logoColor=white)](https://vuejs.org/) [![uni-app](https://img.shields.io/badge/uni--app-CrossPlatform-blue?logo=dcloud&logoColor=white)](https://uniapp.dcloud.net.cn/) [![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-blue?logo=mysql&logoColor=white)](https://www.mysql.com/) [![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?logo=python&logoColor=white)](https://www.python.org/) [![Layui](https://img.shields.io/badge/Layui-2.x-orange)](https://layui.dev/) [![Garmin](https://img.shields.io/badge/Garmin-Connect_API-lightblue?logo=garmin&logoColor=white)](https://connect.garmin.com/)
 
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.3.4-green?logo=springboot&logoColor=white)](https://spring.io/) [![Vue.js](https://img.shields.io/badge/Vue.js-2.x-brightgreen?logo=vue.js&logoColor=white)](https://vuejs.org/) [![uni-app](https://img.shields.io/badge/uni--app-CrossPlatform-blue?logo=dcloud&logoColor=white)](https://uniapp.dcloud.net.cn/) [![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-blue?logo=mysql&logoColor=white)](https://www.mysql.com/) [![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?logo=python&logoColor=white)](https://www.python.org/) [![Layui](https://img.shields.io/badge/Layui-2.x-orange)](https://layui.dev/) [![Garmin](https://img.shields.io/badge/Garmin-Connect_API-lightblue?logo=garmin&logoColor=white)](https://connect.garmin.com/)
 
 </div>
 
@@ -16,8 +15,8 @@
 4. 移动端：https://xiaoye66.lanzoum.com/iRh6S3qbcv9i
 5. 简介：健康关怀系统是一个集成了移动端跨平台 App /H5与 Web 管理后台的心理健康检测管理平台。系统旨在通过多维度的数据采集与分析，帮助用户自我调节并辅助医护人员更好地评估、管理患者的心理与生理健康状况。
 <img width="1280" height="1280" alt="b0ac4200a8fa87d1a3501441f06c91de" src="https://github.com/user-attachments/assets/06f21f7c-f63f-4191-8ad3-615af323a9e2" />
-<img width="1280" height="497" alt="image" src="https://github.com/user-attachments/assets/7fdd834c-ca96-457b-9f15-0bd98be9d6c4" />
 <img width="2531" height="1313" alt="image" src="https://github.com/user-attachments/assets/a96c1612-5160-45bd-817e-5d3346899e10" />
+
  ### ✨ 核心特性
 
 - **心理健康评估** - 支持 SDS、SAS、PSS、SCL-90、PSQI、OCEAN、MAIA-2、CD-RISC、IPAQ、PARS-3 等 10+ 种专业心理量表。
