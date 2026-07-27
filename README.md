@@ -28,7 +28,7 @@
 - **情绪瞬时评估 (EMA)** - 支持生态瞬时情绪评估（EMA），记录瞬时情绪变化并生成情绪分析图表。
 - **疗愈空间生态** - 集成 AI 对话、冥想音频引导、情绪日记与疗愈游戏，构建"评估-疗愈-追踪"的心理闭环。
 - **三维动态官网宣传页** - 提供专为平台设计、适配 PC 和移动端的 3D 官网宣传页 (`/welcome.html`)，包含炫酷的 3D 卡片轮播、ECharts 雷达图数据排版及平滑过渡动效，支持无缝跳转登录页。
-- **专业后台管理** - 提供基于 LayuiMini 的医生/管理员后台，支持用户管理、量表分析、HTP 绘画分析、AI 聊天分析、日记分析与综合健康报告查看。
+- **专业后台管理** - 提供基于 LayuiMini 的医生/管理员后台，支持用户管理、量表分析、HTP 绘画分析、AI 聊天分析、日记分析、综合健康报告查看以及 **Garmin数据分析 (94项全列指标智能评估、ECharts五维雷达图与针对性建议)**。
 - **消息推送系统** - 集成极光推送（JPush）与主流硬件厂商通道，支持健康数据填报、用药与量表提醒。
 - **自动化脚本支持** - 配备一键本地运行脚本 `run_backend.ps1` 和一键自动打包部署脚本 `deploy.ps1`。
 
@@ -285,6 +285,7 @@ healthsystem-backend6/healthsystem-backend/
 │               ├── table_user.html             # 用户管理
 │               ├── table_detail.html           # 用户量表填报详情
 │               ├── table_health.html           # 腕表生理数据分析
+│               ├── table_garmin_analysis.html  # Garmin 数据智能分析页 (新增)
 │               ├── table_htp.html              # HTP 房树人绘画分析页 (新增)
 │               ├── table_scale.html            # 7大心理量表分析页 (新增)
 │               ├── table_ai_chat.html          # AI 聊天会话管理与情感统计页 (新增)
@@ -939,6 +940,16 @@ crontab -e
 | `/healthReport/getDepressionStatistics`| GET | 获取报告中的抑郁风险统计分布 | 是 |
 | `/healthReport/getUserHealthDetail` | GET | 获取指定用户多维度雷达图数据与报告详情 | 是 |
 | `/healthReport/delete/{id}` | POST / DELETE | 删除指定综合健康报告 | 是 |
+
+##### 6. Garmin 数据分析接口 (`/garminAnalysis`)
+
+| 接口 | 方法 | 说明 | 认证 |
+|------|------|------|------|
+| `/garminAnalysis/list` | GET | 分页查询 Garmin 记录列表 (支持用户名/邮箱/日期/风险筛选) | 是 |
+| `/garminAnalysis/detail/{id}` | GET | 获取 Garmin 单条记录 94 项全列指标智能分析报告 | 是 |
+| `/garminAnalysis/statistics` | GET | 获取 Garmin 宏观统计指标 (均心率/睡眠/步数/电量) | 是 |
+| `/garminAnalysis/trend` | GET | 获取指定用户 Garmin 近 N 天历史趋势图表数据 | 是 |
+| `/garminAnalysis/delete/{id}` | POST / DELETE | 删除指定 Garmin 活动记录 | 是 |
 
 ### 💡 请求示例
 

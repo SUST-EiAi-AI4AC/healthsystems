@@ -815,8 +815,8 @@
 				}
 
 				http.get(`${config.baseUrl}/healthInfo/getCurrentDaySteps`, {
-						params: {
-							userName: token
+						headers: {
+							Authorization: token
 						}
 					})
 					.then((res) => {
@@ -851,8 +851,8 @@
 					return;
 				}
 				http.get(`${config.baseUrl}/healthInfo/getCurrentDayBodyBattery`, {
-						params: {
-							userName: token
+						headers: {
+							Authorization: token
 						}
 					})
 					.then((res) => {
@@ -888,8 +888,8 @@
 				}
 
 				http.get(`${config.baseUrl}/healthInfo/getCurrentDayStress`, {
-						params: {
-							userName: token
+						headers: {
+							Authorization: token
 						}
 					})
 					.then((res) => {
@@ -924,8 +924,8 @@
 				}
 
 				http.get(`${config.baseUrl}/healthInfo/getCurrentDaySpO2`, {
-						params: {
-							userName: token
+						headers: {
+							Authorization: token
 						}
 					})
 					.then((res) => {

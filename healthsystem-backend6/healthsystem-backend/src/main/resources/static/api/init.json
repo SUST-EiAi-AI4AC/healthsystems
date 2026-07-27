@@ -40,6 +40,12 @@
       "target": "_self"
     },
     {
+      "title": "Garmin数据分析",
+      "href": "page/table_garmin_analysis.html?v=1.0.0",
+      "icon": "fa fa-heartbeat",
+      "target": "_self"
+    },
+    {
       "title": "HTP房树人分析",
       "href": "page/table_htp.html?v=1.0.2",
       "icon": "fa fa-picture-o",

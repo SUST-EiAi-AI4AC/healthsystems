@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Garmin数据分析</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .stat-card-box {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .stat-card-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        .stat-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+        }
+        .stat-title { font-size: 13px; color: #8c92a4; margin-bottom: 4px; }
+        .stat-number { font-size: 24px; font-weight: 700; color: #2c3e50; }
+        .stat-unit { font-size: 12px; color: #a0a6b5; margin-left: 4px; }
+
+        /* Risk Badges */
+        .risk-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .risk-normal { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .risk-mild { background: linear-gradient(135deg, #f39c12, #d35400); }
+        .risk-moderate { background: linear-gradient(135deg, #e67e22, #e74c3c); }
+        .risk-severe { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+        /* Modal Styles */
+        .report-header-banner {
+            background: linear-gradient(135deg, #2b5876, #4e4376);
+            color: white;
+            padding: 24px 28px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .score-circle {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .score-num { font-size: 28px; font-weight: 800; line-height: 1; }
+        .score-lbl { font-size: 10px; opacity: 0.9; margin-top: 2px; }
+
+        .metric-grid-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 15px;
+        }
+        .metric-grid-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        .metric-item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 13px;
+        }
+        .metric-item-row:last-child { border-bottom: none; }
+        .metric-key { color: #64748b; }
+        .metric-val { font-weight: 600; color: #0f172a; }
+
+        .advice-item-card {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+        .advice-title { font-weight: 700; color: #15803d; font-size: 14px; margin-bottom: 4px; }
+        .advice-body { font-size: 13px; color: #334155; line-height: 1.6; }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <!-- 顶部宏观统计卡片组 -->
+        <div class="layui-row layui-col-space15" style="margin-bottom: 10px;">
+            <div class="layui-col-md2 layui-col-xs6">
+                <div class="stat-card-box">
+                    <div>
+                        <div class="stat-title">总分析天数</div>
+                        <span class="stat-number" id="stat-records">-</span><span class="stat-unit">天</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">📊</div>
+                </div>
+            </div>
+            <div class="layui-col-md2 layui-col-xs6">
+                <div class="stat-card-box">
+                    <div>
+                        <div class="stat-title">均静息心率</div>
+                        <span class="stat-number" id="stat-hr">-</span><span class="stat-unit">bpm</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">💖</div>
+                </div>
+            </div>
+            <div class="layui-col-md2 layui-col-xs6">
+                <div class="stat-card-box">
+                    <div>
+                        <div class="stat-title">均睡眠时长</div>
+                        <span class="stat-number" id="stat-sleep">-</span><span class="stat-unit">小时</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">😴</div>
+                </div>
+            </div>
+            <div class="layui-col-md2 layui-col-xs6">
+                <div class="stat-card-box">
+                    <div>
+                        <div class="stat-title">均每日步数</div>
+                        <span class="stat-number" id="stat-steps">-</span><span class="stat-unit">步</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #10b981, #047857);">🏃</div>
+                </div>
+            </div>
+            <div class="layui-col-md2 layui-col-xs6">
+                <div class="stat-card-box">
+                    <div>
+                        <div class="stat-title">均全天压力</div>
+                        <span class="stat-number" id="stat-stress">-</span><span class="stat-unit">分</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #f59e0b, #b45309);">🧘</div>
+                </div>
+            </div>
+            <div class="layui-col-md2 layui-col-xs6">
+                <div class="stat-card-box">
+                    <div>
+                        <div class="stat-title">均电量恢复</div>
+                        <span class="stat-number" id="stat-battery">-</span><span class="stat-unit">分</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #06b6d4, #0e7490);">⚡</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <fieldset class="table-search-fieldset">
+            <legend>搜索筛选</legend>
+            <div style="margin: 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户名/邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="username" autocomplete="off" class="layui-input" placeholder="输入姓名或邮箱">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">开始日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="startDate" id="startDate" autocomplete="off" class="layui-input" placeholder="yyyy-MM-dd">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">结束日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="endDate" id="endDate" autocomplete="off" class="layui-input" placeholder="yyyy-MM-dd">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">健康状态</label>
+                            <div class="layui-input-inline">
+                                <select name="riskLevel">
+                                    <option value="">全部状态</option>
+                                    <option value="normal">正常 (85-100分)</option>
+                                    <option value="mild">良好 (70-84分)</option>
+                                    <option value="moderate">中度警示 (55-69分)</option>
+                                    <option value="severe">重度预警 (&lt;55分)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn">
+                                <i class="layui-icon"></i> 搜 索
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <!-- 数据表格 -->
+        <table class="layui-hide" id="garminTable" lay-filter="garminTable"></table>
+
+        <!-- 表格行操作栏 -->
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="analyze">
+                <i class="layui-icon">&#xe62c;</i> 智能分析报告
+            </a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">
+                <i class="layui-icon">&#xe640;</i> 删除
+            </a>
+        </script>
+
+    </div>
+</div>
+
+<!-- 智能分析报告 Modal 模态框 -->
+<div id="analysisModal" style="display: none; padding: 24px; background: #ffffff;">
+    <!-- 头部 Badge Banner -->
+    <div class="report-header-banner">
+        <div>
+            <h2 style="font-size: 22px; font-weight: 700; margin: 0 0 6px 0;" id="rpt-user-title">Garmin 生理健康智能评估报告</h2>
+            <div style="font-size: 13px; opacity: 0.9;" id="rpt-subtitle">采集时间: - | 数据提供: Garmin Connect Cloud</div>
+        </div>
+        <div class="score-circle">
+            <span class="score-num" id="rpt-score">-</span>
+            <span class="score-lbl" id="rpt-status">评估中</span>
+        </div>
+    </div>
+
+    <!-- 可视化图表区 (雷达图 + 7日趋势图) -->
+    <div class="layui-row layui-col-space15" style="margin-bottom: 20px;">
+        <div class="layui-col-md5">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; height: 320px;">
+                <h4 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 600; color: #334155;">🕸️ 生理维度诊断雷达图</h4>
+                <div id="radarChart" style="width: 100%; height: 260px;"></div>
+            </div>
+        </div>
+        <div class="layui-col-md7">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; height: 320px;">
+                <h4 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 600; color: #334155;">📈 7日心率与压力动态趋势曲线</h4>
+                <div id="trendChart" style="width: 100%; height: 260px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 关键指标四宫格卡片 -->
+    <div class="layui-row layui-col-space15" style="margin-bottom: 20px;">
+        <div class="layui-col-md3">
+            <div class="metric-grid-card">
+                <div class="metric-grid-title">💖 心率与心脏负荷</div>
+                <div class="metric-item-row"><span class="metric-key">静息心率</span><span class="metric-val" id="m-resting-hr">-</span></div>
+                <div class="metric-item-row"><span class="metric-key">最高心率</span><span class="metric-val" id="m-max-hr">-</span></div>
+                <div class="metric-item-row"><span class="metric-key">7日平均静息</span><span class="metric-val" id="m-avg7-hr">-</span></div>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="metric-grid-card">
+                <div class="metric-grid-title">😴 睡眠与精力恢复</div>
+                <div class="metric-item-row"><span class="metric-key">睡眠总时长</span><span class="metric-val" id="m-sleep-hrs">-</span></div>
+                <div class="metric-item-row"><span class="metric-key">Body Battery 充能</span><span class="metric-val" id="m-battery-charge">-</span></div>
+                <div class="metric-item-row"><span class="metric-key">Body Battery 消耗</span><span class="metric-val" id="m-battery-drain">-</span></div>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="metric-grid-card">
+                <div class="metric-grid-title">🏃 运动步数与卡路里</div>
+                <div class="metric-item-row"><span class="metric-key">全天总步数</span><span class="metric-val" id="m-steps">-</span></div>
+                <div class="metric-item-row"><span class="metric-key">活动卡路里</span><span class="metric-val" id="m-active-cal">-</span></div>
+                <div class="metric-item-row"><span class="metric-key">基础代谢(BMR)</span><span class="metric-val" id="m-bmr-cal">-</span></div>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="metric-grid-card">
+                <div class="metric-grid-title">🧘 压力与血氧监护</div>
+                <div class="metric-item-row"><span class="metric-key">平均压力指数</span><span class="metric-val" id="m-stress">-</span></div>
+                <div class="metric-item-row"><span class="metric-key">平均血氧 SpO2</span><span class="metric-val" id="m-spo2">-</span></div>
+                <div class="metric-item-row"><span class="metric-key">醒来呼吸速率</span><span class="metric-val" id="m-respiration">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 针对性健康反馈与建议 -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px;">
+        <h3 style="margin: 0 0 14px 0; font-size: 16px; font-weight: 700; color: #0f172a; display: flex; align-items: center;">
+            💡 针对性生理改善反馈与专家建议
+        </h3>
+        <div id="advice-list-container">
+            <!-- 动态渲染建议卡片 -->
+        </div>
+    </div>
+</div>
+
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/js/myjs/myscript.js"></script>
+
+<script>
+layui.use(['form', 'table', 'laydate', 'layer'], function () {
+    var $ = layui.jquery,
+        form = layui.form,
+        table = layui.table,
+        laydate = layui.laydate,
+        layer = layui.layer;
+
+    var token = getToken();
+    if (!token) reLoginForShiroExecption();
+
+    // 初始化日期控件
+    laydate.render({ elem: '#startDate' });
+    laydate.render({ elem: '#endDate' });
+
+    // 加载宏观统计指标
+    loadGlobalStatistics();
+
+    function loadGlobalStatistics() {
+        $.ajax({
+            url: '/garminAnalysis/statistics',
+            type: 'GET',
+            headers: { Authorization: token },
+            success: function (res) {
+                if (res.code === 200 && res.result) {
+                    $('#stat-records').text(res.result.totalRecords || 0);
+                    $('#stat-hr').text(res.result.avgRestingHR || '-');
+                    $('#stat-sleep').text(res.result.avgSleepHours || '-');
+                    $('#stat-steps').text(res.result.avgSteps || '-');
+                    $('#stat-stress').text(res.result.avgStress || '-');
+                    $('#stat-battery').text(res.result.avgBodyBatteryCharge || '-');
+                }
+            }
+        });
+    }
+
+    // 渲染表格
+    var tableIns = table.render({
+        elem: '#garminTable',
+        url: '/garminAnalysis/list',
+        method: 'GET',
+        headers: { Authorization: token },
+        page: true,
+        limits: [10, 15, 20, 30, 50],
+        limit: 15,
+        request: { pageName: 'currentPage', limitName: 'pageSize' },
+        parseData: function (res) {
+            if (res.code === 401) return { code: res.code, msg: res.message };
+            return {
+                code: res.code === 200 ? 0 : res.code,
+                msg: res.message,
+                count: res.result ? res.result.pageInfo.totalNumber : 0,
+                data: res.result ? res.result.data : []
+            };
+        },
+        cols: [[
+            { type: 'checkbox', fixed: 'left' },
+            { field: 'realName', title: '姓名/用户', width: 120, fixed: 'left' },
+            { field: 'email', title: '佳明账号邮箱', width: 180 },
+            { field: 'calendarDate', title: '数据采集日期', width: 140, sort: true, templet: function(d){ return d.calendarDate ? d.calendarDate.substring(0,10) : '-'; } },
+            { field: 'healthScore', title: '健康得分', width: 100, sort: true, templet: function(d){
+                return '<strong style="font-size:14px; color:#2563eb;">' + (d.healthScore || 0) + ' 分</strong>';
+            }},
+            { field: 'riskLabel', title: '评估状态', width: 140, templet: function(d){
+                return '<span class="risk-badge ' + (d.riskBadgeClass || 'risk-normal') + '">' + (d.riskLabel || '正常') + '</span>';
+            }},
+            { field: 'restingHRStr', title: '静息心率', width: 105 },
+            { field: 'sleepHoursStr', title: '睡眠时长', width: 110 },
+            { field: 'totalStepsStr', title: '步数', width: 110, sort: true },
+            { field: 'avgStressStr', title: '平均压力', width: 100 },
+            { field: 'avgSpo2Str', title: '平均血氧', width: 100 },
+            { title: '操作', width: 180, align: 'center', fixed: 'right', toolbar: '#barDemo' }
+        ]]
+    });
+
+    // 搜索按钮提交
+    form.on('submit(data-search-btn)', function (data) {
+        tableIns.reload({
+            where: data.field,
+            page: { curr: 1 }
+        });
+        return false;
+    });
+
+    // 表格工具条事件监听
+    table.on('tool(garminTable)', function (obj) {
+        var data = obj.data;
+        if (obj.event === 'analyze') {
+            openAnalysisReport(data.id);
+        } else if (obj.event === 'del') {
+            layer.confirm('确定删除该条 Garmin 生理记录吗？', function (index) {
+                $.ajax({
+                    url: '/garminAnalysis/delete/' + data.id,
+                    type: 'POST',
+                    headers: { Authorization: token },
+                    success: function (res) {
+                        if (res.code === 200) {
+                            layer.msg('删除成功', { icon: 1 });
+                            obj.del();
+                            loadGlobalStatistics();
+                        } else {
+                            layer.msg(res.message || '删除失败', { icon: 2 });
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
+    });
+
+    // 打开智能分析报告模态框
+    function openAnalysisReport(id) {
+        layer.load(1);
+        $.ajax({
+            url: '/garminAnalysis/detail/' + id,
+            type: 'GET',
+            headers: { Authorization: token },
+            success: function (res) {
+                layer.closeAll('loading');
+                if (res.code === 200 && res.result) {
+                    renderModalContent(res.result);
+                    layer.open({
+                        type: 1,
+                        title: false,
+                        closeBtn: 1,
+                        area: ['920px', '88vh'],
+                        shadeClose: true,
+                        content: $('#analysisModal'),
+                        success: function () {
+                            // 延时初始化 ECharts 图表，确保 DOM 容器尺寸可用
+                            setTimeout(function () {
+                                initRadarChart(res.result.analysis.radarMetrics);
+                                initTrendChart(res.result.recentTrends);
+                            }, 200);
+                        }
+                    });
+                } else {
+                    layer.msg(res.message || '加载报告数据失败', { icon: 2 });
+                }
+            },
+            error: function () {
+                layer.closeAll('loading');
+                layer.msg('网络网络异常，请重试', { icon: 2 });
+            }
+        });
+    }
+
+    function renderModalContent(data) {
+        var a = data.analysis || {};
+        var name = data.realName || data.userName || '用户';
+        var dateStr = data.calendarDate ? data.calendarDate.substring(0,10) : '';
+
+        $('#rpt-user-title').text(name + ' 的 Garmin 生理健康智能分析报告');
+        $('#rpt-subtitle').text('采集日期: ' + dateStr + ' | 账号: ' + (data.email || '未绑定'));
+        $('#rpt-score').text(a.healthScore || '-');
+        $('#rpt-status').text(a.riskLabel ? a.riskLabel.split(' ')[0] : '评估完成');
+
+        // 四宫格指标数据填充
+        $('#m-resting-hr').text((a.restingHR || '-') + ' bpm');
+        $('#m-max-hr').text((a.maxHR || '-') + ' bpm');
+        $('#m-avg7-hr').text(data.lastSevenDaysAvgRestingHeartRate ? (data.lastSevenDaysAvgRestingHeartRate + ' bpm') : '-');
+
+        $('#m-sleep-hrs').text((a.sleepHours || '-') + ' 小时');
+        $('#m-battery-charge').text('+' + (a.batteryCharged || '0') + ' 分');
+        $('#m-battery-drain').text('-' + (a.batteryDrained || '0') + ' 分');
+
+        $('#m-steps').text((a.totalSteps || '-') + ' 步');
+        $('#m-active-cal').text((data.activeKilocalories || '-') + ' kcal');
+        $('#m-bmr-cal').text((data.bmrKilocalories || '-') + ' kcal');
+
+        $('#m-stress').text((a.avgStress || '-') + ' / 100');
+        $('#m-spo2').text((a.avgSpo2 || '-') + ' %');
+        $('#m-respiration').text((a.wakingRespiration || '-') + ' 次/分');
+
+        // 针对性建议卡片组渲染
+        var adviceHtml = '';
+        var list = a.recommendations || [];
+        if (list.length === 0) {
+            adviceHtml = '<div style="color:#94a3b8;">暂无额外调整建议，各项生理指标均表现极佳！</div>';
+        } else {
+            list.forEach(function (item) {
+                adviceHtml += '<div class="advice-item-card">';
+                adviceHtml += '<div class="advice-title">' + item.title + '</div>';
+                adviceHtml += '<div class="advice-body">' + item.content + '</div>';
+                adviceHtml += '</div>';
+            });
+        }
+        $('#advice-list-container').html(adviceHtml);
+    }
+
+    // 初始化 ECharts 五维诊断雷达图
+    function initRadarChart(metrics) {
+        metrics = metrics || {};
+        var chartDom = document.getElementById('radarChart');
+        var myChart = echarts.init(chartDom);
+        var option = {
+            tooltip: { trigger: 'item' },
+            radar: {
+                indicator: [
+                    { name: '心率负荷', max: 100 },
+                    { name: '睡眠恢复', max: 100 },
+                    { name: '运动量', max: 100 },
+                    { name: '压力控制', max: 100 },
+                    { name: '电量恢复', max: 100 },
+                    { name: '血氧饱合', max: 100 }
+                ],
+                radius: '65%',
+                splitNumber: 4,
+                axisName: { color: '#475569', fontSize: 11 }
+            },
+            series: [{
+                name: '生理指标综合评分',
+                type: 'radar',
+                data: [{
+                    value: [
+                        metrics.heartRateScore || 80,
+                        metrics.sleepScore || 80,
+                        metrics.activityScore || 70,
+                        metrics.stressScore || 85,
+                        metrics.batteryScore || 75,
+                        metrics.spo2Score || 95
+                    ],
+                    name: '得分维度',
+                    areaStyle: { color: 'rgba(59, 130, 246, 0.25)' },
+                    lineStyle: { color: '#3b82f6', width: 2 },
+                    itemStyle: { color: '#2563eb' }
+                }]
+            }]
+        };
+        myChart.setOption(option);
+    }
+
+    // 初始化 ECharts 7日双轴趋势图
+    function initTrendChart(trend) {
+        trend = trend || {};
+        var dates = trend.dates || ['-'];
+        var hrList = trend.heartRates || [0];
+        var stressList = trend.stressLevels || [0];
+
+        var chartDom = document.getElementById('trendChart');
+        var myChart = echarts.init(chartDom);
+        var option = {
+            tooltip: { trigger: 'axis' },
+            legend: { data: ['静息心率(bpm)', '平均压力(分)'], top: 0 },
+            grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+            xAxis: { type: 'category', boundaryGap: false, data: dates },
+            yAxis: [
+                { type: 'value', name: '心率', min: 40, max: 120 },
+                { type: 'value', name: '压力', min: 0, max: 100 }
+            ],
+            series: [
+                {
+                    name: '静息心率(bpm)',
+                    type: 'line',
+                    smooth: true,
+                    data: hrList,
+                    lineStyle: { color: '#ef4444', width: 2.5 },
+                    itemStyle: { color: '#ef4444' }
+                },
+                {
+                    name: '平均压力(分)',
+                    type: 'line',
+                    smooth: true,
+                    yAxisIndex: 1,
+                    data: stressList,
+                    lineStyle: { color: '#f59e0b', width: 2.5 },
+                    itemStyle: { color: '#f59e0b' }
+                }
+            ]
+        };
+        myChart.setOption(option);
+    }
+});
+</script>
+</body>
+</html>

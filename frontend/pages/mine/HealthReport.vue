@@ -652,10 +652,10 @@
 					const [hrRes, sleepRes, stepsRes, batteryRes, stressRes, spo2Res] = await Promise.allSettled([
 						http.get(`${config.baseUrl}/healthInfo/getCurrentDayHeartrate`, { headers: { Authorization: token } }),
 						http.get(`${config.baseUrl}/healthInfo/getCurrentDaySleep`, { headers: { Authorization: token } }),
-						http.get(`${config.baseUrl}/healthInfo/getCurrentDaySteps`, { params: { userName: token } }),
-						http.get(`${config.baseUrl}/healthInfo/getCurrentDayBodyBattery`, { params: { userName: token } }),
-						http.get(`${config.baseUrl}/healthInfo/getCurrentDayStress`, { params: { userName: token } }),
-						http.get(`${config.baseUrl}/healthInfo/getCurrentDaySpO2`, { params: { userName: token } })
+						http.get(`${config.baseUrl}/healthInfo/getCurrentDaySteps`, { headers: { Authorization: token } }),
+						http.get(`${config.baseUrl}/healthInfo/getCurrentDayBodyBattery`, { headers: { Authorization: token } }),
+						http.get(`${config.baseUrl}/healthInfo/getCurrentDayStress`, { headers: { Authorization: token } }),
+						http.get(`${config.baseUrl}/healthInfo/getCurrentDaySpO2`, { headers: { Authorization: token } })
 					])
 					let hasAny = false
 					const pick = (res, fn) => { if (res.status === 'fulfilled' && res.value && res.value.code === 200) { const v = fn(res.value.result || {}); if (v != null && v !== '--') return v } return null }
