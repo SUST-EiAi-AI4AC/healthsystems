@@ -144,7 +144,7 @@
 
         // 初始化LayuiMIni
         var options = {
-            iniUrl: "../api/init.json",    // 初始化接口
+            iniUrl: "../api/init.json?v=" + new Date().getTime(),    // 初始化接口 (带防缓存时间戳)
             clearUrl: "../api/clear.json", // 缓存清理接口
             urlHashLocation: true,      // 是否打开hash定位
             bgColorDefault: false,      // 主题默认配置

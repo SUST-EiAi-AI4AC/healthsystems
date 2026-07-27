@@ -411,12 +411,21 @@ layui.use(['form', 'table', 'laydate', 'layer'], function () {
     // 表格工具条事件监听
     table.on('tool(garminTable)', function (obj) {
         var data = obj.data;
+        var rowId = data.id || data.ID;
         if (obj.event === 'analyze') {
-            openAnalysisReport(data.id);
+            if (!rowId) {
+                layer.msg('未获取到有效记录 ID', { icon: 2 });
+                return;
+            }
+            openAnalysisReport(rowId);
         } else if (obj.event === 'del') {
+            if (!rowId) {
+                layer.msg('未获取到有效记录 ID', { icon: 2 });
+                return;
+            }
             layer.confirm('确定删除该条 Garmin 生理记录吗？', function (index) {
                 $.ajax({
-                    url: '/garminAnalysis/delete/' + data.id,
+                    url: '/garminAnalysis/delete/' + rowId,
                     type: 'POST',
                     headers: { Authorization: token },
                     success: function (res) {
@@ -427,6 +436,13 @@ layui.use(['form', 'table', 'laydate', 'layer'], function () {
                         } else {
                             layer.msg(res.message || '删除失败', { icon: 2 });
                         }
+                    },
+                    error: function (xhr) {
+                        var errMsg = '删除请求失败';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errMsg = xhr.responseJSON.message;
+                        }
+                        layer.msg(errMsg, { icon: 2 });
                     }
                 });
                 layer.close(index);
@@ -455,18 +471,32 @@ layui.use(['form', 'table', 'laydate', 'layer'], function () {
                         success: function () {
                             // 延时初始化 ECharts 图表，确保 DOM 容器尺寸可用
                             setTimeout(function () {
-                                initRadarChart(res.result.analysis.radarMetrics);
-                                initTrendChart(res.result.recentTrends);
+                                var analysisObj = res.result.analysis || {};
+                                initRadarChart(analysisObj.radarMetrics || {});
+                                initTrendChart(res.result.recentTrends || {});
                             }, 200);
                         }
                     });
                 } else {
-                    layer.msg(res.message || '加载报告数据失败', { icon: 2 });
+                    var errMsg = res.message || '加载报告数据失败';
+                    if (res.result && typeof res.result === 'string') {
+                        errMsg += ' (' + res.result + ')';
+                    }
+                    console.error('Garmin Analysis Detail Error:', res);
+                    layer.msg(errMsg, { icon: 2 });
                 }
             },
-            error: function () {
+            error: function (xhr) {
                 layer.closeAll('loading');
-                layer.msg('网络网络异常，请重试', { icon: 2 });
+                var errMsg = '请求服务端接口异常';
+                if (xhr.responseJSON) {
+                    errMsg = xhr.responseJSON.message || xhr.responseJSON.error || errMsg;
+                    if (xhr.responseJSON.result && typeof xhr.responseJSON.result === 'string') {
+                        errMsg += ' (' + xhr.responseJSON.result + ')';
+                    }
+                }
+                console.error('Garmin Analysis XHR Error:', xhr);
+                layer.msg(errMsg, { icon: 2 });
             }
         });
     }

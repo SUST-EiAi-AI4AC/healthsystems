@@ -30,6 +30,14 @@ public class GarminAnalysisService {
             List<Map<String, Object>> processedList = new ArrayList<>();
             for (Map<String, Object> row : rawList) {
                 Map<String, Object> item = new HashMap<>(row);
+                // 规范化字段名
+                Object rowId = getCaseVal(row, "id");
+                item.put("id", rowId);
+                item.put("realName", getCaseVal(row, "realName"));
+                item.put("userName", getCaseVal(row, "userName"));
+                item.put("email", getCaseVal(row, "email"));
+                item.put("calendarDate", getCaseVal(row, "calendarDate"));
+
                 // 计算健康得分与风险等级
                 Map<String, Object> eval = evaluatePhysiologicalData(row);
                 item.put("healthScore", eval.get("healthScore"));
@@ -38,11 +46,11 @@ public class GarminAnalysisService {
                 item.put("riskBadgeClass", eval.get("riskBadgeClass"));
                 
                 // 格式化输出
-                item.put("sleepHoursStr", formatSleepHours(row.get("sleepingSeconds")));
-                item.put("totalStepsStr", formatValue(row.get("totalSteps"), "步"));
-                item.put("restingHRStr", formatValue(row.get("restingHeartRate"), "bpm"));
-                item.put("avgStressStr", formatValue(row.get("averageStressLevel"), ""));
-                item.put("avgSpo2Str", formatValue(row.get("averageSpo2"), "%"));
+                item.put("sleepHoursStr", formatSleepHours(getCaseVal(row, "sleepingSeconds")));
+                item.put("totalStepsStr", formatValue(getCaseVal(row, "totalSteps"), "步"));
+                item.put("restingHRStr", formatValue(getCaseVal(row, "restingHeartRate"), "bpm"));
+                item.put("avgStressStr", formatValue(getCaseVal(row, "averageStressLevel"), ""));
+                item.put("avgSpo2Str", formatValue(getCaseVal(row, "averageSpo2"), "%"));
 
                 processedList.add(item);
             }
@@ -76,6 +84,9 @@ public class GarminAnalysisService {
      */
     public Response getGarminDetail(Long id) {
         try {
+            if (id == null) {
+                return Response.fail("请求参数 id 不能为空");
+            }
             Map<String, Object> row = garminActivityMapper.selectActivityById(id);
             if (row == null) {
                 return Response.fail("未找到指定记录 ID: " + id);
@@ -83,15 +94,26 @@ public class GarminAnalysisService {
 
             Map<String, Object> eval = evaluatePhysiologicalData(row);
             Map<String, Object> detailResult = new HashMap<>(row);
+            detailResult.put("id", getCaseVal(row, "id"));
+            detailResult.put("realName", getCaseVal(row, "realName"));
+            detailResult.put("userName", getCaseVal(row, "userName"));
+            detailResult.put("email", getCaseVal(row, "email"));
+            detailResult.put("calendarDate", getCaseVal(row, "calendarDate"));
+            detailResult.put("lastSevenDaysAvgRestingHeartRate", getCaseVal(row, "lastSevenDaysAvgRestingHeartRate"));
+            detailResult.put("activeKilocalories", getCaseVal(row, "activeKilocalories"));
+            detailResult.put("bmrKilocalories", getCaseVal(row, "bmrKilocalories"));
             detailResult.put("analysis", eval);
 
             // 附带获取该用户近7天的历史趋势数据
-            String email = (String) row.get("email");
-            if (email != null && !email.isEmpty()) {
-                List<Map<String, Object>> recentRows = garminActivityMapper.selectUserRecentActivity(email, 7);
-                // 翻转按时间顺序排列
+            Object emailObj = getCaseVal(row, "email");
+            String email = emailObj != null ? emailObj.toString() : null;
+            if (email != null && !email.trim().isEmpty()) {
+                List<Map<String, Object>> recentRaw = garminActivityMapper.selectUserRecentActivity(email, 7);
+                List<Map<String, Object>> recentRows = new ArrayList<>(recentRaw != null ? recentRaw : Collections.emptyList());
                 Collections.reverse(recentRows);
                 detailResult.put("recentTrends", formatRecentTrends(recentRows));
+            } else {
+                detailResult.put("recentTrends", formatRecentTrends(Collections.emptyList()));
             }
 
             return Response.success(detailResult);
@@ -111,20 +133,20 @@ public class GarminAnalysisService {
                 stats = new HashMap<>();
             }
             // 格式化处理
-            double avgHR = parseDouble(stats.get("avgRestingHR"), 68.5);
-            double avgSleep = parseDouble(stats.get("avgSleepHours"), 7.2);
-            double avgSteps = parseDouble(stats.get("avgSteps"), 8450);
-            double avgStress = parseDouble(stats.get("avgStress"), 32.0);
-            double avgBattery = parseDouble(stats.get("avgBodyBatteryCharge"), 65.0);
+            double avgHR = parseDouble(getCaseVal(stats, "avgRestingHR"), 68.5);
+            double avgSleep = parseDouble(getCaseVal(stats, "avgSleepHours"), 7.2);
+            double avgSteps = parseDouble(getCaseVal(stats, "avgSteps"), 8450);
+            double avgStress = parseDouble(getCaseVal(stats, "avgStress"), 32.0);
+            double avgBattery = parseDouble(getCaseVal(stats, "avgBodyBatteryCharge"), 65.0);
 
             Map<String, Object> formattedStats = new HashMap<>();
             formattedStats.put("totalRecords", stats.getOrDefault("totalRecords", 0));
             formattedStats.put("totalUsers", stats.getOrDefault("totalUsers", 0));
-            formattedStats.put("avgRestingHR", df1.format(avgHR));
-            formattedStats.put("avgSleepHours", df1.format(avgSleep));
-            formattedStats.put("avgSteps", df0.format(avgSteps));
-            formattedStats.put("avgStress", df1.format(avgStress));
-            formattedStats.put("avgBodyBatteryCharge", df0.format(avgBattery));
+            formattedStats.put("avgRestingHR", formatDecimal(avgHR, "0.0"));
+            formattedStats.put("avgSleepHours", formatDecimal(avgSleep, "0.0"));
+            formattedStats.put("avgSteps", formatDecimal(avgSteps, "0"));
+            formattedStats.put("avgStress", formatDecimal(avgStress, "0.0"));
+            formattedStats.put("avgBodyBatteryCharge", formatDecimal(avgBattery, "0"));
 
             return Response.success(formattedStats);
         } catch (Exception e) {
@@ -172,20 +194,20 @@ public class GarminAnalysisService {
         Map<String, Object> eval = new HashMap<>();
 
         // 提取主要指标
-        double restingHR = parseDouble(row.get("restingHeartRate"), 65.0);
-        double maxHR = parseDouble(row.get("maxHeartRate"), 120.0);
-        double sleepSec = parseDouble(row.get("sleepingSeconds"), 25200.0); // 默认7小时
+        double restingHR = parseDouble(getCaseVal(row, "restingHeartRate"), 65.0);
+        double maxHR = parseDouble(getCaseVal(row, "maxHeartRate"), 120.0);
+        double sleepSec = parseDouble(getCaseVal(row, "sleepingSeconds"), 25200.0); // 默认7小时
         double sleepHours = sleepSec / 3600.0;
-        double steps = parseDouble(row.get("totalSteps"), 8000.0);
-        double stress = parseDouble(row.get("averageStressLevel"), 30.0);
-        double spo2 = parseDouble(row.get("averageSpo2"), 97.0);
-        double batteryCharged = parseDouble(row.get("bodyBatteryChargedValue"), 60.0);
-        double batteryDrained = parseDouble(row.get("bodyBatteryDrainedValue"), 55.0);
-        double respiration = parseDouble(row.get("avgWakingRespirationValue"), 15.0);
+        double steps = parseDouble(getCaseVal(row, "totalSteps"), 8000.0);
+        double stress = parseDouble(getCaseVal(row, "averageStressLevel"), 30.0);
+        double spo2 = parseDouble(getCaseVal(row, "averageSpo2"), 97.0);
+        double batteryCharged = parseDouble(getCaseVal(row, "bodyBatteryChargedValue"), 60.0);
+        double batteryDrained = parseDouble(getCaseVal(row, "bodyBatteryDrainedValue"), 55.0);
+        double respiration = parseDouble(getCaseVal(row, "avgWakingRespirationValue"), 15.0);
 
         // 1. 心率维度得分 (0-100)
         double hrScore = 100.0;
-        if (restingHR < 50) hrScore = 95; // 可能是运动员或心率偏低
+        if (restingHR < 50) hrScore = 95;
         else if (restingHR <= 72) hrScore = 100;
         else if (restingHR <= 85) hrScore = 82;
         else if (restingHR <= 95) hrScore = 65;
@@ -262,30 +284,30 @@ public class GarminAnalysisService {
 
         // 睡眠建议
         if (sleepHours < 6.5) {
-            recommendations.add(createAdvise("😴 睡眠调理", "昨日睡眠时长不足" + df1.format(sleepHours) + "小时。建议今晚提早30分钟入睡，避免睡前使用高亮电子屏幕，促进深睡眠恢复。"));
+            recommendations.add(createAdvise("😴 睡眠调理", "昨日睡眠时长不足" + formatDecimal(sleepHours, "0.0") + "小时。建议今晚提早30分钟入睡，避免睡前使用高亮电子屏幕，促进深睡眠恢复。"));
         } else {
-            recommendations.add(createAdvise("😴 睡眠调理", "睡眠时长达到" + df1.format(sleepHours) + "小时，节律良好！请继续保持规律作息。"));
+            recommendations.add(createAdvise("😴 睡眠调理", "睡眠时长达到" + formatDecimal(sleepHours, "0.0") + "小时，节律良好！请继续保持规律作息。"));
         }
 
         // 压力与电量建议
         if (stress > 45 || batteryCharged < 40) {
-            recommendations.add(createAdvise("⚡ 能量与压力调节", "检测到平均压力指数达" + df0.format(stress) + "，电量仅恢复" + df0.format(batteryCharged) + "分。建议下午进行15分钟冥想腹式呼吸，减缓交感神经兴奋。"));
+            recommendations.add(createAdvise("⚡ 能量与压力调节", "检测到平均压力指数达" + formatDecimal(stress, "0") + "，电量仅恢复" + formatDecimal(batteryCharged, "0") + "分。建议下午进行15分钟冥想腹式呼吸，减缓交感神经兴奋。"));
         } else {
-            recommendations.add(createAdvise("🧘 压力控制", "全天压力控制良好（平均" + df0.format(stress) + "），身心处于健康平衡状态。"));
+            recommendations.add(createAdvise("🧘 压力控制", "全天压力控制良好（平均" + formatDecimal(stress, "0") + "），身心处于健康平衡状态。"));
         }
 
         // 运动建议
         if (steps < 6000) {
-            recommendations.add(createAdvise("🏃 运动与代谢", "昨日步数" + df0.format(steps) + "步，尚未达到基础健康活动量。建议饭后散步20-30分钟，改善心肺血液循环。"));
+            recommendations.add(createAdvise("🏃 运动与代谢", "昨日步数" + formatDecimal(steps, "0") + "步，尚未达到基础健康活动量。建议饭后散步20-30分钟，改善心肺血液循环。"));
         } else {
-            recommendations.add(createAdvise("🏃 运动与代谢", "昨日总步数" + df0.format(steps) + "步，活动量达标！建议保持有氧运动与肌肉力量训练相结合。"));
+            recommendations.add(createAdvise("🏃 运动与代谢", "昨日总步数" + formatDecimal(steps, "0") + "步，活动量达标！建议保持有氧运动与肌肉力量训练相结合。"));
         }
 
         // 心率与血氧建议
         if (restingHR > 80 || spo2 < 95) {
-            recommendations.add(createAdvise("💖 心血管与血氧监护", "静息心率偏高(" + df0.format(restingHR) + " bpm)或血氧均值(" + df1.format(spo2) + "%)稍低。注意补水与室内通风，必要时排查疲劳或感染。"));
+            recommendations.add(createAdvise("💖 心血管与血氧监护", "静息心率偏高(" + formatDecimal(restingHR, "0") + " bpm)或血氧均值(" + formatDecimal(spo2, "0.0") + "%)稍低。注意补水与室内通风，必要时排查疲劳或感染。"));
         } else {
-            recommendations.add(createAdvise("💖 心血管与血氧监护", "静息心率(" + df0.format(restingHR) + " bpm)与血氧(" + df1.format(spo2) + "%)指标非常健康，心脏泵血效率优异。"));
+            recommendations.add(createAdvise("💖 心血管与血氧监护", "静息心率(" + formatDecimal(restingHR, "0") + " bpm)与血氧(" + formatDecimal(spo2, "0.0") + "%)指标非常健康，心脏泵血效率优异。"));
         }
 
         eval.put("healthScore", finalScore);
@@ -294,15 +316,15 @@ public class GarminAnalysisService {
         eval.put("riskBadgeClass", riskBadgeClass);
         eval.put("radarMetrics", radarMetrics);
         eval.put("recommendations", recommendations);
-        eval.put("restingHR", df0.format(restingHR));
-        eval.put("maxHR", df0.format(maxHR));
-        eval.put("sleepHours", df1.format(sleepHours));
-        eval.put("totalSteps", df0.format(steps));
-        eval.put("avgStress", df0.format(stress));
-        eval.put("avgSpo2", df1.format(spo2));
-        eval.put("batteryCharged", df0.format(batteryCharged));
-        eval.put("batteryDrained", df0.format(batteryDrained));
-        eval.put("wakingRespiration", df0.format(respiration));
+        eval.put("restingHR", formatDecimal(restingHR, "0"));
+        eval.put("maxHR", formatDecimal(maxHR, "0"));
+        eval.put("sleepHours", formatDecimal(sleepHours, "0.0"));
+        eval.put("totalSteps", formatDecimal(steps, "0"));
+        eval.put("avgStress", formatDecimal(stress, "0"));
+        eval.put("avgSpo2", formatDecimal(spo2, "0.0"));
+        eval.put("batteryCharged", formatDecimal(batteryCharged, "0"));
+        eval.put("batteryDrained", formatDecimal(batteryDrained, "0"));
+        eval.put("wakingRespiration", formatDecimal(respiration, "0"));
 
         return eval;
     }
@@ -323,14 +345,15 @@ public class GarminAnalysisService {
         List<Integer> bodyBatteries = new ArrayList<>();
 
         for (Map<String, Object> r : rows) {
-            Object d = r.get("calendarDate");
+            Object d = getCaseVal(r, "calendarDate");
             String dateStr = d != null ? d.toString().split(" ")[0] : "";
             dates.add(dateStr);
 
-            heartRates.add((int) parseDouble(r.get("restingHeartRate"), 65));
-            sleepHours.add(Double.parseDouble(df1.format(parseDouble(r.get("sleepingSeconds"), 25200) / 3600.0)));
-            steps.add((int) parseDouble(r.get("totalSteps"), 0));
-            stressLevels.add((int) parseDouble(r.get("averageStressLevel"), 30));
+            heartRates.add((int) parseDouble(getCaseVal(r, "restingHeartRate"), 65));
+            double sh = parseDouble(getCaseVal(r, "sleepingSeconds"), 25200) / 3600.0;
+            sleepHours.add(Double.parseDouble(formatDecimal(sh, "0.0")));
+            steps.add((int) parseDouble(getCaseVal(r, "totalSteps"), 0));
+            stressLevels.add((int) parseDouble(getCaseVal(r, "averageStressLevel"), 30));
             bodyBatteries.add((int) parseDouble(r.get("bodyBatteryChargedValue"), 60));
         }
 
@@ -348,7 +371,7 @@ public class GarminAnalysisService {
         double sec = parseDouble(secObj, 0);
         if (sec <= 0) return "暂无数据";
         double hours = sec / 3600.0;
-        return df1.format(hours) + " 小时";
+        return formatDecimal(hours, "0.0") + " 小时";
     }
 
     private String formatValue(Object valObj, String unit) {
@@ -365,5 +388,24 @@ public class GarminAnalysisService {
         } catch (Exception e) {
             return defaultVal;
         }
+    }
+
+    private String formatDecimal(double val, String pattern) {
+        try {
+            return new DecimalFormat(pattern).format(val);
+        } catch (Exception e) {
+            return String.valueOf(val);
+        }
+    }
+
+    private Object getCaseVal(Map<String, Object> map, String key) {
+        if (map == null || key == null) return null;
+        if (map.containsKey(key)) return map.get(key);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (key.equalsIgnoreCase(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 }

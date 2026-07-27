@@ -17,10 +17,10 @@ public interface GarminActivityMapper {
     @Select("<script>" +
             "SELECT a.*, COALESCE(u.real_name, u.user_name, '未知用户') AS realName, u.user_name AS userName " +
             "FROM activity a " +
-            "LEFT JOIN user_info u ON a.email = u.email " +
+            "LEFT JOIN (SELECT email, MAX(real_name) AS real_name, MAX(user_name) AS user_name FROM user_info WHERE email IS NOT NULL AND email != '' GROUP BY email) u ON a.email = u.email " +
             "WHERE 1=1 " +
             "<if test='username != null and username != \"\"'>" +
-            "  AND (u.user_name LIKE CONSTRUCT('%', #{username}, '%') OR u.real_name LIKE CONSTRUCT('%', #{username}, '%') OR a.email LIKE CONSTRUCT('%', #{username}, '%')) " +
+            "  AND (u.user_name LIKE CONCAT('%', #{username}, '%') OR u.real_name LIKE CONCAT('%', #{username}, '%') OR a.email LIKE CONCAT('%', #{username}, '%')) " +
             "</if>" +
             "<if test='startDate != null and startDate != \"\"'>" +
             "  AND DATE(a.calendarDate) &gt;= #{startDate} " +
@@ -43,12 +43,12 @@ public interface GarminActivityMapper {
      * 查询符合条件的记录总数
      */
     @Select("<script>" +
-            "SELECT COUNT(*) " +
+            "SELECT COUNT(DISTINCT a.id) " +
             "FROM activity a " +
-            "LEFT JOIN user_info u ON a.email = u.email " +
+            "LEFT JOIN (SELECT email, MAX(real_name) AS real_name, MAX(user_name) AS user_name FROM user_info WHERE email IS NOT NULL AND email != '' GROUP BY email) u ON a.email = u.email " +
             "WHERE 1=1 " +
             "<if test='username != null and username != \"\"'>" +
-            "  AND (u.user_name LIKE CONSTRUCT('%', #{username}, '%') OR u.real_name LIKE CONSTRUCT('%', #{username}, '%') OR a.email LIKE CONSTRUCT('%', #{username}, '%')) " +
+            "  AND (u.user_name LIKE CONCAT('%', #{username}, '%') OR u.real_name LIKE CONCAT('%', #{username}, '%') OR a.email LIKE CONCAT('%', #{username}, '%')) " +
             "</if>" +
             "<if test='startDate != null and startDate != \"\"'>" +
             "  AND DATE(a.calendarDate) &gt;= #{startDate} " +
@@ -68,8 +68,8 @@ public interface GarminActivityMapper {
      */
     @Select("SELECT a.*, COALESCE(u.real_name, u.user_name, '未知用户') AS realName, u.user_name AS userName " +
             "FROM activity a " +
-            "LEFT JOIN user_info u ON a.email = u.email " +
-            "WHERE a.id = #{id}")
+            "LEFT JOIN (SELECT email, MAX(real_name) AS real_name, MAX(user_name) AS user_name FROM user_info WHERE email IS NOT NULL AND email != '' GROUP BY email) u ON a.email = u.email " +
+            "WHERE a.id = #{id} LIMIT 1")
     Map<String, Object> selectActivityById(@Param("id") Long id);
 
     /**

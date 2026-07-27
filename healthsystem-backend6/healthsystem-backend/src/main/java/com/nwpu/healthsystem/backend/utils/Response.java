@@ -53,7 +53,7 @@ public class Response {
      * @return
      */
     public static Response fail(String errorMessage) {
-        return fail(400, "操作失败", errorMessage);
+        return fail(400, errorMessage, null);
     }
 
     public static Response fail(String message, Object result) {
