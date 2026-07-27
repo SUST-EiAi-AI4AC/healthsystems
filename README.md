@@ -24,7 +24,7 @@
 - **AI 心理陪伴与语音合成 (TTS)** - 内置"心晴" AI 心理助手，对接 `MiniMax-M2.5` 模型进行共情陪伴。集成 StepFun `stepaudio-2.5-tts` 模型，提供温柔贴心的女声语音（“邻家姐姐”音色）播报，支持一键音量全局静音控制与防重叠自动中断播放。
 - **HTP 房树人投射测验** - 支持房树人HTP测验，通过 AI 对绘画图像进行多维度量化分析并生成智能报告。
 - **综合健康报告** - 整合心理量表、手环生理指标、日常填报，自动生成多维度雷达图的综合健康报告。
-- **智能手环数据同步** - 基于 Garmin Connect API，自动定时拉取并存储心率、睡眠、步数、血氧、压力和身体能量。
+- **智能手环数据同步** - 基于 Garmin Connect API 与 `sync_garmin.py` 自动化脚本，全量覆盖 `activity` 数据库表 94 个指标字段（含卡路里消耗分项、心率、睡眠分期、步数、血氧、压力分布、身体能量及呼吸速率等），支持凭证 Token 长效持久化与 SSH 加密隧道通信。
 - **情绪瞬时评估 (EMA)** - 支持生态瞬时情绪评估（EMA），记录瞬时情绪变化并生成情绪分析图表。
 - **疗愈空间生态** - 集成 AI 对话、冥想音频引导、情绪日记与疗愈游戏，构建"评估-疗愈-追踪"的心理闭环。
 - **三维动态官网宣传页** - 提供专为平台设计、适配 PC 和移动端的 3D 官网宣传页 (`/welcome.html`)，包含炫酷的 3D 卡片轮播、ECharts 雷达图数据排版及平滑过渡动效，支持无缝跳转登录页。
@@ -300,10 +300,13 @@ python-garminconnect-master/
 ├── garminconnect/              # Garmin API 封装库
 │   ├── __init__.py            # 主接口实现
 │   └── fit.py                 # FIT 文件解析
-├── example_modify.py           # 主数据同步脚本（带后端推送）
-├── example_modify_copy.py      # 同步脚本备用版本
-├── tests/                     # 测试用例
-├── pyproject.toml              # Python 项目配置
+├── sync_garmin.py              # 核心数据同步脚本 (支持 94 字段全列覆盖同步与 SSH 加密隧道)
+├── .env                        # 环境配置文件 (账号密码、国内区配置及数据库参数)
+├── run_sync.bat                # Windows 一键数据同步批处理脚本
+├── run_sync.ps1                # PowerShell 数据同步启动脚本
+├── example_modify.py           # API 功能测试与扩展示例脚本
+├── 手环.md                      # Garmin 手环/手表数据同步至数据库标准操作指南
+├── tests/                     # 自动化测试用例
 └── requirements-dev.txt        # 依赖列表
 ```
 
@@ -403,25 +406,29 @@ database/
 
 ### 5. ⌚ 智能手环数据同步模块
 
-#### 支持的健康指标
+#### 支持的健康指标 (全量 94 列数据库表对齐)
 
-| 指标 | 说明 | 数据来源 |
-|------|------|----------|
-| **心率** | 实时心率、静息心率 | Garmin Connect |
-| **睡眠** | 睡眠时长、深浅睡眠分期 | Garmin Connect |
-| **步数** | 每日步数、活动距离 | Garmin Connect |
-| **血氧** | SpO2 血氧饱和度 | Garmin Connect |
-| **压力** | Garmin 压力指数监测 | Garmin Connect |
-| **身体能量** | Body Battery 能量值 | Garmin Connect |
+| 指标类别 | 详细字段说明 | 数据来源 |
+|----------|--------------|----------|
+| **卡路里消耗** | 总消耗卡路里 (`totalKilocalories`)、活动卡路里 (`activeKilocalories`)、基础代谢 (`bmrKilocalories`)、健康卡路里 (`wellnessKilocalories`) | Garmin Connect |
+| **心率监测** | 实时心率、静息心率 (`restingHeartRate`)、最低/最高心率 (`minHeartRate`/`maxHeartRate`)、近7日平均静息心率 | Garmin Connect |
+| **睡眠与活动** | 睡眠时长 (`sleepingSeconds`)、活动时长 (`activeSeconds`)、久坐时长 (`sedentarySeconds`)、高度活跃时长 (`highlyActiveSeconds`) | Garmin Connect |
+| **步数与距离** | 每日总步数 (`totalSteps`)、步数目标 (`dailyStepGoal`)、总活动距离 (`totalDistanceMeters`)、健康步行距离 (`wellnessDistanceMeters`) | Garmin Connect |
+| **血氧饱和度** | 平均血氧 (`averageSpo2`)、最低血氧 (`lowestSpo2`)、最新血氧 (`latestSpo2`) 及测量时间戳 | Garmin Connect |
+| **压力指数** | 平均压力等级 (`averageStressLevel`)、最高压力等级 (`maxStressLevel`)、休息/活动/低/中/高压力时长与占比、压力评级 (`stressQualifier`) | Garmin Connect |
+| **身体能量** | Body Battery 充电值 (`bodyBatteryChargedValue`)、消耗值 (`bodyBatteryDrainedValue`)、全天最高/最低/最新电量值 | Garmin Connect |
+| **呼吸速率** | 平均醒来呼吸速率 (`avgWakingRespirationValue`)、最高/最低/最新呼吸频率 (`highestRespirationValue`/`lowestRespirationValue`/`latestRespirationValue`) | Garmin Connect |
 
 #### 数据同步流程
 
 ```
-Garmin 手环 → Garmin Connect App → Garmin Cloud API
+Garmin 手环/手表 → Garmin Connect App → Garmin Cloud API (garth 认证 Session)
     ↓
-Python 脚本定时拉取 → 数据处理与格式化 → POST 到 Spring Boot API
+Python 脚本 (sync_garmin.py) 定时拉取/自动打通 SSH 隧道
     ↓
-MySQL 数据库存储 → 后端 API 查询 → 前端 ECharts 图表展示
+数据解析与 94 字段全列映射 (ON DUPLICATE KEY UPDATE)
+    ↓
+MySQL 数据库 (`activity` 表存储) → Spring Boot API 查询 → 前端 ECharts 可视化图表展示
 ```
 
 ### 6. 🎭 情绪追踪模块
@@ -745,31 +752,58 @@ export default {
 
 ```bash
 cd python-garminconnect-master
-pip3 install -r requirements-dev.txt
+pip install garminconnect garth pymysql sshtunnel requests
 ```
 
-#### 2. 配置 Garmin 账号
+#### 2. 配置 `.env` 文件
 
+在 `python-garminconnect-master/.env` 中配置您的佳明账号密码与数据库连接参数：
+
+```env
+# 佳明 Connect 账号信息
+GARMIN_EMAIL=your_email@example.com
+GARMIN_PASSWORD=your_password
+
+# 国内购买绑定的佳明账号默认为中国区 connect.garmin.cn (True)
+GARMIN_IS_CN=True
+
+# 数据库连接参数
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASS=123456
+DB_NAME=healthsystem_test2
+SYNC_DAYS_BACK=7
+
+# 可选：自动建立 SSH 隧道连接云端数据库
+USE_SSH_TUNNEL=False
+SSH_HOST=47.109.49.174
+SSH_PORT=22
+SSH_USER=root
+SSH_PASS=your_ssh_password
+```
+
+#### 3. 运行数据同步
+
+**方式 A：一键批处理运行 (Windows)**
+```cmd
+run_sync.bat
+```
+
+**方式 B：直接执行 Python 同步脚本**
 ```bash
-export EMAIL=your_garmin_email
-export PASSWORD=your_garmin_password
-export GARMINTOKENS=~/.garminconnect
+python sync_garmin.py
 ```
 
-#### 3. 首次登录
+*首次登录成功后，脚本会自动生成 Token 凭证文件保存至本地（默认 `~/.garminconnect`，有效期约 1 年），后续运行优先加载缓存 Token 免密登录。*
 
-```bash
-python3 example_modify.py
-# 按提示完成 MFA 登录，生成 Token 文件（有效期约 1 年）
-```
-
-#### 4. 配置定时任务
+#### 4. 配置 Linux/Windows 定时任务
 
 ```bash
 crontab -e
 
-# 每小时同步一次
-0 * * * * cd /path/to/python-garminconnect-master && python3 example_modify.py >> sync.log 2>&1
+# 每小时定时全量同步 Garmin 手环健康数据
+0 * * * * cd /path/to/python-garminconnect-master && python sync_garmin.py >> sync.log 2>&1
 ```
 
 ---
