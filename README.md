@@ -2,7 +2,8 @@
 
 <div align="center">
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.3.4-green?logo=springboot&logoColor=white)](https://spring.io/) [![Vue.js](https://img.shields.io/badge/Vue.js-2.x-brightgreen?logo=vue.js&logoColor=white)](https://vuejs.org/) [![uni-app](https://img.shields.io/badge/uni--app-CrossPlatform-blue?logo=dcloud&logoColor=white)](https://uniapp.dcloud.net.cn/) [![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-blue?logo=mysql&logoColor=white)](https://www.mysql.com/) [![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?logo=python&logoColor=white)](https://www.python.org/) [![Layui](https://img.shields.io/badge/Layui-2.x-orange)](https://layui.dev/) [![Garmin](https://img.shields.io/badge/Garmin-Connect_API-lightblue?logo=garmin&logoColor=white)](https://connect.garmin.com/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.3.4-green?logo=springboot&logoColor=white)](https://spring.io/) [![Vue.js](https://img.shields.io/badge/Vue.js-2.x-brightgreen?logo=vue.js&logoColor=white)](https://vuejs.org/) [![uni-app](https://img.shields.io/badge/uni--app-CrossPlatform-blue?logo=dcloud&logoColor=white)](https://uniapp.dcloud.net.cn/) [![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-blue?logo=mysql&logoColor=white)](https://www.mysql.com/) [![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?logo=python&logoColor=white)](https://www.python.org/) [![Layui](https://img.shields.io/badge/Layui-2.x-orange)](https://layui.dev/) [![Garmin]
+<img width="2531" height="1313" alt="image" src="https://github.com/user-attachments/assets/a96c1612-5160-45bd-817e-5d3346899e10" />
 
 </div>
 
