@@ -1,3 +1,4 @@
+import socket
 import paramiko
 
 hostname = "47.109.49.174"
@@ -12,9 +13,17 @@ remote_cert = "/etc/pki/nginx/www.nwpuhs.cn_cert_chain.pem"
 
 print("Connecting to remote server...")
 try:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(30)
+    local_ips = [ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith('198.18.')]
+    if local_ips:
+        print(f"Binding connection socket to local IP: {local_ips[0]}")
+        sock.bind((local_ips[0], 0))
+    sock.connect((hostname, 22))
+
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname, username=username, password=password, timeout=15)
+    ssh.connect(hostname, username=username, password=password, sock=sock, timeout=30, banner_timeout=30, auth_timeout=30)
     print("Connected successfully!")
     
     # 1. Backup old files

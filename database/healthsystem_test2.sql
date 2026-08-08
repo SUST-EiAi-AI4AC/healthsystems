@@ -1,17 +1,17 @@
 /*
- Navicat Premium Data Transfer
+ Navicat Premium Dump SQL
 
- Source Server         : healthsystem
+ Source Server         : healthy
  Source Server Type    : MySQL
- Source Server Version : 80041 (8.0.41)
+ Source Server Version : 50744 (5.7.44-log)
  Source Host           : localhost:3306
  Source Schema         : healthsystem_test2
 
  Target Server Type    : MySQL
- Target Server Version : 80041 (8.0.41)
+ Target Server Version : 50744 (5.7.44-log)
  File Encoding         : 65001
 
- Date: 19/04/2026 11:21:45
+ Date: 27/07/2026 14:51:20
 */
 
 SET NAMES utf8mb4;
@@ -22,7 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `activity`;
 CREATE TABLE `activity`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `userProfileId` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE `activity`  (
   `burnedKilocalories` float NULL DEFAULT NULL,
   `consumedKilocalories` float NULL DEFAULT NULL,
   `remainingKilocalories` float NULL DEFAULT NULL,
-  `totalSteps` int NULL DEFAULT NULL,
+  `totalSteps` int(11) NULL DEFAULT NULL,
   `netCalorieGoal` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `totalDistanceMeters` float NULL DEFAULT NULL,
   `wellnessDistanceMeters` float NULL DEFAULT NULL,
@@ -95,15 +95,15 @@ CREATE TABLE `activity`  (
   `lastSyncTimestampGMT` datetime NULL DEFAULT NULL,
   `minAvgHeartRate` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `maxAvgHeartRate` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `bodyBatteryChargedValue` int NULL DEFAULT NULL,
-  `bodyBatteryDrainedValue` int NULL DEFAULT NULL,
-  `bodyBatteryHighestValue` int NULL DEFAULT NULL,
-  `bodyBatteryLowestValue` int NULL DEFAULT NULL,
-  `bodyBatteryMostRecentValue` int NULL DEFAULT NULL,
+  `bodyBatteryChargedValue` int(11) NULL DEFAULT NULL,
+  `bodyBatteryDrainedValue` int(11) NULL DEFAULT NULL,
+  `bodyBatteryHighestValue` int(11) NULL DEFAULT NULL,
+  `bodyBatteryLowestValue` int(11) NULL DEFAULT NULL,
+  `bodyBatteryMostRecentValue` int(11) NULL DEFAULT NULL,
   `bodyBatteryDuringSleep` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `bodyBatteryAtWakeTime` int NULL DEFAULT NULL,
+  `bodyBatteryAtWakeTime` int(11) NULL DEFAULT NULL,
   `bodyBatteryVersion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `abnormalHeartRateAlertsCount` int NULL DEFAULT NULL,
+  `abnormalHeartRateAlertsCount` int(11) NULL DEFAULT NULL,
   `averageSpo2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `lowestSpo2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `latestSpo2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -111,15 +111,15 @@ CREATE TABLE `activity`  (
   `latestSpo2ReadingTimeLocal` datetime NULL DEFAULT NULL,
   `averageMonitoringEnvironmentAltitude` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `restingCaloriesFromActivity` float NULL DEFAULT NULL,
-  `avgWakingRespirationValue` int NULL DEFAULT NULL,
-  `highestRespirationValue` int NULL DEFAULT NULL,
-  `lowestRespirationValue` int NULL DEFAULT NULL,
-  `latestRespirationValue` int NULL DEFAULT NULL,
+  `avgWakingRespirationValue` int(11) NULL DEFAULT NULL,
+  `highestRespirationValue` int(11) NULL DEFAULT NULL,
+  `lowestRespirationValue` int(11) NULL DEFAULT NULL,
+  `latestRespirationValue` int(11) NULL DEFAULT NULL,
   `latestRespirationTimeGMT` datetime NULL DEFAULT NULL,
   `respirationAlgorithmVersion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14201 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 14189 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of activity
@@ -351,34 +351,40 @@ INSERT INTO `activity` VALUES (14127, '2025-10-15 00:00:00', 'ccceee00001@163.co
 INSERT INTO `activity` VALUES (14132, '2025-10-20 00:00:00', 'ccceee00001@163.com', '12358082', 2972, 604, 2368, 2972, NULL, NULL, NULL, 11189, NULL, 8771, 8771, 604, 604, '12358082', '2025-10-20 00:00:00', '1', 'public', 'a20c66be20014a6f83d0cf634de9c7aa', '7700', '2025-10-19 16:00:00', '2025-10-20 00:00:00', '2025-10-20 16:00:00', '2025-10-21 00:00:00', '24h', NULL, '1h9min', '1h52min', '13h24min', '7h34min', 'True', 'True', 'False', 'False', '26', '3', NULL, NULL, NULL, NULL, '150', '10', '56', '147', '58', '61', 'GARMIN', '28', '96', '7h56min', '10h31min', '4h53min', '12min', '23h32min', '5h28min', '2h6min', '22min', '33.71', '44.69', '20.75', '0.85', '23.23', '8.92', '1.56', 'BALANCED', '16h6min', '7h14min', NULL, '57', '145', 73, 76, 91, 17, 17, '70', 90, '3.0', NULL, '93.0', '83', '90', '2025-10-20 16:00:00', '2025-10-21 00:00:00', NULL, 95, 15, 24, 7, 15, '2025-10-20 16:00:00', '200');
 INSERT INTO `activity` VALUES (14134, '2025-10-29 00:00:00', 'ccceee00001@163.com', '12358082', 2743, 375, 2368, 2743, NULL, NULL, NULL, 8409, NULL, 6679, 6679, 375, 375, '12358082', '2025-10-29 00:00:00', '1', 'public', 'b228f40e2678422dbb7aa97bab7517b4', '7700', '2025-10-28 16:00:00', '2025-10-29 00:00:00', '2025-10-29 16:00:00', '2025-10-30 00:00:00', '24h', NULL, '23min', '2h5min', '14h52min', '6h39min', 'True', 'False', 'False', 'False', '9', '1', NULL, NULL, NULL, NULL, '150', '10', '52', '121', '60', '57', 'GARMIN', '27', '96', '7h24min', '12h1min', '3h20min', '52min', '23h37min', '5h3min', '1h41min', '40min', '31.33', '50.88', '14.11', '3.67', '21.38', '7.13', '2.82', 'BALANCED', '16h7min', '6h38min', NULL, '55', '118', 76, 69, 85, 12, 21, '73', 85, '3.0', NULL, '94.0', '83', '95', '2025-10-29 16:00:00', '2025-10-30 00:00:00', NULL, NULL, 15, 25, 7, 10, '2025-10-29 16:00:00', '200');
 INSERT INTO `activity` VALUES (14146, '2025-10-30 00:00:00', 'ccceee00001@163.com', '12358082', 1684, 292, 1392, 1684, NULL, NULL, NULL, 4504, NULL, 3483, 3483, 292, 292, '12358082', '2025-10-30 00:00:00', '1', 'public', '0ee7023b70b74e5bb03c0ededab3d759', '7700', '2025-10-29 16:00:00', '2025-10-30 00:00:00', '2025-10-30 06:07:00', '2025-10-30 14:07:00', '14h7min', NULL, '3min', '1h24min', '7h15min', '5h24min', 'True', 'False', 'False', 'False', '9', '0', NULL, NULL, NULL, NULL, '150', '10', '54', '123', '58', '57', 'GARMIN', '23', '99', '2h57min', '9h13min', '1h42min', '10min', '14h2min', '1h37min', '51min', '29min', '21.02', '65.68', '12.11', '1.19', '11.52', '6.06', '3.44', 'UNKNOWN', '8h29min', '5h23min', NULL, '56', '121', 62, 41, 82, 20, 42, '59', 81, '3.0', NULL, '93.0', '85', '90', '2025-10-30 06:06:00', '2025-10-30 14:06:00', NULL, NULL, 16, 24, 8, 15, '2025-10-30 06:06:00', '200');
+INSERT INTO `activity` VALUES (14172, '2026-07-20 00:00:00', 'ccceee00021@163.com', '12487837', 2763, 607, 2156, 2763, NULL, NULL, NULL, 3621, NULL, 2883, 2883, 607, 607, '12487837', '2026-07-20 00:00:00', '2', 'private', '88fbb8d92ab04d45971ba132c7fd99b8', '6590', '2026-07-19 16:00:00', '2026-07-20 00:00:00', '2026-07-20 16:00:00', '2026-07-21 00:00:00', '86400000', NULL, '1460', '4005', '49075', '31860', 'True', 'False', 'False', 'False', '7', '11', NULL, NULL, NULL, NULL, '150', '10', '51', '152', '54', '52', 'GARMIN', '36', '99', '32820', '34740', '10740', '8100', '86400', '13320', '11040', '8460', '37.99', '40.21', '12.43', '9.38', '15.42', '12.78', '9.79', 'BALANCED', '48960', '29340', NULL, '53', '148', 73, 75, 85, 11, 11, '71', 85, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15, 25, 8, 17, '2026-07-20 15:59:00', '200');
+INSERT INTO `activity` VALUES (14173, '2026-07-21 00:00:00', 'ccceee00021@163.com', '12487837', 3597, 1441, 2156, 3597, NULL, NULL, NULL, 6326, NULL, 5037, 5037, 1441, 1441, '12487837', '2026-07-21 00:00:00', '2', 'private', '00e997588ef7459787d2ecf633ada644', '6000', '2026-07-20 16:00:00', '2026-07-21 00:00:00', '2026-07-21 16:00:00', '2026-07-22 00:00:00', '86400000', NULL, '1305', '7215', '47880', '30000', 'True', 'True', 'False', 'False', '42', '62', NULL, NULL, NULL, NULL, '150', '10', '55', '171', '56', '53', 'GARMIN', '41', '100', '33900', '32160', '13500', '6480', '86040', '11460', '9360', '13080', '39.4', '37.38', '15.69', '7.53', '13.32', '10.88', '15.2', 'BALANCED', '54900', '24660', NULL, '56', '165', 65, 71, 69, 5, 5, '56', 67, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 74, 15, 23, 7, 15, '2026-07-21 16:00:00', '200');
+INSERT INTO `activity` VALUES (14174, '2026-07-22 00:00:00', 'ccceee00021@163.com', '12487837', 2644, 488, 2156, 2644, NULL, NULL, NULL, 4126, NULL, 3285, 3285, 488, 488, '12487837', '2026-07-22 00:00:00', '2', 'private', '32897f4af8264d088527ecc3e9877021', '6040', '2026-07-21 16:00:00', '2026-07-22 00:00:00', '2026-07-22 16:00:00', '2026-07-23 00:00:00', '86400000', NULL, '1335', '4325', '49359', '31381', 'True', 'False', 'False', 'False', '7', '9', NULL, NULL, NULL, NULL, '150', '10', '56', '126', '57', '54', 'GARMIN', '38', '99', '40560', '34320', '11460', '60', '86400', '19140', '12000', '9420', '46.94', '39.72', '13.26', '0.07', '22.15', '13.89', '10.9', 'BALANCED', '57300', '29040', NULL, '57', '122', 53, 53, 58, 5, 5, '53', 58, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15, 22, 7, 15, '2026-07-22 16:00:00', '200');
+INSERT INTO `activity` VALUES (14175, '2026-07-23 00:00:00', 'ccceee00021@163.com', '12487837', 2868, 712, 2156, 2868, NULL, NULL, NULL, 7481, NULL, 5956, 5956, 712, 712, '12487837', '2026-07-23 00:00:00', '2', 'private', '3929035da56e4b68b3afe4b117768837', '5850', '2026-07-22 16:00:00', '2026-07-23 00:00:00', '2026-07-23 16:00:00', '2026-07-24 00:00:00', '86400000', NULL, '1500', '6218', '48202', '30480', 'True', 'False', 'False', 'False', '11', '12', NULL, NULL, NULL, NULL, '150', '10', '52', '151', '54', '54', 'GARMIN', '33', '99', '16140', '30360', '8880', '30180', '85560', '3120', '5640', '7380', '18.86', '35.48', '10.38', '35.27', '3.65', '6.59', '8.63', 'BALANCED', '24900', '30480', NULL, '53', '136', 78, 61, 83, 5, 22, '78', 83, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 16, 25, 8, 15, '2026-07-23 12:28:00', '200');
+INSERT INTO `activity` VALUES (14176, '2026-07-24 00:00:00', 'ccceee00021@163.com', '12487837', 3342, 1186, 2156, 3342, NULL, NULL, NULL, 5487, NULL, 4369, 4369, 1186, 1186, '12487837', '2026-07-24 00:00:00', '2', 'private', '1e1d896bb8714b16a97dff231c0c6f23', '6020', '2026-07-23 16:00:00', '2026-07-24 00:00:00', '2026-07-24 16:00:00', '2026-07-25 00:00:00', '86400000', NULL, '1356', '5454', '79590', '0', 'True', 'True', 'False', 'False', '31', '69', NULL, NULL, NULL, NULL, '150', '10', '70', '152', '58', '55', 'GARMIN', '71', '99', '6600', '240', '11040', '65220', '83100', '720', '2580', '3300', '7.94', '0.29', '13.29', '78.48', '0.87', '3.1', '3.97', 'UNKNOWN', '17880', '0', NULL, '70', '146', 0, 37, 54, 16, 16, NULL, NULL, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 101, 15, 22, 8, 22, '2026-07-24 14:13:00', '200');
+INSERT INTO `activity` VALUES (14177, '2026-07-25 00:00:00', 'ccceee00021@163.com', '12487837', 1520, 22, 1498, 1520, NULL, NULL, NULL, 339, NULL, 270, 270, 22, 22, '12487837', '2026-07-25 00:00:00', '2', 'private', 'd6657acd858c42ebb930f13075cdbc8b', '5970', '2026-07-24 16:00:00', '2026-07-25 00:00:00', '2026-07-25 08:41:00', '2026-07-25 16:41:00', '60060000', NULL, '135', '90', '59835', '0', 'True', 'False', 'False', 'False', '0', '0', NULL, NULL, NULL, NULL, '150', '10', '71', '106', NULL, NULL, 'GARMIN', '89', '96', '300', NULL, '180', '59520', '60000', NULL, NULL, '300', '0.5', '0.0', '0.3', '99.2', '0.0', '0.0', '0.5', 'UNKNOWN', '480', '0', NULL, '71', '106', 0, 4, 69, 40, 40, NULL, NULL, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 13, 16, 10, 11, '2026-07-25 08:41:00', '200');
+INSERT INTO `activity` VALUES (14180, '2026-07-20 00:00:00', 'ccceee00022@163.com', '12487837', 2763, 607, 2156, 2763, NULL, NULL, NULL, 3621, NULL, 2883, 2883, 607, 607, '12487837', '2026-07-20 00:00:00', '2', 'private', '88fbb8d92ab04d45971ba132c7fd99b8', '6590', '2026-07-19 16:00:00', '2026-07-20 00:00:00', '2026-07-20 16:00:00', '2026-07-21 00:00:00', '86400000', NULL, '1460', '4005', '49075', '31860', 'True', 'False', 'False', 'False', '7', '11', NULL, NULL, NULL, NULL, '150', '10', '51', '152', '54', '52', 'GARMIN', '36', '99', '32820', '34740', '10740', '8100', '86400', '13320', '11040', '8460', '37.99', '40.21', '12.43', '9.38', '15.42', '12.78', '9.79', 'BALANCED', '48960', '29340', NULL, '53', '148', 73, 75, 85, 11, 11, '71', 85, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15, 25, 8, 17, '2026-07-20 15:59:00', '200');
+INSERT INTO `activity` VALUES (14181, '2026-07-21 00:00:00', 'ccceee00022@163.com', '12487837', 3597, 1441, 2156, 3597, NULL, NULL, NULL, 6326, NULL, 5037, 5037, 1441, 1441, '12487837', '2026-07-21 00:00:00', '2', 'private', '00e997588ef7459787d2ecf633ada644', '6000', '2026-07-20 16:00:00', '2026-07-21 00:00:00', '2026-07-21 16:00:00', '2026-07-22 00:00:00', '86400000', NULL, '1305', '7215', '47880', '30000', 'True', 'True', 'False', 'False', '42', '62', NULL, NULL, NULL, NULL, '150', '10', '55', '171', '56', '53', 'GARMIN', '41', '100', '33900', '32160', '13500', '6480', '86040', '11460', '9360', '13080', '39.4', '37.38', '15.69', '7.53', '13.32', '10.88', '15.2', 'BALANCED', '54900', '24660', NULL, '56', '165', 65, 71, 69, 5, 5, '56', 67, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 74, 15, 23, 7, 15, '2026-07-21 16:00:00', '200');
+INSERT INTO `activity` VALUES (14182, '2026-07-22 00:00:00', 'ccceee00022@163.com', '12487837', 2644, 488, 2156, 2644, NULL, NULL, NULL, 4126, NULL, 3285, 3285, 488, 488, '12487837', '2026-07-22 00:00:00', '2', 'private', '32897f4af8264d088527ecc3e9877021', '6040', '2026-07-21 16:00:00', '2026-07-22 00:00:00', '2026-07-22 16:00:00', '2026-07-23 00:00:00', '86400000', NULL, '1335', '4325', '49359', '31381', 'True', 'False', 'False', 'False', '7', '9', NULL, NULL, NULL, NULL, '150', '10', '56', '126', '57', '54', 'GARMIN', '38', '99', '40560', '34320', '11460', '60', '86400', '19140', '12000', '9420', '46.94', '39.72', '13.26', '0.07', '22.15', '13.89', '10.9', 'BALANCED', '57300', '29040', NULL, '57', '122', 53, 53, 58, 5, 5, '53', 58, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15, 22, 7, 15, '2026-07-22 16:00:00', '200');
+INSERT INTO `activity` VALUES (14183, '2026-07-23 00:00:00', 'ccceee00022@163.com', '12487837', 2868, 712, 2156, 2868, NULL, NULL, NULL, 7481, NULL, 5956, 5956, 712, 712, '12487837', '2026-07-23 00:00:00', '2', 'private', '3929035da56e4b68b3afe4b117768837', '5850', '2026-07-22 16:00:00', '2026-07-23 00:00:00', '2026-07-23 16:00:00', '2026-07-24 00:00:00', '86400000', NULL, '1500', '6218', '48202', '30480', 'True', 'False', 'False', 'False', '11', '12', NULL, NULL, NULL, NULL, '150', '10', '52', '151', '54', '54', 'GARMIN', '33', '99', '16140', '30360', '8880', '30180', '85560', '3120', '5640', '7380', '18.86', '35.48', '10.38', '35.27', '3.65', '6.59', '8.63', 'BALANCED', '24900', '30480', NULL, '53', '136', 78, 61, 83, 5, 22, '78', 83, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 16, 25, 8, 15, '2026-07-23 12:28:00', '200');
+INSERT INTO `activity` VALUES (14184, '2026-07-24 00:00:00', 'ccceee00022@163.com', '12487837', 3342, 1186, 2156, 3342, NULL, NULL, NULL, 5487, NULL, 4369, 4369, 1186, 1186, '12487837', '2026-07-24 00:00:00', '2', 'private', '1e1d896bb8714b16a97dff231c0c6f23', '6020', '2026-07-23 16:00:00', '2026-07-24 00:00:00', '2026-07-24 16:00:00', '2026-07-25 00:00:00', '86400000', NULL, '1356', '5454', '79590', '0', 'True', 'True', 'False', 'False', '31', '69', NULL, NULL, NULL, NULL, '150', '10', '70', '152', '58', '55', 'GARMIN', '71', '99', '6600', '240', '11040', '65220', '83100', '720', '2580', '3300', '7.94', '0.29', '13.29', '78.48', '0.87', '3.1', '3.97', 'UNKNOWN', '17880', '0', NULL, '70', '146', 0, 37, 54, 16, 16, NULL, NULL, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 101, 15, 22, 8, 22, '2026-07-24 14:13:00', '200');
+INSERT INTO `activity` VALUES (14185, '2026-07-25 00:00:00', 'ccceee00022@163.com', '12487837', 1520, 22, 1498, 1520, NULL, NULL, NULL, 339, NULL, 270, 270, 22, 22, '12487837', '2026-07-25 00:00:00', '2', 'private', 'd6657acd858c42ebb930f13075cdbc8b', '5970', '2026-07-24 16:00:00', '2026-07-25 00:00:00', '2026-07-25 08:41:00', '2026-07-25 16:41:00', '60060000', NULL, '135', '90', '59835', '0', 'True', 'False', 'False', 'False', '0', '0', NULL, NULL, NULL, NULL, '150', '10', '71', '106', NULL, NULL, 'GARMIN', '89', '96', '300', NULL, '180', '59520', '60000', NULL, NULL, '300', '0.5', '0.0', '0.3', '99.2', '0.0', '0.0', '0.5', 'UNKNOWN', '480', '0', NULL, '71', '106', 0, 4, 69, 40, 40, NULL, NULL, '3.0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 13, 16, 10, 11, '2026-07-25 08:41:00', '200');
 
 -- ----------------------------
 -- Table structure for ai_chat_message
 -- ----------------------------
 DROP TABLE IF EXISTS `ai_chat_message`;
 CREATE TABLE `ai_chat_message`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `session_id` bigint NOT NULL COMMENT '所属会话ID',
-  `user_id` bigint NOT NULL COMMENT '用户ID（冗余，便于查询）',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `session_id` bigint(20) NOT NULL COMMENT '所属会话ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID（冗余，便于查询）',
   `role` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'user / ai',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '消息内容',
   `msg_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'text' COMMENT 'text / image',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '消息时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_acm_session_id`(`session_id` ASC) USING BTREE,
-  INDEX `idx_acm_user_id`(`user_id` ASC) USING BTREE,
+  INDEX `idx_acm_session_id`(`session_id`) USING BTREE,
+  INDEX `idx_acm_user_id`(`user_id`) USING BTREE,
   CONSTRAINT `fk_acm_session_id` FOREIGN KEY (`session_id`) REFERENCES `ai_chat_session` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'AI心晴聊天消息记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'AI心晴聊天消息记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ai_chat_message
 -- ----------------------------
-INSERT INTO `ai_chat_message` VALUES (6, 2, 220, 'ai', '你好呀 🌸 我是心晴，你的专属心理助手。今天感觉怎么样？有什么想聊的吗？', 'text', '2026-03-31 22:27:41');
-INSERT INTO `ai_chat_message` VALUES (7, 2, 220, 'user', '没有入选非常伤心', 'text', '2026-03-31 22:27:41');
-INSERT INTO `ai_chat_message` VALUES (8, 2, 220, 'ai', '亲爱的，我能感受到你现在的伤心和失落 💙 没有入选确实让人很难过，这种感觉是正常的。\n\n请允许自己难过一会儿，这没什么不对的。但我想告诉你，一次没入选并不能定义你的价值 🌟\n\n或许这是一个机会，让你更清楚自己的方向，或者为下一次做准备。你已经很勇敢地去尝试了，这本身就值得骄傲。\n\n想聊聊发生了什么吗？或者我可以陪你一起想想接下来怎么做', 'text', '2026-03-31 22:27:41');
-INSERT INTO `ai_chat_message` VALUES (14, 4, 220, 'ai', '你好呀 🌸 我是心晴，你的专属心理助手。今天感觉怎么样？有什么想聊的吗？', 'text', '2026-04-01 17:03:59');
-INSERT INTO `ai_chat_message` VALUES (15, 4, 220, 'user', '哈哈哈', 'text', '2026-04-01 17:03:59');
-INSERT INTO `ai_chat_message` VALUES (16, 4, 220, 'ai', '哈哈，看起来你今天心情不错呀！😄 有什么有趣的事情吗？或者只是想找人聊聊天？我都在这里陪你哦～', 'text', '2026-04-01 17:03:59');
 INSERT INTO `ai_chat_message` VALUES (17, 5, 220, 'ai', '你好呀 🌸 我是心晴，你的专属心理助手。今天感觉怎么样？有什么想聊的吗？', 'text', '2026-04-02 12:39:09');
 INSERT INTO `ai_chat_message` VALUES (18, 5, 220, 'user', '你好', 'text', '2026-04-02 12:39:09');
 INSERT INTO `ai_chat_message` VALUES (19, 5, 220, 'ai', '你好呀～很高兴见到你！😊\n\n如果你今天有什么心事或烦恼，可以随时告诉我，我在这里陪你聊～', 'text', '2026-04-02 12:39:09');
@@ -402,59 +408,79 @@ INSERT INTO `ai_chat_message` VALUES (41, 9, 181, 'ai', '哈哈，看起来你�
 INSERT INTO `ai_chat_message` VALUES (42, 10, 181, 'ai', '你好呀 🌸 我是心晴，你的专属心理助手。今天感觉怎么样？有什么想聊的吗？', 'text', '2026-04-18 22:18:54');
 INSERT INTO `ai_chat_message` VALUES (43, 10, 181, 'user', '今天挺开心', 'text', '2026-04-18 22:18:54');
 INSERT INTO `ai_chat_message` VALUES (44, 10, 181, 'ai', '太棒了呀！😊 听到你开心，我也为你感到高兴呢！\n\n有什么好事发生吗？或者只是平平淡淡但很舒心的日子？✨\n\n希望你的好心情能一直延续下去～有什么想分享的都可以告诉我哦！', 'text', '2026-04-18 22:18:54');
+INSERT INTO `ai_chat_message` VALUES (48, 12, 220, 'ai', '你好呀 🌸 我是心晴，你的专属心理助手。今天感觉怎么样？有什么想聊的吗？', 'text', '2026-06-02 20:22:28');
+INSERT INTO `ai_chat_message` VALUES (49, 12, 220, 'user', '加油加油', 'text', '2026-06-02 20:22:28');
+INSERT INTO `ai_chat_message` VALUES (50, 12, 220, 'ai', '谢谢你的加油鼓励！💪\n\n很高兴能和你聊聊天～ 有什么想分享的或者需要倾诉的吗？我在这里陪着你哦', 'text', '2026-06-02 20:22:28');
+INSERT INTO `ai_chat_message` VALUES (51, 13, 181, 'ai', '你好呀 🌸 我是心晴，你的专属心理助手。今天感觉怎么样？有什么想聊的吗？', 'text', '2026-06-02 21:17:28');
+INSERT INTO `ai_chat_message` VALUES (52, 13, 181, 'user', '你好。今天不开心', 'text', '2026-06-02 21:17:28');
+INSERT INTO `ai_chat_message` VALUES (53, 13, 181, 'ai', '抱抱你 🤗 今天一定很不容易吧。\n\n愿意告诉我发生了什么事吗？或者只是想找人陪着聊聊也可以，我在这里听你说～', 'text', '2026-06-02 21:17:28');
+INSERT INTO `ai_chat_message` VALUES (54, 14, 220, 'user', '您好哈哈哈', 'text', '2026-07-21 12:21:08');
+INSERT INTO `ai_chat_message` VALUES (55, 14, 220, 'ai', '您好呀！看到您心情不错，真好～ 😊 有什么想聊的或者需要帮忙的，随时告诉我哦！', 'text', '2026-07-21 12:21:08');
+INSERT INTO `ai_chat_message` VALUES (56, 14, 220, 'user', '今天不开心', 'text', '2026-07-21 12:21:39');
+INSERT INTO `ai_chat_message` VALUES (57, 14, 220, 'ai', '哎，能感觉到您今天很低落 😔 没关系，心情不好的时候允许自己emo一下，不用勉强自己～\n\n如果想聊聊，我在这里倾听；如果只是想安静待着也没事。您今天遇到什么了吗？', 'text', '2026-07-21 12:21:39');
+INSERT INTO `ai_chat_message` VALUES (58, 15, 220, 'user', '您好', 'text', '2026-07-22 17:03:24');
+INSERT INTO `ai_chat_message` VALUES (59, 15, 220, 'ai', '您好呀～ 🌸\n\n我是心晴，很高兴见到您。今天过得怎么样？有什么想聊的或者需要倾诉的，我都在这里陪您哦～', 'text', '2026-07-22 17:03:24');
+INSERT INTO `ai_chat_message` VALUES (60, 16, 220, 'user', '哈哈哈', 'text', '2026-07-23 14:57:23');
+INSERT INTO `ai_chat_message` VALUES (61, 16, 220, 'ai', '看起来你今天心情不错呀！😊 有什么开心的事想分享吗？我随时在这里陪你聊天～', 'text', '2026-07-23 14:57:23');
+INSERT INTO `ai_chat_message` VALUES (62, 17, 181, 'user', '哈哈哈', 'text', '2026-07-27 10:46:12');
+INSERT INTO `ai_chat_message` VALUES (63, 17, 181, 'ai', '看到你笑得这么开心，我也很为你高兴呢！😊 有什么有趣的事情吗？分享出来，让快乐翻倍吧～', 'text', '2026-07-27 10:46:12');
 
 -- ----------------------------
 -- Table structure for ai_chat_session
 -- ----------------------------
 DROP TABLE IF EXISTS `ai_chat_session`;
 CREATE TABLE `ai_chat_session`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '新对话' COMMENT '对话标题（取第一条用户消息前20字）',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '会话创建时间',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_acs_user_id`(`user_id` ASC) USING BTREE,
+  INDEX `idx_acs_user_id`(`user_id`) USING BTREE,
   CONSTRAINT `fk_acs_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'AI心晴聊天会话' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'AI心晴聊天会话' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ai_chat_session
 -- ----------------------------
-INSERT INTO `ai_chat_session` VALUES (2, 220, '没有入选非常伤心', '2026-03-31 22:27:41', '2026-03-31 22:27:41');
-INSERT INTO `ai_chat_session` VALUES (4, 220, '哈哈哈', '2026-04-01 17:03:59', '2026-04-01 17:03:59');
 INSERT INTO `ai_chat_session` VALUES (5, 220, '你好', '2026-04-02 12:39:09', '2026-04-02 12:39:09');
 INSERT INTO `ai_chat_session` VALUES (6, 220, '就很棒', '2026-04-02 12:42:26', '2026-04-02 19:25:06');
 INSERT INTO `ai_chat_session` VALUES (7, 181, '你好', '2026-04-09 21:31:35', '2026-04-09 22:21:37');
 INSERT INTO `ai_chat_session` VALUES (9, 181, '哈哈哈哈', '2026-04-15 15:53:10', '2026-04-15 15:53:10');
 INSERT INTO `ai_chat_session` VALUES (10, 181, '今天挺开心', '2026-04-18 22:18:54', '2026-04-18 22:18:54');
+INSERT INTO `ai_chat_session` VALUES (12, 220, '加油加油', '2026-06-02 20:22:27', '2026-06-02 20:22:28');
+INSERT INTO `ai_chat_session` VALUES (13, 181, '你好。今天不开心', '2026-06-02 21:17:28', '2026-06-02 21:17:28');
+INSERT INTO `ai_chat_session` VALUES (14, 220, '您好哈哈哈', '2026-07-21 12:21:08', '2026-07-21 12:21:39');
+INSERT INTO `ai_chat_session` VALUES (15, 220, '您好', '2026-07-22 17:03:24', '2026-07-22 17:03:24');
+INSERT INTO `ai_chat_session` VALUES (16, 220, '哈哈哈', '2026-07-23 14:57:23', '2026-07-23 14:57:23');
+INSERT INTO `ai_chat_session` VALUES (17, 181, '哈哈哈', '2026-07-27 10:46:12', '2026-07-27 10:46:12');
 
 -- ----------------------------
 -- Table structure for answer
 -- ----------------------------
 DROP TABLE IF EXISTS `answer`;
 CREATE TABLE `answer`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '用户id，外键',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户id，外键',
   `log_date` date NOT NULL COMMENT '填报日期，本来已有时间戳，但为了更直观，也为了便于与每日多次填报的数据进行连接。同时还可以在数据库层面完成限制：一个用户一天只有一条记录',
-  `diet_info` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '如暴饮暴食、胃口更差/更好、进食更多/更少；这里可能也不是用一个词就能描述状态（某些状态也并不是互斥的，比如分为胃口和进食多少，胃口好可能不一定进食多?），即可以用‘|’分隔表示状态',
-  `statement_url` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT '' COMMENT '个人阐述，自行补充情况，描述今天遇到的事情、心情、个人状况等等，必须录制语音；存储语音文件地址',
+  `diet_info` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '如暴饮暴食、胃口更差/更好、进食更多/更少；这里可能也不是用一个词就能描述状态（某些状态也并不是互斥的，比如分为胃口和进食多少，胃口好可能不一定进食多?），即可以用‘|’分隔表示状态',
+  `statement_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '个人阐述，自行补充情况，描述今天遇到的事情、心情、个人状况等等，必须录制语音；存储语音文件地址',
   `add_timestamp_mils` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间戳',
-  `time_management` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `social_expression` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `study_or_work_time` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `study_or_work_state` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `free` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `free_symptom` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `yesterday_night` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `yesterday_end_feel` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `communicate_time` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `phone_play_time` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `weakup_status` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
+  `time_management` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `social_expression` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `study_or_work_time` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `study_or_work_state` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `free` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `free_symptom` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `yesterday_night` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `yesterday_end_feel` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `communicate_time` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `phone_play_time` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `weakup_status` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `u_user_logdate`(`user_id` ASC, `log_date` ASC) USING BTREE,
+  UNIQUE INDEX `u_user_logdate`(`user_id`, `log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_3` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 963 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '每日一次的填报记录（睡眠时间、运动时间、服药等信息）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 975 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '每日一次的填报记录（睡眠时间、运动时间、服药等信息）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of answer
@@ -636,57 +662,68 @@ INSERT INTO `answer` VALUES (959, 212, '2026-01-09', '按时吃饭，食欲正�
 INSERT INTO `answer` VALUES (960, 212, '2026-01-10', '按时吃饭，食欲正常', NULL, '2026-01-11 00:09:20', '制定了清晰的计划并基本执行', '积极参与交流，享受互动时光', '0', '未工作或学习', '休息或简单娱乐', '都没有', '直接睡觉', '感到充实和满足', '少于30分钟', '超过2小时', '赖床刷手机或社交媒体');
 INSERT INTO `answer` VALUES (961, 210, '2026-01-10', '按时吃饭，食欲正常', NULL, '2026-01-11 04:37:39', '制定了计划但有所调整', '积极参与交流，享受互动时光', '0', '未工作或学习', '休息或简单娱乐', '都没有', '上网或玩游戏', '感到充实和满足', '超过2小时', '超过2小时', '起床前稍作休息');
 INSERT INTO `answer` VALUES (962, 212, '2026-01-11', '偶尔漏餐，但总体还好', NULL, '2026-01-11 23:20:25', '没有计划，随心而行', '较少参与交流，更喜欢独处', '0', '未工作或学习', '休息或简单娱乐', '都没有', '听音乐、看电影等放松活动', '感到充实和满足', '少于30分钟', '超过2小时', '赖床刷手机或社交媒体');
+INSERT INTO `answer` VALUES (963, 224, '2026-07-14', '按时吃饭，食欲正常', NULL, '2026-07-14 21:14:55', '有大致计划但不明确', '积极参与交流，享受互动时光', '3-5小时', '大多数时候能集中注意力，但效率一般', '休息或简单娱乐', '有些心神不宁', '上网或玩游戏', '一般，但还可以', '1-1.5小时', '超过2小时', '起床前稍作休息');
+INSERT INTO `answer` VALUES (964, 181, '2026-07-14', '偶尔漏餐，但总体还好', NULL, '2026-07-14 21:16:44', '制定了清晰的计划并基本执行', '积极参与交流，享受互动时光', '5-8小时', '大多数时候能集中注意力且高效', '休息或简单娱乐', '都没有', '听音乐、看电影等放松活动', '感到充实和满足', '1-1.5小时', '1-1.5小时', '立刻起床，精神不错');
+INSERT INTO `answer` VALUES (965, 224, '2026-07-16', '按时吃饭，食欲正常', NULL, '2026-07-16 20:05:49', '有大致计划但不明确', '较少参与交流，更喜欢独处', '3-5小时', '大多数时候能集中注意力，但效率一般', '休息或简单娱乐', '有些心神不宁', '上网或玩游戏', '一般，但还可以', '超过2小时', '超过2小时', '起床前稍作休息');
+INSERT INTO `answer` VALUES (966, 181, '2026-07-16', '按时吃饭，食欲正常', NULL, '2026-07-16 20:37:37', '制定了计划但有所调整', '积极参与交流，享受互动时光', '1-3小时', '大多数时候能集中注意力，但效率一般', '参加喜欢的社交活动', '都没有', '听音乐、看电影等放松活动', '感到充实和满足', '1.5-2小时', '1-1.5小时', '立刻起床，精神不错');
+INSERT INTO `answer` VALUES (968, 224, '2026-07-17', '按时吃饭，食欲正常', NULL, '2026-07-17 20:01:28', '有大致计划但不明确', '尝试与他人进行交流，享受互动时光', '3-5小时', '大多数时候能集中注意力，但效率一般', '休息或简单娱乐', '都没有', '上网或玩游戏', '感到充实和满足', '超过2小时', '超过2小时', '起床前稍作休息');
+INSERT INTO `answer` VALUES (969, 181, '2026-07-17', '偶尔漏餐，但总体还好', NULL, '2026-07-18 00:35:31', '制定了清晰的计划并基本执行', '积极参与交流，享受互动时光', '1-3小时', '大多数时候能集中注意力，但效率一般', '休息或简单娱乐', '都没有', '听音乐、看电影等放松活动', '感到充实和满足', '1-1.5小时', '30分钟-1小时', '立刻起床，精神不错');
+INSERT INTO `answer` VALUES (970, 224, '2026-07-18', '按时吃饭，食欲正常', NULL, '2026-07-18 20:03:57', '没有计划，随心而行', '积极参与交流，享受互动时光', '3-5小时', '难以集中注意力，容易分心', '休息或简单娱乐', '有些心神不宁', '上网或玩游戏', '感到充实和满足', '超过2小时', '超过2小时', '赖床刷手机或社交媒体');
+INSERT INTO `answer` VALUES (971, 224, '2026-07-19', '按时吃饭，食欲正常', NULL, '2026-07-19 20:02:51', '有大致计划但不明确', '积极参与交流，享受互动时光', '3-5小时', '大多数时候能集中注意力且高效', '休息或简单娱乐', '都没有', '上网或玩游戏', '感到充实和满足', '超过2小时', '超过2小时', '继续睡了一会儿');
+INSERT INTO `answer` VALUES (972, 181, '2026-07-19', '按时吃饭，食欲正常', NULL, '2026-07-19 22:50:39', '制定了清晰的计划并基本执行', '积极参与交流，享受互动时光', '1-3小时', '难以集中注意力，容易分心', '参加喜欢的社交活动', '都没有', '阅读或学习', '感到充实和满足', '1.5-2小时', '30分钟-1小时', '立刻起床，精神不错');
+INSERT INTO `answer` VALUES (973, 224, '2026-07-20', '按时吃饭，食欲正常', NULL, '2026-07-20 20:06:24', '有大致计划但不明确', '积极参与交流，享受互动时光', '5-8小时', '大多数时候能集中注意力且高效', '休息或简单娱乐', '都没有', '上网或玩游戏', '感到充实和满足', '超过2小时', '超过2小时', '继续睡了一会儿');
+INSERT INTO `answer` VALUES (974, 224, '2026-07-21', '按时吃饭，食欲正常', NULL, '2026-07-21 20:12:10', '制定了计划但有所调整', '积极参与交流，享受互动时光', '5-8小时', '大多数时候能集中注意力且高效', '休息或简单娱乐', '都没有', '上网或玩游戏', '感到充实和满足', '超过2小时', '超过2小时', '继续睡了一会儿');
 
 -- ----------------------------
 -- Table structure for basic_info
 -- ----------------------------
 DROP TABLE IF EXISTS `basic_info`;
 CREATE TABLE `basic_info`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '用户id，外键',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户id，外键',
   `log_date` date NOT NULL,
-  `sex` enum('男','女') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '男',
-  `phone` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `sex` enum('男','女') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '男',
+  `phone` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `birth_date` date NOT NULL,
-  `culture` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '本科',
-  `is_single_parent` enum('是','否') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '否',
-  `is_abandon` enum('是','否') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '否',
-  `residential` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `marital` enum('未婚','已婚','离异','再婚','丧偶') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '未婚',
-  `trauma` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `trauma_time` enum('童年期','青少年','成年后') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `relative_suicide` enum('无','有') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '无',
-  `mental_illness` enum('无','有') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '无',
-  `family_mental_history` enum('无','有') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '无',
-  `close_rel` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `resident` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `neighbor_rel` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `colleague_rel` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `favour` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `comfort` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `share` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `seek_help` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `group_activity` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `dating_engaged` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `dating_lose` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `parents_conflict` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `family_finance_dif` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `debt` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `family_ser_inj` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `family_die` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `ser_inj` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `unemployed` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `work_pressure` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `poor_mark` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `roommates_dis` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `life_law_change` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `friend_ser_inj` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `friend_die` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `misunderstood` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `stolen` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `accidental_shock` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `culture` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '本科',
+  `is_single_parent` enum('是','否') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '否',
+  `is_abandon` enum('是','否') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '否',
+  `residential` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `marital` enum('未婚','已婚','离异','再婚','丧偶') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '未婚',
+  `trauma` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `trauma_time` enum('童年期','青少年','成年后') CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `relative_suicide` enum('无','有') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '无',
+  `mental_illness` enum('无','有') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '无',
+  `family_mental_history` enum('无','有') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '无',
+  `close_rel` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `resident` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `neighbor_rel` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `colleague_rel` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `favour` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `comfort` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `share` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `seek_help` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `group_activity` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `dating_engaged` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `dating_lose` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `parents_conflict` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `family_finance_dif` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `debt` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `family_ser_inj` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `family_die` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `ser_inj` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `unemployed` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `work_pressure` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `poor_mark` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `roommates_dis` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `life_law_change` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `friend_ser_inj` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `friend_die` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `misunderstood` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `stolen` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `accidental_shock` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of basic_info
@@ -704,13 +741,15 @@ INSERT INTO `basic_info` VALUES (19, 210, '2025-12-26', '女', '15291816176', '2
 INSERT INTO `basic_info` VALUES (20, 211, '2025-12-29', '女', '13939948323', '2001-07-01', '硕士研究生', '否', '否', '集体宿舍', '未婚', '无', NULL, '无', '无', '无', '1-2个', '和同学、同事或朋友住在一起', '遇到困难可能稍微关心', '遇到困难可能稍微关心', '其他家人,朋友', '其他家人,朋友', '只向关系即为密切的1-2人倾诉', '有时请求别人帮助', '偶尔参加', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '长期性,坏事,无影响,三月内', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null');
 INSERT INTO `basic_info` VALUES (21, 212, '2025-12-29', '女', '13571121019', '2001-08-01', '硕士研究生', '否', '否', '集体宿舍', '未婚', '无', NULL, '无', '无', '无', '3-5个', '和同学、同事或朋友住在一起', '遇到困难可能稍微关心', '遇到困难可能稍微关心', '其他家人', '朋友', '只向关系即为密切的1-2人倾诉', '很少请求别人帮助', '偶尔参加', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null');
 INSERT INTO `basic_info` VALUES (22, 213, '2025-12-29', '男', '15724289617', '2002-11-01', '硕士研究生', '否', '否', '集体宿舍', '未婚', '无', NULL, '无', '无', '无', '6个或6个以上', '和家人住在一起', '遇到困难可能稍微关心', '遇到困难可能稍微关心', '其他家人', '其他家人', '主动倾诉自己的烦恼，以获得支持和理解', '有困难时经常向家人、亲友、组织求援', '偶尔参加', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null');
+INSERT INTO `basic_info` VALUES (23, 224, '2026-07-14', '女', '13153464692', '2003-06-01', '硕士研究生', '否', '否', '集体宿舍', '未婚', '无', NULL, '无', '无', '无', '1-2个', '和同学、同事或朋友住在一起', '相互之间从不关心，只是点头之交', '遇到困难可能稍微关心', '亲戚', '配偶,其他家人,朋友,亲戚', '只向关系即为密切的1-2人倾诉', '很少请求别人帮助', '偶尔参加', '长期性,好事,无影响,三月内', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '一年前,坏事,轻度,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null');
+INSERT INTO `basic_info` VALUES (24, 181, '2026-07-14', '女', '18729658273', '2002-11-01', '硕士研究生', '是', '否', '集体宿舍', '未婚', '无', NULL, '无', '无', '无', '3-5个', '和同学、同事或朋友住在一起', '有些邻居很关心您', '有些同事很关心您', '其他家人,朋友', '其他家人,朋友', '只向关系即为密切的1-2人倾诉', '有时请求别人帮助', '经常参加', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null', '未发生,null,null,null');
 
 -- ----------------------------
 -- Table structure for body_battery
 -- ----------------------------
 DROP TABLE IF EXISTS `body_battery`;
 CREATE TABLE `body_battery`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `charged` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -720,8 +759,8 @@ CREATE TABLE `body_battery`  (
   `startTimestampLocal` datetime NULL DEFAULT NULL,
   `endTimestampLocal` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16136 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 16115 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of body_battery
@@ -959,48 +998,50 @@ INSERT INTO `body_battery` VALUES (16064, '2025-10-20 00:00:00', 'ccceee00001@16
 INSERT INTO `body_battery` VALUES (16066, '2025-10-29 00:00:00', 'ccceee00001@163.com', '76', '69', '2025-10-28 16:00:00', '2025-10-29 16:00:00', '2025-10-29 00:00:00', '2025-10-30 00:00:00');
 INSERT INTO `body_battery` VALUES (16078, '2025-10-30 00:00:00', 'ccceee00001@163.com', '62', '41', '2025-10-29 16:00:00', '2025-10-30 06:07:00', '2025-10-30 00:00:00', '2025-10-30 14:07:00');
 INSERT INTO `body_battery` VALUES (16112, '2025-10-31 00:00:00', 'ccceee00001@163.com', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `body_battery` VALUES (16113, '2026-07-21 00:00:00', 'ccceee00021@163.com', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `body_battery` VALUES (16114, '2026-07-20 00:00:00', 'ccceee00021@163.com', '71', '66', '2026-07-19 16:00:00', '2026-07-20 12:05:00', '2026-07-20 00:00:00', '2026-07-20 20:05:00');
 
 -- ----------------------------
 -- Table structure for cdrisc
 -- ----------------------------
 DROP TABLE IF EXISTS `cdrisc`;
 CREATE TABLE `cdrisc`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `q1` tinyint NOT NULL DEFAULT 0,
-  `q2` tinyint NOT NULL DEFAULT 0,
-  `q3` tinyint NOT NULL DEFAULT 0,
-  `q4` tinyint NOT NULL DEFAULT 0,
-  `q5` tinyint NOT NULL DEFAULT 0,
-  `q6` tinyint NOT NULL DEFAULT 0,
-  `q7` tinyint NOT NULL DEFAULT 0,
-  `q8` tinyint NOT NULL DEFAULT 0,
-  `q9` tinyint NOT NULL DEFAULT 0,
-  `q10` tinyint NOT NULL DEFAULT 0,
-  `q11` tinyint NOT NULL DEFAULT 0,
-  `q12` tinyint NOT NULL DEFAULT 0,
-  `q13` tinyint NOT NULL DEFAULT 0,
-  `q14` tinyint NOT NULL DEFAULT 0,
-  `q15` tinyint NOT NULL DEFAULT 0,
-  `q16` tinyint NOT NULL DEFAULT 0,
-  `q17` tinyint NOT NULL DEFAULT 0,
-  `q18` tinyint NOT NULL DEFAULT 0,
-  `q19` tinyint NOT NULL DEFAULT 0,
-  `q20` tinyint NOT NULL DEFAULT 0,
-  `q21` tinyint NOT NULL DEFAULT 0,
-  `q22` tinyint NOT NULL DEFAULT 0,
-  `q23` tinyint NOT NULL DEFAULT 0,
-  `q24` tinyint NOT NULL DEFAULT 0,
-  `q25` tinyint NOT NULL DEFAULT 0,
-  `score` smallint NOT NULL DEFAULT 0,
-  `status` tinyint NOT NULL DEFAULT 0,
+  `q1` tinyint(4) NOT NULL DEFAULT 0,
+  `q2` tinyint(4) NOT NULL DEFAULT 0,
+  `q3` tinyint(4) NOT NULL DEFAULT 0,
+  `q4` tinyint(4) NOT NULL DEFAULT 0,
+  `q5` tinyint(4) NOT NULL DEFAULT 0,
+  `q6` tinyint(4) NOT NULL DEFAULT 0,
+  `q7` tinyint(4) NOT NULL DEFAULT 0,
+  `q8` tinyint(4) NOT NULL DEFAULT 0,
+  `q9` tinyint(4) NOT NULL DEFAULT 0,
+  `q10` tinyint(4) NOT NULL DEFAULT 0,
+  `q11` tinyint(4) NOT NULL DEFAULT 0,
+  `q12` tinyint(4) NOT NULL DEFAULT 0,
+  `q13` tinyint(4) NOT NULL DEFAULT 0,
+  `q14` tinyint(4) NOT NULL DEFAULT 0,
+  `q15` tinyint(4) NOT NULL DEFAULT 0,
+  `q16` tinyint(4) NOT NULL DEFAULT 0,
+  `q17` tinyint(4) NOT NULL DEFAULT 0,
+  `q18` tinyint(4) NOT NULL DEFAULT 0,
+  `q19` tinyint(4) NOT NULL DEFAULT 0,
+  `q20` tinyint(4) NOT NULL DEFAULT 0,
+  `q21` tinyint(4) NOT NULL DEFAULT 0,
+  `q22` tinyint(4) NOT NULL DEFAULT 0,
+  `q23` tinyint(4) NOT NULL DEFAULT 0,
+  `q24` tinyint(4) NOT NULL DEFAULT 0,
+  `q25` tinyint(4) NOT NULL DEFAULT 0,
+  `score` smallint(6) NOT NULL DEFAULT 0,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_cdrisc`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_cdrisc`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_cdrisc`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_cdrisc`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_cdrisc` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'CD-RISC 心理弹性量表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'CD-RISC 心理弹性量表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of cdrisc
@@ -1011,13 +1052,13 @@ CREATE TABLE `cdrisc`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `csv_file_paths`;
 CREATE TABLE `csv_file_paths`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `category` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `file_path` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `imported_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_path`(`file_path`(100) ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1196377 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_path`(`file_path`(100)) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1107826 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of csv_file_paths
@@ -28369,22 +28410,274 @@ INSERT INTO `csv_file_paths` VALUES (1107526, 'activity', '/healthsystem-test/py
 INSERT INTO `csv_file_paths` VALUES (1107529, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00001_163.com/activity/2026-01-29/body_battery_events.csv', '2026-03-27 21:34:26');
 INSERT INTO `csv_file_paths` VALUES (1107531, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00001_163.com/activity/2026-01-29/body_battery_feedback_events.csv', '2026-03-27 21:34:26');
 INSERT INTO `csv_file_paths` VALUES (1107533, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00001_163.com/activity/2026-01-29/activity_summary.csv', '2026-03-27 21:34:27');
+INSERT INTO `csv_file_paths` VALUES (1107534, 'resting_heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/resting_heart_rate/2026-07-21/resting_heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107535, 'resting_heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/resting_heart_rate/2026-07-26/resting_heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107536, 'resting_heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/resting_heart_rate/2026-07-25/resting_heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107537, 'resting_heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/resting_heart_rate/2026-07-20/resting_heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107538, 'resting_heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/resting_heart_rate/2026-07-24/resting_heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107539, 'resting_heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/resting_heart_rate/2026-07-23/resting_heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107540, 'resting_heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/resting_heart_rate/2026-07-22/resting_heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107541, 'stress', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stress/2026-07-21/stress_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107542, 'stress', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stress/2026-07-26/stress_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107543, 'stress', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stress/2026-07-25/stress_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107544, 'stress', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stress/2026-07-20/stress_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107545, 'stress', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stress/2026-07-20/stress_timeseries.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107546, 'stress', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stress/2026-07-24/stress_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107547, 'stress', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stress/2026-07-23/stress_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107548, 'stress', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stress/2026-07-22/stress_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107549, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-21/body_battery_events.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107550, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-21/stats_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107551, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-26/body_battery_events.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107552, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-26/stats_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107553, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-25/body_battery_events.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107554, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-25/stats_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107555, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-20/body_battery_events.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107556, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-20/stats_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107557, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-24/body_battery_events.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107558, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-24/stats_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107559, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-23/body_battery_events.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107560, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-23/stats_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107561, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-22/body_battery_events.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107562, 'stats_body_composition', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/stats_body_composition/2026-07-22/stats_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107563, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-21/fitness_age_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107564, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-21/fitness_age_components.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107565, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-26/fitness_age_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107566, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-26/fitness_age_components.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107567, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-25/fitness_age_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107568, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-25/fitness_age_components.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107569, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-20/fitness_age_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107570, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-20/fitness_age_components.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107571, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-24/fitness_age_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107572, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-24/fitness_age_components.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107573, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-23/fitness_age_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107574, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-23/fitness_age_components.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107575, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-22/fitness_age_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107576, 'fitness_age', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/fitness_age/2026-07-22/fitness_age_components.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107577, 'hrv', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/hrv/2026-07-20/hrv_baseline.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107578, 'hrv', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/hrv/2026-07-20/hrv_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107579, 'hrv', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/hrv/2026-07-20/hrv_readings.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107580, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-21/respiration_averages_valuesarray.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107581, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-21/respiration_values_array.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107582, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-21/respiration_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107585, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-26/respiration_averages_valuesarray.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107586, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-26/respiration_values_array.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107587, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-26/respiration_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107590, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-25/respiration_averages_valuesarray.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107591, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-25/respiration_values_array.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107592, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-25/respiration_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107595, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-20/respiration_averages_valuesarray.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107596, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-20/respiration_values_array.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107597, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-20/respiration_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107600, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-24/respiration_averages_valuesarray.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107601, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-24/respiration_values_array.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107602, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-24/respiration_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107605, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-23/respiration_averages_valuesarray.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107606, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-23/respiration_values_array.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107607, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-23/respiration_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107610, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-22/respiration_averages_valuesarray.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107611, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-22/respiration_values_array.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107612, 'respiration', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/respiration/2026-07-22/respiration_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107615, 'body_battery', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/body_battery/2026-07-21/body_battery_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107619, 'body_battery', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/body_battery/2026-07-21/stress_value_descriptors.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107621, 'body_battery', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/body_battery/2026-07-21/event_stress_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107623, 'body_battery', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/body_battery/2026-07-21/event_body_battery_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107625, 'body_battery', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/body_battery/2026-07-20/body_battery_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107629, 'body_battery', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/body_battery/2026-07-20/stress_value_descriptors.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107631, 'body_battery', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/body_battery/2026-07-20/event_stress_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107633, 'body_battery', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/body_battery/2026-07-20/event_body_battery_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107635, 'steps', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/steps/2026-07-20/step_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107636, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-21/heart_rate_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107638, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-21/heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107639, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-26/heart_rate_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107641, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-26/heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107642, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-25/heart_rate_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107644, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-25/heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107645, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-20/heart_rate_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107647, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-20/heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107648, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-24/heart_rate_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107650, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-24/heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107651, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-23/heart_rate_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107653, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-23/heart_rate_summary.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107654, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-22/heart_rate_values.csv', '2026-07-27 10:12:44');
+INSERT INTO `csv_file_paths` VALUES (1107656, 'heart_rate', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/heart_rate/2026-07-22/heart_rate_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107657, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-21/spo2_hourly.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107658, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-21/spo2_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107659, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-21/spo2_continuous_readings.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107660, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-21/spo2_descriptors.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107661, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-26/spo2_hourly.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107662, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-26/spo2_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107663, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-26/spo2_continuous_readings.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107664, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-26/spo2_descriptors.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107665, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-25/spo2_hourly.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107666, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-25/spo2_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107667, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-25/spo2_continuous_readings.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107668, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-25/spo2_descriptors.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107669, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-20/spo2_hourly.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107670, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-20/spo2_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107671, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-20/spo2_continuous_readings.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107672, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-20/spo2_descriptors.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107673, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-24/spo2_hourly.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107674, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-24/spo2_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107675, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-24/spo2_continuous_readings.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107676, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-24/spo2_descriptors.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107677, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-23/spo2_hourly.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107678, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-23/spo2_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107679, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-23/spo2_continuous_readings.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107680, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-23/spo2_descriptors.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107681, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-22/spo2_hourly.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107682, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-22/spo2_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107683, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-22/spo2_continuous_readings.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107684, 'spo2', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/spo2/2026-07-22/spo2_descriptors.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107685, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/sleep_body_battery.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107686, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/rem_sleep_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107687, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/sleep_restless_moments.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107688, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/daily_nap_dtos.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107689, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/wellness_epoch_respiration.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107690, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/hrv_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107691, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/wellness_epoch_spo2.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107692, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/sleep_movement.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107693, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/next_sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107695, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/wellness_spo2_sleep_detail.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107696, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/sleep_levels.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107697, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/sleep_stress.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107698, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107699, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/sleep_heart_rate.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107700, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/sleep_scores.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107701, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-21/daily_sleep_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107702, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/sleep_body_battery.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107703, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/rem_sleep_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107704, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/sleep_restless_moments.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107705, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/daily_nap_dtos.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107706, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/wellness_epoch_respiration.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107707, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/hrv_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107708, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/wellness_epoch_spo2.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107709, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/sleep_movement.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107710, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/next_sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107712, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/wellness_spo2_sleep_detail.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107713, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/sleep_levels.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107714, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/sleep_stress.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107715, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107716, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/sleep_heart_rate.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107717, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/sleep_scores.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107718, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-26/daily_sleep_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107719, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/sleep_body_battery.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107720, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/rem_sleep_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107721, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/sleep_restless_moments.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107722, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/daily_nap_dtos.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107723, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/wellness_epoch_respiration.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107724, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/hrv_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107725, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/wellness_epoch_spo2.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107726, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/sleep_movement.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107727, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/next_sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107729, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/wellness_spo2_sleep_detail.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107730, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/sleep_levels.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107731, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/sleep_stress.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107732, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107733, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/sleep_heart_rate.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107734, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/sleep_scores.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107735, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-25/daily_sleep_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107736, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/sleep_body_battery.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107737, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/rem_sleep_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107738, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/sleep_restless_moments.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107739, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/daily_nap_dtos.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107740, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/wellness_epoch_respiration.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107741, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/hrv_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107742, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/wellness_epoch_spo2.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107743, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/sleep_movement.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107744, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/next_sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107746, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/wellness_spo2_sleep_detail.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107747, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/sleep_levels.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107748, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/sleep_stress.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107749, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107750, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/sleep_heart_rate.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107751, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/sleep_scores.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107752, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-20/daily_sleep_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107753, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/sleep_body_battery.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107754, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/rem_sleep_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107755, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/sleep_restless_moments.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107756, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/daily_nap_dtos.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107757, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/wellness_epoch_respiration.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107758, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/hrv_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107759, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/wellness_epoch_spo2.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107760, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/sleep_movement.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107761, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/next_sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107763, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/wellness_spo2_sleep_detail.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107764, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/sleep_levels.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107765, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/sleep_stress.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107766, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107767, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/sleep_heart_rate.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107768, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/sleep_scores.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107769, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-24/daily_sleep_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107770, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/sleep_body_battery.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107771, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/rem_sleep_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107772, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/sleep_restless_moments.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107773, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/daily_nap_dtos.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107774, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/wellness_epoch_respiration.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107775, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/hrv_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107776, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/wellness_epoch_spo2.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107777, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/sleep_movement.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107778, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/next_sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107780, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/wellness_spo2_sleep_detail.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107781, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/sleep_levels.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107782, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/sleep_stress.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107783, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107784, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/sleep_heart_rate.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107785, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/sleep_scores.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107786, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-23/daily_sleep_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107787, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/sleep_body_battery.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107788, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/rem_sleep_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107789, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/sleep_restless_moments.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107790, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/daily_nap_dtos.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107791, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/wellness_epoch_respiration.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107792, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/hrv_data.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107793, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/wellness_epoch_spo2.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107794, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/sleep_movement.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107795, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/next_sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107797, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/wellness_spo2_sleep_detail.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107798, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/sleep_levels.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107799, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/sleep_stress.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107800, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/sleep_need.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107801, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/sleep_heart_rate.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107802, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/sleep_scores.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107803, 'sleep', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/sleep/2026-07-22/daily_sleep_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107804, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-21/body_battery_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107805, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-21/body_battery_feedback_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107806, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-21/activity_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107807, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-26/body_battery_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107808, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-26/body_battery_feedback_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107809, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-26/activity_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107810, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-25/body_battery_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107811, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-25/body_battery_feedback_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107812, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-25/activity_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107813, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-20/body_battery_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107814, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-20/body_battery_feedback_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107815, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-20/activity_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107816, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-24/body_battery_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107817, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-24/body_battery_feedback_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107818, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-24/activity_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107819, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-23/body_battery_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107820, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-23/body_battery_feedback_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107821, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-23/activity_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107822, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-22/body_battery_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107823, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-22/body_battery_feedback_events.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107824, 'activity', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/activity/2026-07-22/activity_summary.csv', '2026-07-27 10:12:45');
+INSERT INTO `csv_file_paths` VALUES (1107825, 'daily_steps', '/healthsystem-test/python_scripts/csv_data/ccceee00021_163.com/daily_steps/2026-07-20/daily_steps_summary.csv', '2026-07-27 10:12:45');
 
 -- ----------------------------
 -- Table structure for daily_steps
 -- ----------------------------
 DROP TABLE IF EXISTS `daily_steps`;
 CREATE TABLE `daily_steps`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `calendarDate` datetime NULL DEFAULT NULL,
-  `totalSteps` int NULL DEFAULT NULL,
+  `totalSteps` int(11) NULL DEFAULT NULL,
   `totalDistance` float NULL DEFAULT NULL,
   `stepGoal` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13957 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 13893 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of daily_steps
@@ -28581,31 +28874,32 @@ INSERT INTO `daily_steps` VALUES (13877, '2025-10-28 00:00:00', 'ccceee00001@163
 INSERT INTO `daily_steps` VALUES (13884, '2025-10-15 00:00:00', 'ccceee00001@163.com', '2025-10-15 00:00:00', 9293, 7445, '7700');
 INSERT INTO `daily_steps` VALUES (13889, '2025-10-20 00:00:00', 'ccceee00001@163.com', '2025-10-20 00:00:00', 11189, 8771, '7700');
 INSERT INTO `daily_steps` VALUES (13891, '2025-10-29 00:00:00', 'ccceee00001@163.com', '2025-10-29 00:00:00', 8409, 6679, '7700');
+INSERT INTO `daily_steps` VALUES (13892, '2026-07-20 00:00:00', 'ccceee00021@163.com', '2026-07-20 00:00:00', 7732, 5577, '7420');
 
 -- ----------------------------
 -- Table structure for ema_answer
 -- ----------------------------
 DROP TABLE IF EXISTS `ema_answer`;
 CREATE TABLE `ema_answer`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL COMMENT '记录日期',
   `log_time` time NOT NULL COMMENT '记录时间',
-  `mood` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'happy, sad, angry, fear/worrying, neutral, annoying,stress',
-  `moodlevel` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '心境程度，a little bit, somewhat, very much, extremely',
-  `stresslevel` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '压力程度，A little stressed, Definitely stressed, Stressed out, Feeling good, Feeling great\n\n',
-  `speech_url` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '上传地语音文件地链接地址',
-  `pam` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT '' COMMENT 'pam：前端的图片对应的情绪标签，通过用户选择图片，得到情绪标签，值是afraid、tense、excited等字符串，具体见《PAM.pptx》',
-  `valence` tinyint NULL DEFAULT NULL,
-  `arousal` tinyint NULL DEFAULT NULL,
-  `pam_score` tinyint NOT NULL COMMENT 'pam Score 1-16',
-  `img_datas` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL,
-  `img_selected` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
+  `mood` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'happy, sad, angry, fear/worrying, neutral, annoying,stress',
+  `moodlevel` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '心境程度，a little bit, somewhat, very much, extremely',
+  `stresslevel` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '压力程度，A little stressed, Definitely stressed, Stressed out, Feeling good, Feeling great\n\n',
+  `speech_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '上传地语音文件地链接地址',
+  `pam` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT 'pam：前端的图片对应的情绪标签，通过用户选择图片，得到情绪标签，值是afraid、tense、excited等字符串，具体见《PAM.pptx》',
+  `valence` tinyint(4) NULL DEFAULT NULL,
+  `arousal` tinyint(4) NULL DEFAULT NULL,
+  `pam_score` tinyint(4) NOT NULL COMMENT 'pam Score 1-16',
+  `img_datas` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `img_selected` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `k_log_date`(`log_date` ASC) USING BTREE,
-  INDEX `fk_user_id_4`(`user_id` ASC) USING BTREE,
+  INDEX `k_log_date`(`log_date`) USING BTREE,
+  INDEX `fk_user_id_4`(`user_id`) USING BTREE,
   CONSTRAINT `ema_answer_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 649 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '生态瞬间评估法（Ecological Momentary Assessment,简称 EMA ），包含情绪和压力信息以及pam信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生态瞬间评估法（Ecological Momentary Assessment,简称 EMA ），包含情绪和压力信息以及pam信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ema_answer
@@ -28616,7 +28910,7 @@ CREATE TABLE `ema_answer`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `fitness_age`;
 CREATE TABLE `fitness_age`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `chronologicalAge` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -28625,8 +28919,8 @@ CREATE TABLE `fitness_age`  (
   `previousFitnessAge` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `lastUpdated` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25226 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 25233 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of fitness_age
@@ -29343,25 +29637,32 @@ INSERT INTO `fitness_age` VALUES (25221, '2026-02-26 00:00:00', 'ccceee00001@163
 INSERT INTO `fitness_age` VALUES (25223, '2025-12-25 00:00:00', 'ccceee00001@163.com', '20', '21.083877310492554', '18.0', '21.193545232764635', '2025-10-29 00:00:00');
 INSERT INTO `fitness_age` VALUES (25224, '2025-11-06 00:00:00', 'ccceee00001@163.com', '20', '21.083877310492554', '18.0', '21.193545232764635', '2025-10-29 00:00:00');
 INSERT INTO `fitness_age` VALUES (25225, '2026-01-29 00:00:00', 'ccceee00001@163.com', '20', '21.083877310492554', '18.0', '21.193545232764635', '2025-10-29 00:00:00');
+INSERT INTO `fitness_age` VALUES (25226, '2026-07-21 00:00:00', 'ccceee00021@163.com', '41', '40.99670403525878', '37.10546346602887', '41.04836494478928', '2026-07-20 00:00:00');
+INSERT INTO `fitness_age` VALUES (25227, '2026-07-26 00:00:00', 'ccceee00021@163.com', '41', '40.99670403525878', '37.10546346602887', '41.04836494478928', '2026-07-20 00:00:00');
+INSERT INTO `fitness_age` VALUES (25228, '2026-07-25 00:00:00', 'ccceee00021@163.com', '41', '40.99670403525878', '37.10546346602887', '41.04836494478928', '2026-07-20 00:00:00');
+INSERT INTO `fitness_age` VALUES (25229, '2026-07-20 00:00:00', 'ccceee00021@163.com', '41', '40.99670403525878', '37.10546346602887', '41.04836494478928', '2026-07-20 00:00:00');
+INSERT INTO `fitness_age` VALUES (25230, '2026-07-24 00:00:00', 'ccceee00021@163.com', '41', '40.99670403525878', '37.10546346602887', '41.04836494478928', '2026-07-20 00:00:00');
+INSERT INTO `fitness_age` VALUES (25231, '2026-07-23 00:00:00', 'ccceee00021@163.com', '41', '40.99670403525878', '37.10546346602887', '41.04836494478928', '2026-07-20 00:00:00');
+INSERT INTO `fitness_age` VALUES (25232, '2026-07-22 00:00:00', 'ccceee00021@163.com', '41', '40.99670403525878', '37.10546346602887', '41.04836494478928', '2026-07-20 00:00:00');
 
 -- ----------------------------
 -- Table structure for heal_diary
 -- ----------------------------
 DROP TABLE IF EXISTS `heal_diary`;
 CREATE TABLE `heal_diary`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '日记主键ID',
-  `user_id` bigint NOT NULL COMMENT '用户ID，外键关联 user_info',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '日记主键ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID，外键关联 user_info',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '日记正文内容',
-  `mood_score` tinyint NULL DEFAULT NULL COMMENT '情绪评分 1-10，1最差 10最好，可为空',
+  `mood_score` tinyint(4) NULL DEFAULT NULL COMMENT '情绪评分 1-10，1最差 10最好，可为空',
   `mood_label` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '情绪标签，如：平静、开心、焦虑、悲伤等',
   `image_urls` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '附图URL列表，JSON数组格式，如 [\"url1\",\"url2\"]',
   `is_private` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否私密：1私密（默认），0公开',
   `add_timestamp_mils` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间戳',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_hd_user_id`(`user_id` ASC) USING BTREE,
-  INDEX `idx_hd_user_log_date`(`user_id` ASC) USING BTREE,
+  INDEX `idx_hd_user_id`(`user_id`) USING BTREE,
+  INDEX `idx_hd_user_log_date`(`user_id`) USING BTREE,
   CONSTRAINT `fk_hd_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户疗愈日记表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户疗愈日记表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of heal_diary
@@ -29369,21 +29670,21 @@ CREATE TABLE `heal_diary`  (
 INSERT INTO `heal_diary` VALUES (4, 220, '就很棒', 2, '平静', '[\"blob:https://localhost:8080/4e70380f-8353-4f54-90ee-51c217bb5b18\"]', 1, '2026-04-01 00:23:43');
 INSERT INTO `heal_diary` VALUES (5, 220, '哈哈哈', 2, '平静', '[]', 1, '2026-04-01 15:13:25');
 INSERT INTO `heal_diary` VALUES (7, 220, '加油加油', 2, '平静', '[]', 1, '2026-04-01 16:00:53');
-INSERT INTO `heal_diary` VALUES (9, 220, '天气不错！', 1, '开心', '[]', 1, '2026-04-02 12:43:51');
 INSERT INTO `heal_diary` VALUES (10, 181, '哈哈', 2, '平静', '[]', 1, '2026-04-09 10:49:33');
 INSERT INTO `heal_diary` VALUES (11, 181, '就很棒', 2, '平静', '[]', 1, '2026-04-09 17:16:17');
 INSERT INTO `heal_diary` VALUES (12, 181, '今天不开心', 2, '平静', '[]', 1, '2026-04-12 16:18:24');
 INSERT INTO `heal_diary` VALUES (13, 181, '加油呜呜', 2, '平静', '[]', 1, '2026-04-13 10:53:02');
-INSERT INTO `heal_diary` VALUES (14, 181, '不开心呜呜', 5, '焦虑', '[]', 1, '2026-04-15 15:52:46');
 INSERT INTO `heal_diary` VALUES (15, 181, '就很棒哈哈哈', 2, '平静', '[]', 1, '2026-04-18 22:18:23');
-INSERT INTO `heal_diary` VALUES (16, 181, '呵呵哈哈哈', 2, '平静', '[]', 1, '2026-04-19 10:22:37');
+INSERT INTO `heal_diary` VALUES (17, 220, '今天开心', 2, '平静', '[]', 1, '2026-07-13 14:13:10');
+INSERT INTO `heal_diary` VALUES (18, 220, '哈哈哈', 2, '平静', '[]', 1, '2026-07-22 16:59:25');
+INSERT INTO `heal_diary` VALUES (19, 220, '哈哈哈', 2, '平静', '[]', 1, '2026-07-23 10:32:43');
 
 -- ----------------------------
 -- Table structure for heart_rate
 -- ----------------------------
 DROP TABLE IF EXISTS `heart_rate`;
 CREATE TABLE `heart_rate`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `userProfilePK` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -29397,8 +29698,8 @@ CREATE TABLE `heart_rate`  (
   `restingHeartRate` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `lastSevenDaysAvgRestingHeartRate` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25226 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 25233 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of heart_rate
@@ -30115,13 +30416,20 @@ INSERT INTO `heart_rate` VALUES (25221, '2026-02-26 00:00:00', 'ccceee00001@163.
 INSERT INTO `heart_rate` VALUES (25223, '2025-12-25 00:00:00', 'ccceee00001@163.com', '12358082', '2025-12-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `heart_rate` VALUES (25224, '2025-11-06 00:00:00', 'ccceee00001@163.com', '12358082', '2025-11-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `heart_rate` VALUES (25225, '2026-01-29 00:00:00', 'ccceee00001@163.com', '12358082', '2026-01-29 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `heart_rate` VALUES (25226, '2026-07-21 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `heart_rate` VALUES (25227, '2026-07-26 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-26 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `heart_rate` VALUES (25228, '2026-07-25 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `heart_rate` VALUES (25229, '2026-07-20 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-20 00:00:00', '2026-07-19 16:00:00', '2026-07-20 12:05:00', '2026-07-20 00:00:00', '2026-07-21 00:00:00', '188', '47', '47', '51');
+INSERT INTO `heart_rate` VALUES (25230, '2026-07-24 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-24 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `heart_rate` VALUES (25231, '2026-07-23 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-23 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `heart_rate` VALUES (25232, '2026-07-22 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-22 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for hrv
 -- ----------------------------
 DROP TABLE IF EXISTS `hrv`;
 CREATE TABLE `hrv`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `userProfilePk` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -30141,8 +30449,8 @@ CREATE TABLE `hrv`  (
   `feedbackPhrase` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `createTimeStamp` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12869 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 12818 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of hrv
@@ -30333,53 +30641,49 @@ INSERT INTO `hrv` VALUES (12797, '2025-10-15 00:00:00', 'ccceee00001@163.com', '
 INSERT INTO `hrv` VALUES (12802, '2025-10-20 00:00:00', 'ccceee00001@163.com', '12358082', '2025-10-19 15:46:09', '2025-10-19 23:12:32', '2025-10-19 23:46:09', '2025-10-20 07:12:32', NULL, NULL, NULL, NULL, '2025-10-20 00:00:00', '45', '52', '75', 'BALANCED', 'HRV_BALANCED_2', '2025-10-20 00:42:52');
 INSERT INTO `hrv` VALUES (12804, '2025-10-29 00:00:00', 'ccceee00001@163.com', '12358082', '2025-10-28 16:41:43', '2025-10-28 23:17:31', '2025-10-29 00:41:43', '2025-10-29 07:17:31', NULL, NULL, NULL, NULL, '2025-10-29 00:00:00', '49', '51', '80', 'BALANCED', 'HRV_BALANCED_7', '2025-10-29 10:42:43');
 INSERT INTO `hrv` VALUES (12816, '2025-10-30 00:00:00', 'ccceee00001@163.com', '12358082', '2025-10-29 17:57:00', '2025-10-29 23:17:31', '2025-10-30 01:57:00', '2025-10-30 07:17:31', NULL, NULL, NULL, NULL, '2025-10-30 00:00:00', '49', '46', '82', 'BALANCED', 'HRV_BALANCED_8', '2025-10-30 06:08:05');
+INSERT INTO `hrv` VALUES (12817, '2026-07-20 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-19 17:20:03', '2026-07-20 00:00:39', '2026-07-20 01:20:03', '2026-07-20 08:00:39', '2026-07-19 17:20:03', '2026-07-20 00:02:03', '2026-07-20 01:20:03', '2026-07-20 08:02:03', '2026-07-20 00:00:00', '57', '57', '76', 'NONE', 'ONBOARDING_1', '2026-07-20 12:06:11');
 
 -- ----------------------------
 -- Table structure for htp_drawing_record
 -- ----------------------------
 DROP TABLE IF EXISTS `htp_drawing_record`;
 CREATE TABLE `htp_drawing_record`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '用户id，外键',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户id，外键',
   `log_date` date NOT NULL COMMENT '绘画日期',
-  `score` tinyint NOT NULL DEFAULT 0 COMMENT 'HTP综合评分 0-100',
+  `score` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'HTP综合评分 0-100',
   `report_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI生成的心理分析报告全文',
   `drawing_img_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '绘画图片文件路径（完整画布图片）',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_htp_user_id`(`user_id` ASC) USING BTREE,
-  INDEX `idx_htp_log_date`(`log_date` ASC) USING BTREE,
-  INDEX `idx_htp_user_date`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `idx_htp_score`(`score` ASC) USING BTREE,
+  INDEX `idx_htp_user_id`(`user_id`) USING BTREE,
+  INDEX `idx_htp_log_date`(`log_date`) USING BTREE,
+  INDEX `idx_htp_user_date`(`user_id`, `log_date`) USING BTREE,
+  INDEX `idx_htp_score`(`score`) USING BTREE,
   CONSTRAINT `fk_htp_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'HTP绘画测验历史记录（房-树-人测验，存储评分、报告、图片路径）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'HTP绘画测验历史记录（房-树-人测验，存储评分、报告、图片路径）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of htp_drawing_record
 -- ----------------------------
-INSERT INTO `htp_drawing_record` VALUES (1, 220, '2026-03-31', 52, '{\"score\":52,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"简洁\",\"score\":28,\"color\":\"#f093fb\",\"detail\":\"使用了 2 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"温暖\",\"score\":25,\"color\":\"#fda085\",\"detail\":\"暖色调为主，暗示对外界持开放、友善态度，情绪较积极。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":65.5,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":22,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":24,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"温暖开放\",\"tagColor\":\"#fda085\",\"text\":\"暖色偏好显示您倾向于积极的人际关系，具有较好的共情能力和社交意愿。\"},{\"tag\":\"空旷感\",\"tagColor\":\"#a7b2c1\",\"text\":\"大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":28,\"warmth\":25,\"strokeForce\":20,\"complexity\":11,\"compositionScore\":65.52196883357796,\"fullness\":22,\"positivity\":24,\"colorCount\":2,\"totalStrokes\":3,\"totalPoints\":110,\"warmCount\":1,\"coolCount\":0,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', NULL);
-INSERT INTO `htp_drawing_record` VALUES (2, 220, '2026-03-31', 54, '{\"score\":54,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"单调\",\"score\":14,\"color\":\"#f093fb\",\"detail\":\"使用了 1 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"中性\",\"score\":50,\"color\":\"#fda085\",\"detail\":\"色调中性，情感表达较为克制。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":54.4,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":10.2,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":30,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"情感内敛\",\"tagColor\":\"#a18cd1\",\"text\":\"单一色调提示情感表达较为节制，可能存在压抑或回避的心理倾向。\"},{\"tag\":\"空旷感\",\"tagColor\":\"#a7b2c1\",\"text\":\"大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":14,\"warmth\":50,\"strokeForce\":20,\"complexity\":5.1,\"compositionScore\":54.40247140710803,\"fullness\":10.2,\"positivity\":30,\"colorCount\":1,\"totalStrokes\":2,\"totalPoints\":51,\"warmCount\":0,\"coolCount\":0,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', NULL);
-INSERT INTO `htp_drawing_record` VALUES (3, 220, '2026-03-31', 55, '{\"score\":55,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"单调\",\"score\":14,\"color\":\"#f093fb\",\"detail\":\"使用了 1 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"中性\",\"score\":50,\"color\":\"#fda085\",\"detail\":\"色调中性，情感表达较为克制。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":57.4,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":14.2,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":30,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"情感内敛\",\"tagColor\":\"#a18cd1\",\"text\":\"单一色调提示情感表达较为节制，可能存在压抑或回避的心理倾向。\"},{\"tag\":\"空旷感\",\"tagColor\":\"#a7b2c1\",\"text\":\"大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":14,\"warmth\":50,\"strokeForce\":20,\"complexity\":7.1,\"compositionScore\":57.36793018061233,\"fullness\":14.2,\"positivity\":30,\"colorCount\":1,\"totalStrokes\":1,\"totalPoints\":71,\"warmCount\":0,\"coolCount\":0,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', '/htp/220_drawing_20260331_75df647a-54c0-4e25-90b6-62eac1266489.png');
-INSERT INTO `htp_drawing_record` VALUES (4, 220, '2026-04-01', 51, '{\"score\":51,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"简洁\",\"score\":28,\"color\":\"#f093fb\",\"detail\":\"使用了 2 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"温暖\",\"score\":25,\"color\":\"#fda085\",\"detail\":\"暖色调为主，暗示对外界持开放、友善态度，情绪较积极。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":57,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":20.8,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":24,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"温暖开放\",\"tagColor\":\"#fda085\",\"text\":\"暖色偏好显示您倾向于积极的人际关系，具有较好的共情能力和社交意愿。\"},{\"tag\":\"空旷感\",\"tagColor\":\"#a7b2c1\",\"text\":\"大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":28,\"warmth\":25,\"strokeForce\":20,\"complexity\":10.4,\"compositionScore\":57.01824264335276,\"fullness\":20.8,\"positivity\":24,\"colorCount\":2,\"totalStrokes\":2,\"totalPoints\":104,\"warmCount\":1,\"coolCount\":0,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', '/htp/220_drawing_20260401_35a7bb55-49cc-4f90-9a9d-ab6b26f3af0e.png');
-INSERT INTO `htp_drawing_record` VALUES (6, 220, '2026-04-01', 51, '{\"score\":51,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"简洁\",\"score\":28,\"color\":\"#f093fb\",\"detail\":\"使用了 2 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"温暖\",\"score\":25,\"color\":\"#fda085\",\"detail\":\"暖色调为主，暗示对外界持开放、友善态度，情绪较积极。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":59,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":22.6,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":24,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"温暖开放\",\"tagColor\":\"#fda085\",\"text\":\"暖色偏好显示您倾向于积极的人际关系，具有较好的共情能力和社交意愿。\"},{\"tag\":\"空旷感\",\"tagColor\":\"#a7b2c1\",\"text\":\"大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":28,\"warmth\":25,\"strokeForce\":20,\"complexity\":11.3,\"compositionScore\":58.95180991361259,\"fullness\":22.6,\"positivity\":24,\"colorCount\":2,\"totalStrokes\":4,\"totalPoints\":113,\"warmCount\":1,\"coolCount\":0,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', '/htp/220_drawing_20260401_2f1dde17-c935-453d-8ee0-54f03979a2f5.png');
-INSERT INTO `htp_drawing_record` VALUES (7, 220, '2026-04-01', 55, '{\"score\":55,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"单调\",\"score\":14,\"color\":\"#f093fb\",\"detail\":\"使用了 1 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"中性\",\"score\":50,\"color\":\"#fda085\",\"detail\":\"色调中性，情感表达较为克制。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":57,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":19.6,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":30,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"情感内敛\",\"tagColor\":\"#a18cd1\",\"text\":\"单一色调提示情感表达较为节制，可能存在压抑或回避的心理倾向。\"},{\"tag\":\"空旷感\",\"tagColor\":\"#a7b2c1\",\"text\":\"大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":14,\"warmth\":50,\"strokeForce\":20,\"complexity\":9.8,\"compositionScore\":57.033091765497076,\"fullness\":19.6,\"positivity\":30,\"colorCount\":1,\"totalStrokes\":2,\"totalPoints\":98,\"warmCount\":0,\"coolCount\":0,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', '/htp/220_drawing_20260401_10a3cb27-c564-418d-a0fe-609ac41fc9d9.png');
-INSERT INTO `htp_drawing_record` VALUES (8, 181, '2026-04-15', 54, '{\"score\":54,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"单调\",\"score\":14,\"color\":\"#f093fb\",\"detail\":\"使用了 1 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"中性\",\"score\":50,\"color\":\"#fda085\",\"detail\":\"色调中性，情感表达较为克制。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":52.6,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":11.4,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":30,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"情感内敛\",\"tagColor\":\"#a18cd1\",\"text\":\"单一色调提示情感表达较为节制，可能存在压抑或回避的心理倾向。\"},{\"tag\":\"空旷感\",\"tagColor\":\"#a7b2c1\",\"text\":\"大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":14,\"warmth\":50,\"strokeForce\":20,\"complexity\":5.7,\"compositionScore\":52.6238760863341,\"fullness\":11.4,\"positivity\":30,\"colorCount\":1,\"totalStrokes\":1,\"totalPoints\":57,\"warmCount\":0,\"coolCount\":0,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', '/htp/181_drawing_20260415_80aa8dae-6c2a-4071-be72-c12d80dde8fc.png');
-INSERT INTO `htp_drawing_record` VALUES (9, 181, '2026-04-18', 50, '{\"score\":50,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"单调\",\"score\":14,\"color\":\"#f093fb\",\"detail\":\"使用了 1 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"温暖\",\"score\":25,\"color\":\"#fda085\",\"detail\":\"暖色调为主，暗示对外界持开放、友善态度，情绪较积极。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":50.9,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":36.2,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":20,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"情感内敛\",\"tagColor\":\"#a18cd1\",\"text\":\"单一色调提示情感表达较为节制，可能存在压抑或回避的心理倾向。\"},{\"tag\":\"温暖开放\",\"tagColor\":\"#fda085\",\"text\":\"暖色偏好显示您倾向于积极的人际关系，具有较好的共情能力和社交意愿。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":14,\"warmth\":25,\"strokeForce\":20,\"complexity\":18.1,\"compositionScore\":50.881452818438014,\"fullness\":36.2,\"positivity\":20,\"colorCount\":1,\"totalStrokes\":1,\"totalPoints\":181,\"warmCount\":1,\"coolCount\":0,\"darkCount\":0,\"avgSize\":3,\"hasWhite\":false}}', '/htp/181_drawing_20260418_74053cbe-53a1-48d3-9608-21d3bb41aa3b.png');
+INSERT INTO `htp_drawing_record` VALUES (10, 220, '2026-05-28', 54, '{\"score\":54,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"单调\",\"score\":14,\"color\":\"#f093fb\",\"detail\":\"使用了 1 种颜色。色彩偏少，可能存在情绪压抑或内敛倾向。\"},{\"name\":\"感官温度\",\"value\":\"中性\",\"score\":50,\"color\":\"#fda085\",\"detail\":\"色调中性，情感表达较为克制。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":20,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"略有偏移\",\"score\":53,\"color\":\"#4facfe\",\"detail\":\"构图略有偏移，可能存在轻微的焦虑或不安全感。\"},{\"name\":\"画面饱满度\",\"value\":\"大量留白\",\"score\":11.2,\"color\":\"#43e97b\",\"detail\":\"留白较多，可能体现退缩、空虚感或低活跃状态。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":30,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"情感内敛\",\"tagColor\":\"#a18cd1\",\"text\":\"单一色调提示情感表达较为节制，可能存在压抑或回避的心理倾向。\"},{\"tag\":\"空旷感\",\"tagColor\":\"#a7b2c1\",\"text\":\"大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\"],\"analysis\":{\"colorDiversity\":14,\"warmth\":50,\"strokeForce\":20,\"complexity\":5.6,\"compositionScore\":53.014921724880274,\"fullness\":11.2,\"positivity\":30,\"colorCount\":1,\"totalStrokes\":2,\"totalPoints\":56,\"warmCount\":0,\"coolCount\":0,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', '/htp/220_drawing_20260528_0ef32f94-6877-440d-9401-55ada2f69404.png');
+INSERT INTO `htp_drawing_record` VALUES (11, 220, '2026-06-02', 62, '{\"score\":62,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"简洁\",\"score\":42,\"color\":\"#f093fb\",\"detail\":\"使用了 3 种颜色。色彩适中，情感较为平衡。\"},{\"name\":\"感官温度\",\"value\":\"冷静\",\"score\":30,\"color\":\"#fda085\",\"detail\":\"冷色调偏多，体现理性、内敛特质，或存在一定情绪距离感。\"},{\"name\":\"笔触力度\",\"value\":\"适中\",\"score\":52.6984126984127,\"color\":\"#a18cd1\",\"detail\":\"笔触均衡，心理状态较为稳定。\"},{\"name\":\"构图合理性\",\"value\":\"偏侧明显\",\"score\":46.8,\"color\":\"#4facfe\",\"detail\":\"画面明显偏侧，可能暗示内心失衡或逃避倾向。\"},{\"name\":\"画面饱满度\",\"value\":\"适度留白\",\"score\":67.6,\"color\":\"#43e97b\",\"detail\":\"留白适度，构图感和空间意识良好。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":40,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"整体平衡\",\"tagColor\":\"#43e97b\",\"text\":\"各项指标较为均衡，未见明显心理警示信号，继续保持良好生活状态。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"练习冥想或深呼吸，每天花 5-10 分钟静心，帮助内心找到平静与平衡。\",\"建立规律的生活节奏，保证充足睡眠，这对情绪稳定很重要。\"],\"analysis\":{\"colorDiversity\":42,\"warmth\":30,\"strokeForce\":52.6984126984127,\"complexity\":33.8,\"compositionScore\":46.82234648060819,\"fullness\":67.6,\"positivity\":40,\"colorCount\":3,\"totalStrokes\":21,\"totalPoints\":338,\"warmCount\":0,\"coolCount\":2,\"darkCount\":1,\"avgSize\":4.904761904761905,\"hasWhite\":false}}', '/htp/220_drawing_20260602_98faa007-c186-4fbf-914c-8f201b167d5e.png');
+INSERT INTO `htp_drawing_record` VALUES (12, 220, '2026-07-13', 60, '{\"score\":60,\"level\":\"心理状态平稳\",\"desc\":\"当前心理状态基本平稳，部分维度可能存在提升空间，值得关注\",\"dims\":[{\"name\":\"色彩运用\",\"value\":\"丰富\",\"score\":56,\"color\":\"#f093fb\",\"detail\":\"使用了 4 种颜色。色彩适中，情感较为平衡。\"},{\"name\":\"感官温度\",\"value\":\"冷静\",\"score\":20,\"color\":\"#fda085\",\"detail\":\"冷色调偏多，体现理性、内敛特质，或存在一定情绪距离感。\"},{\"name\":\"笔触力度\",\"value\":\"轻柔\",\"score\":40,\"color\":\"#a18cd1\",\"detail\":\"线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。\"},{\"name\":\"构图合理性\",\"value\":\"偏侧明显\",\"score\":49.8,\"color\":\"#4facfe\",\"detail\":\"画面明显偏侧，可能暗示内心失衡或逃避倾向。\"},{\"name\":\"画面饱满度\",\"value\":\"充实饱满\",\"score\":100,\"color\":\"#43e97b\",\"detail\":\"画面填充丰富，体现较强的表达欲望和活跃度。\"},{\"name\":\"画面积极性\",\"value\":\"偏向消极\",\"score\":37,\"color\":\"#f7971e\",\"detail\":\"部分指标偏低，可能存在情绪低落或心理压力。\"}],\"interpret\":[{\"tag\":\"整体平衡\",\"tagColor\":\"#43e97b\",\"text\":\"各项指标较为均衡，未见明显心理警示信号，继续保持良好生活状态。\"}],\"advice\":[\"您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。\",\"适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。\",\"练习冥想或深呼吸，每天花 5-10 分钟静心，帮助内心找到平静与平衡。\"],\"analysis\":{\"colorDiversity\":56,\"warmth\":20,\"strokeForce\":40,\"complexity\":91.7,\"compositionScore\":49.77708968659703,\"fullness\":100,\"positivity\":37,\"colorCount\":4,\"totalStrokes\":32,\"totalPoints\":917,\"warmCount\":0,\"coolCount\":3,\"darkCount\":1,\"avgSize\":3,\"hasWhite\":false}}', '/htp/220_drawing_20260713_557fa0c5-b295-4046-b099-1f0275704c8b.png');
 
 -- ----------------------------
 -- Table structure for invition_code
 -- ----------------------------
 DROP TABLE IF EXISTS `invition_code`;
 CREATE TABLE `invition_code`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '医生或者管理员的id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '医生或者管理员的id',
   `invition_code` varchar(32) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT '邀请码',
-  `inviter` bigint NULL DEFAULT NULL COMMENT '邀请者的id',
+  `inviter` bigint(20) NULL DEFAULT NULL COMMENT '邀请者的id',
   `assistant_code` varchar(32) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT '助理邀请码，用于邀请助理注册',
-  `group_id` bigint NOT NULL COMMENT '助理归属于的医生的id，可以一个小组的id',
+  `group_id` bigint(20) NOT NULL COMMENT '助理归属于的医生的id，可以一个小组的id',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `u_invition_code`(`invition_code` ASC) USING BTREE,
-  INDEX `fk_userId_13`(`user_id` ASC) USING BTREE,
-  INDEX `fk_userId_13_2`(`inviter` ASC) USING BTREE,
+  UNIQUE INDEX `u_invition_code`(`invition_code`) USING BTREE,
+  INDEX `fk_userId_13`(`user_id`) USING BTREE,
+  INDEX `fk_userId_13_2`(`inviter`) USING BTREE,
   CONSTRAINT `fk_userId_13` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_userId_13_2` FOREIGN KEY (`inviter`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '用于管理后台管理端的用户，通过邀请码注册' ROW_FORMAT = DYNAMIC;
@@ -30402,32 +30706,32 @@ INSERT INTO `invition_code` VALUES (10, 184, NULL, NULL, NULL, 1);
 -- ----------------------------
 DROP TABLE IF EXISTS `ipaq`;
 CREATE TABLE `ipaq`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `q1_days` tinyint NOT NULL DEFAULT 0,
-  `q1_hours` smallint NOT NULL DEFAULT 0,
-  `q1_minutes` smallint NOT NULL DEFAULT 0,
-  `q2_days` tinyint NOT NULL DEFAULT 0,
-  `q2_hours` smallint NOT NULL DEFAULT 0,
-  `q2_minutes` smallint NOT NULL DEFAULT 0,
-  `q3_days` tinyint NOT NULL DEFAULT 0,
-  `q3_hours` smallint NOT NULL DEFAULT 0,
-  `q3_minutes` smallint NOT NULL DEFAULT 0,
-  `q4_hours` smallint NOT NULL DEFAULT 0,
-  `q4_minutes` smallint NOT NULL DEFAULT 0,
-  `q5_hours` smallint NOT NULL DEFAULT 0,
-  `q5_minutes` smallint NOT NULL DEFAULT 0,
-  `q6` tinyint NOT NULL DEFAULT 0,
-  `q7` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
-  `score` int NOT NULL DEFAULT 0,
-  `status` tinyint NOT NULL DEFAULT 0,
+  `q1_days` tinyint(4) NOT NULL DEFAULT 0,
+  `q1_hours` smallint(6) NOT NULL DEFAULT 0,
+  `q1_minutes` smallint(6) NOT NULL DEFAULT 0,
+  `q2_days` tinyint(4) NOT NULL DEFAULT 0,
+  `q2_hours` smallint(6) NOT NULL DEFAULT 0,
+  `q2_minutes` smallint(6) NOT NULL DEFAULT 0,
+  `q3_days` tinyint(4) NOT NULL DEFAULT 0,
+  `q3_hours` smallint(6) NOT NULL DEFAULT 0,
+  `q3_minutes` smallint(6) NOT NULL DEFAULT 0,
+  `q4_hours` smallint(6) NOT NULL DEFAULT 0,
+  `q4_minutes` smallint(6) NOT NULL DEFAULT 0,
+  `q5_hours` smallint(6) NOT NULL DEFAULT 0,
+  `q5_minutes` smallint(6) NOT NULL DEFAULT 0,
+  `q6` tinyint(4) NOT NULL DEFAULT 0,
+  `q7` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `score` int(11) NOT NULL DEFAULT 0,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_ipaq`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_ipaq`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_ipaq`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_ipaq`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_ipaq` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'IPAQ 国际体力活动量表（短卷）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'IPAQ 国际体力活动量表（短卷）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ipaq
@@ -30440,54 +30744,54 @@ INSERT INTO `ipaq` VALUES (3, 220, '2026-04-01', 2, 6, 6, 2, 3, 5, 3, 6, 7, 7, 5
 -- ----------------------------
 DROP TABLE IF EXISTS `maia2`;
 CREATE TABLE `maia2`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `q1` tinyint NOT NULL DEFAULT 0,
-  `q2` tinyint NOT NULL DEFAULT 0,
-  `q3` tinyint NOT NULL DEFAULT 0,
-  `q4` tinyint NOT NULL DEFAULT 0,
-  `q5` tinyint NOT NULL DEFAULT 0,
-  `q6` tinyint NOT NULL DEFAULT 0,
-  `q7` tinyint NOT NULL DEFAULT 0,
-  `q8` tinyint NOT NULL DEFAULT 0,
-  `q9` tinyint NOT NULL DEFAULT 0,
-  `q10` tinyint NOT NULL DEFAULT 0,
-  `q11` tinyint NOT NULL DEFAULT 0,
-  `q12` tinyint NOT NULL DEFAULT 0,
-  `q13` tinyint NOT NULL DEFAULT 0,
-  `q14` tinyint NOT NULL DEFAULT 0,
-  `q15` tinyint NOT NULL DEFAULT 0,
-  `q16` tinyint NOT NULL DEFAULT 0,
-  `q17` tinyint NOT NULL DEFAULT 0,
-  `q18` tinyint NOT NULL DEFAULT 0,
-  `q19` tinyint NOT NULL DEFAULT 0,
-  `q20` tinyint NOT NULL DEFAULT 0,
-  `q21` tinyint NOT NULL DEFAULT 0,
-  `q22` tinyint NOT NULL DEFAULT 0,
-  `q23` tinyint NOT NULL DEFAULT 0,
-  `q24` tinyint NOT NULL DEFAULT 0,
-  `q25` tinyint NOT NULL DEFAULT 0,
-  `q26` tinyint NOT NULL DEFAULT 0,
-  `q27` tinyint NOT NULL DEFAULT 0,
-  `q28` tinyint NOT NULL DEFAULT 0,
-  `q29` tinyint NOT NULL DEFAULT 0,
-  `q30` tinyint NOT NULL DEFAULT 0,
-  `q31` tinyint NOT NULL DEFAULT 0,
-  `q32` tinyint NOT NULL DEFAULT 0,
-  `q33` tinyint NOT NULL DEFAULT 0,
-  `q34` tinyint NOT NULL DEFAULT 0,
-  `q35` tinyint NOT NULL DEFAULT 0,
-  `q36` tinyint NOT NULL DEFAULT 0,
-  `q37` tinyint NOT NULL DEFAULT 0,
-  `score` smallint NOT NULL DEFAULT 0,
-  `status` tinyint NOT NULL DEFAULT 0,
+  `q1` tinyint(4) NOT NULL DEFAULT 0,
+  `q2` tinyint(4) NOT NULL DEFAULT 0,
+  `q3` tinyint(4) NOT NULL DEFAULT 0,
+  `q4` tinyint(4) NOT NULL DEFAULT 0,
+  `q5` tinyint(4) NOT NULL DEFAULT 0,
+  `q6` tinyint(4) NOT NULL DEFAULT 0,
+  `q7` tinyint(4) NOT NULL DEFAULT 0,
+  `q8` tinyint(4) NOT NULL DEFAULT 0,
+  `q9` tinyint(4) NOT NULL DEFAULT 0,
+  `q10` tinyint(4) NOT NULL DEFAULT 0,
+  `q11` tinyint(4) NOT NULL DEFAULT 0,
+  `q12` tinyint(4) NOT NULL DEFAULT 0,
+  `q13` tinyint(4) NOT NULL DEFAULT 0,
+  `q14` tinyint(4) NOT NULL DEFAULT 0,
+  `q15` tinyint(4) NOT NULL DEFAULT 0,
+  `q16` tinyint(4) NOT NULL DEFAULT 0,
+  `q17` tinyint(4) NOT NULL DEFAULT 0,
+  `q18` tinyint(4) NOT NULL DEFAULT 0,
+  `q19` tinyint(4) NOT NULL DEFAULT 0,
+  `q20` tinyint(4) NOT NULL DEFAULT 0,
+  `q21` tinyint(4) NOT NULL DEFAULT 0,
+  `q22` tinyint(4) NOT NULL DEFAULT 0,
+  `q23` tinyint(4) NOT NULL DEFAULT 0,
+  `q24` tinyint(4) NOT NULL DEFAULT 0,
+  `q25` tinyint(4) NOT NULL DEFAULT 0,
+  `q26` tinyint(4) NOT NULL DEFAULT 0,
+  `q27` tinyint(4) NOT NULL DEFAULT 0,
+  `q28` tinyint(4) NOT NULL DEFAULT 0,
+  `q29` tinyint(4) NOT NULL DEFAULT 0,
+  `q30` tinyint(4) NOT NULL DEFAULT 0,
+  `q31` tinyint(4) NOT NULL DEFAULT 0,
+  `q32` tinyint(4) NOT NULL DEFAULT 0,
+  `q33` tinyint(4) NOT NULL DEFAULT 0,
+  `q34` tinyint(4) NOT NULL DEFAULT 0,
+  `q35` tinyint(4) NOT NULL DEFAULT 0,
+  `q36` tinyint(4) NOT NULL DEFAULT 0,
+  `q37` tinyint(4) NOT NULL DEFAULT 0,
+  `score` smallint(6) NOT NULL DEFAULT 0,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_maia2`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_maia2`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_maia2`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_maia2`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_maia2` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'MAIA-2 多维度内感受意识量表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'MAIA-2 多维度内感受意识量表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of maia2
@@ -30498,8 +30802,8 @@ CREATE TABLE `maia2`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `media`;
 CREATE TABLE `media`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `file_type` varchar(32) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `log_date` date NOT NULL,
   `log_time` time NOT NULL,
@@ -30508,7 +30812,7 @@ CREATE TABLE `media`  (
   `infer_cost` decimal(10, 2) NULL DEFAULT NULL,
   `question_end_time` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_audo_userid`(`user_id` ASC) USING BTREE,
+  INDEX `fk_audo_userid`(`user_id`) USING BTREE,
   CONSTRAINT `fk_depressionvideo_userid` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = DYNAMIC;
 
@@ -30537,19 +30841,19 @@ INSERT INTO `media` VALUES (33, 170, 'depression-video', '2024-06-23', '21:40:48
 -- ----------------------------
 DROP TABLE IF EXISTS `nwpu_user_info`;
 CREATE TABLE `nwpu_user_info`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '用户id',
-  `nwpu_id` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '用户学号/工号',
-  `college` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '所属学院/单位名字',
-  `grade` smallint NOT NULL DEFAULT 0 COMMENT '用户所在年级，入学/校年份',
-  `type` enum('未知','本科生','硕士生','博士生','教职工') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '未知' COMMENT '用户类型，未知（0），本科生（1），硕士（2），博士（3），教职工（4）',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户id',
+  `nwpu_id` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户学号/工号',
+  `college` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '所属学院/单位名字',
+  `grade` smallint(6) NOT NULL DEFAULT 0 COMMENT '用户所在年级，入学/校年份',
+  `type` enum('未知','本科生','硕士生','博士生','教职工') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '未知' COMMENT '用户类型，未知（0），本科生（1），硕士（2），博士（3），教职工（4）',
   `add_timestamp_mils` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间戳',
   `mod_timestamp_mils` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间戳',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `u_nwpu_id`(`nwpu_id` ASC) USING BTREE COMMENT '学号/工号唯一',
-  UNIQUE INDEX `u_user_id_3`(`user_id` ASC) USING BTREE,
-  INDEX `fk_user_id`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '西北工业大学用户信息' ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `u_nwpu_id`(`nwpu_id`) USING BTREE COMMENT '学号/工号唯一',
+  UNIQUE INDEX `u_user_id_3`(`user_id`) USING BTREE,
+  INDEX `fk_user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '西北工业大学用户信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of nwpu_user_info
@@ -30560,77 +30864,77 @@ CREATE TABLE `nwpu_user_info`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `ocean`;
 CREATE TABLE `ocean`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `q1` tinyint NOT NULL DEFAULT 0,
-  `q2` tinyint NOT NULL DEFAULT 0,
-  `q3` tinyint NOT NULL DEFAULT 0,
-  `q4` tinyint NOT NULL DEFAULT 0,
-  `q5` tinyint NOT NULL DEFAULT 0,
-  `q6` tinyint NOT NULL DEFAULT 0,
-  `q7` tinyint NOT NULL DEFAULT 0,
-  `q8` tinyint NOT NULL DEFAULT 0,
-  `q9` tinyint NOT NULL DEFAULT 0,
-  `q10` tinyint NOT NULL DEFAULT 0,
-  `q11` tinyint NOT NULL DEFAULT 0,
-  `q12` tinyint NOT NULL DEFAULT 0,
-  `q13` tinyint NOT NULL DEFAULT 0,
-  `q14` tinyint NOT NULL DEFAULT 0,
-  `q15` tinyint NOT NULL DEFAULT 0,
-  `q16` tinyint NOT NULL DEFAULT 0,
-  `q17` tinyint NOT NULL DEFAULT 0,
-  `q18` tinyint NOT NULL DEFAULT 0,
-  `q19` tinyint NOT NULL DEFAULT 0,
-  `q20` tinyint NOT NULL DEFAULT 0,
-  `q21` tinyint NOT NULL DEFAULT 0,
-  `q22` tinyint NOT NULL DEFAULT 0,
-  `q23` tinyint NOT NULL DEFAULT 0,
-  `q24` tinyint NOT NULL DEFAULT 0,
-  `q25` tinyint NOT NULL DEFAULT 0,
-  `q26` tinyint NOT NULL DEFAULT 0,
-  `q27` tinyint NOT NULL DEFAULT 0,
-  `q28` tinyint NOT NULL DEFAULT 0,
-  `q29` tinyint NOT NULL DEFAULT 0,
-  `q30` tinyint NOT NULL DEFAULT 0,
-  `q31` tinyint NOT NULL DEFAULT 0,
-  `q32` tinyint NOT NULL DEFAULT 0,
-  `q33` tinyint NOT NULL DEFAULT 0,
-  `q34` tinyint NOT NULL DEFAULT 0,
-  `q35` tinyint NOT NULL DEFAULT 0,
-  `q36` tinyint NOT NULL DEFAULT 0,
-  `q37` tinyint NOT NULL DEFAULT 0,
-  `q38` tinyint NOT NULL DEFAULT 0,
-  `q39` tinyint NOT NULL DEFAULT 0,
-  `q40` tinyint NOT NULL DEFAULT 0,
-  `q41` tinyint NOT NULL DEFAULT 0,
-  `q42` tinyint NOT NULL DEFAULT 0,
-  `q43` tinyint NOT NULL DEFAULT 0,
-  `q44` tinyint NOT NULL DEFAULT 0,
-  `q45` tinyint NOT NULL DEFAULT 0,
-  `q46` tinyint NOT NULL DEFAULT 0,
-  `q47` tinyint NOT NULL DEFAULT 0,
-  `q48` tinyint NOT NULL DEFAULT 0,
-  `q49` tinyint NOT NULL DEFAULT 0,
-  `q50` tinyint NOT NULL DEFAULT 0,
-  `q51` tinyint NOT NULL DEFAULT 0,
-  `q52` tinyint NOT NULL DEFAULT 0,
-  `q53` tinyint NOT NULL DEFAULT 0,
-  `q54` tinyint NOT NULL DEFAULT 0,
-  `q55` tinyint NOT NULL DEFAULT 0,
-  `q56` tinyint NOT NULL DEFAULT 0,
-  `q57` tinyint NOT NULL DEFAULT 0,
-  `q58` tinyint NOT NULL DEFAULT 0,
-  `q59` tinyint NOT NULL DEFAULT 0,
-  `q60` tinyint NOT NULL DEFAULT 0,
-  `score` smallint NOT NULL DEFAULT 0,
-  `status` tinyint NOT NULL DEFAULT 0,
+  `q1` tinyint(4) NOT NULL DEFAULT 0,
+  `q2` tinyint(4) NOT NULL DEFAULT 0,
+  `q3` tinyint(4) NOT NULL DEFAULT 0,
+  `q4` tinyint(4) NOT NULL DEFAULT 0,
+  `q5` tinyint(4) NOT NULL DEFAULT 0,
+  `q6` tinyint(4) NOT NULL DEFAULT 0,
+  `q7` tinyint(4) NOT NULL DEFAULT 0,
+  `q8` tinyint(4) NOT NULL DEFAULT 0,
+  `q9` tinyint(4) NOT NULL DEFAULT 0,
+  `q10` tinyint(4) NOT NULL DEFAULT 0,
+  `q11` tinyint(4) NOT NULL DEFAULT 0,
+  `q12` tinyint(4) NOT NULL DEFAULT 0,
+  `q13` tinyint(4) NOT NULL DEFAULT 0,
+  `q14` tinyint(4) NOT NULL DEFAULT 0,
+  `q15` tinyint(4) NOT NULL DEFAULT 0,
+  `q16` tinyint(4) NOT NULL DEFAULT 0,
+  `q17` tinyint(4) NOT NULL DEFAULT 0,
+  `q18` tinyint(4) NOT NULL DEFAULT 0,
+  `q19` tinyint(4) NOT NULL DEFAULT 0,
+  `q20` tinyint(4) NOT NULL DEFAULT 0,
+  `q21` tinyint(4) NOT NULL DEFAULT 0,
+  `q22` tinyint(4) NOT NULL DEFAULT 0,
+  `q23` tinyint(4) NOT NULL DEFAULT 0,
+  `q24` tinyint(4) NOT NULL DEFAULT 0,
+  `q25` tinyint(4) NOT NULL DEFAULT 0,
+  `q26` tinyint(4) NOT NULL DEFAULT 0,
+  `q27` tinyint(4) NOT NULL DEFAULT 0,
+  `q28` tinyint(4) NOT NULL DEFAULT 0,
+  `q29` tinyint(4) NOT NULL DEFAULT 0,
+  `q30` tinyint(4) NOT NULL DEFAULT 0,
+  `q31` tinyint(4) NOT NULL DEFAULT 0,
+  `q32` tinyint(4) NOT NULL DEFAULT 0,
+  `q33` tinyint(4) NOT NULL DEFAULT 0,
+  `q34` tinyint(4) NOT NULL DEFAULT 0,
+  `q35` tinyint(4) NOT NULL DEFAULT 0,
+  `q36` tinyint(4) NOT NULL DEFAULT 0,
+  `q37` tinyint(4) NOT NULL DEFAULT 0,
+  `q38` tinyint(4) NOT NULL DEFAULT 0,
+  `q39` tinyint(4) NOT NULL DEFAULT 0,
+  `q40` tinyint(4) NOT NULL DEFAULT 0,
+  `q41` tinyint(4) NOT NULL DEFAULT 0,
+  `q42` tinyint(4) NOT NULL DEFAULT 0,
+  `q43` tinyint(4) NOT NULL DEFAULT 0,
+  `q44` tinyint(4) NOT NULL DEFAULT 0,
+  `q45` tinyint(4) NOT NULL DEFAULT 0,
+  `q46` tinyint(4) NOT NULL DEFAULT 0,
+  `q47` tinyint(4) NOT NULL DEFAULT 0,
+  `q48` tinyint(4) NOT NULL DEFAULT 0,
+  `q49` tinyint(4) NOT NULL DEFAULT 0,
+  `q50` tinyint(4) NOT NULL DEFAULT 0,
+  `q51` tinyint(4) NOT NULL DEFAULT 0,
+  `q52` tinyint(4) NOT NULL DEFAULT 0,
+  `q53` tinyint(4) NOT NULL DEFAULT 0,
+  `q54` tinyint(4) NOT NULL DEFAULT 0,
+  `q55` tinyint(4) NOT NULL DEFAULT 0,
+  `q56` tinyint(4) NOT NULL DEFAULT 0,
+  `q57` tinyint(4) NOT NULL DEFAULT 0,
+  `q58` tinyint(4) NOT NULL DEFAULT 0,
+  `q59` tinyint(4) NOT NULL DEFAULT 0,
+  `q60` tinyint(4) NOT NULL DEFAULT 0,
+  `score` smallint(6) NOT NULL DEFAULT 0,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_ocean`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_ocean`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_ocean`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_ocean`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_ocean` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'OCEAN 大五人格量表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'OCEAN 大五人格量表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ocean
@@ -30641,22 +30945,22 @@ CREATE TABLE `ocean`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `pars3`;
 CREATE TABLE `pars3`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `q1` tinyint NOT NULL DEFAULT 0,
-  `q2` tinyint NOT NULL DEFAULT 0,
-  `q3` tinyint NOT NULL DEFAULT 0,
-  `q4_types` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
-  `q5` tinyint NOT NULL DEFAULT 0,
-  `score` smallint NOT NULL DEFAULT 0,
-  `status` tinyint NOT NULL DEFAULT 0,
+  `q1` tinyint(4) NOT NULL DEFAULT 0,
+  `q2` tinyint(4) NOT NULL DEFAULT 0,
+  `q3` tinyint(4) NOT NULL DEFAULT 0,
+  `q4_types` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `q5` tinyint(4) NOT NULL DEFAULT 0,
+  `score` smallint(6) NOT NULL DEFAULT 0,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_pars3`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_pars3`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_pars3`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_pars3`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_pars3` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'PARS-3 体育活动等级量表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'PARS-3 体育活动等级量表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pars3
@@ -30665,35 +30969,36 @@ INSERT INTO `pars3` VALUES (1, 220, '2026-03-30', 2, 3, 4, '4', 3, 24, 2, '2026-
 INSERT INTO `pars3` VALUES (2, 220, '2026-03-31', 2, 3, 4, '4', 4, 24, 2, '2026-03-31 22:57:23');
 INSERT INTO `pars3` VALUES (3, 220, '2026-04-01', 2, 3, 4, '3,8', 4, 24, 2, '2026-04-01 15:24:37');
 INSERT INTO `pars3` VALUES (4, 181, '2026-04-15', 2, 3, 4, '4', 4, 24, 2, '2026-04-15 15:50:49');
+INSERT INTO `pars3` VALUES (5, 224, '2026-07-14', 3, 3, 4, '6', 4, 36, 2, '2026-07-14 09:55:08');
 
 -- ----------------------------
 -- Table structure for perceived_stress_scale
 -- ----------------------------
 DROP TABLE IF EXISTS `perceived_stress_scale`;
 CREATE TABLE `perceived_stress_scale`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `pss_q1` tinyint NOT NULL DEFAULT 0 COMMENT '一些无法预期的事情发生而感到心烦意乱',
-  `pss_q2` tinyint NOT NULL DEFAULT 0 COMMENT '感觉无法控制自己生活中重要的事情',
-  `pss_q3` tinyint NOT NULL DEFAULT 0 COMMENT '感到紧张不安和压力',
-  `pss_q4` tinyint NOT NULL DEFAULT 0 COMMENT '成功地处理恼人的生活麻烦',
-  `pss_q5` tinyint NOT NULL DEFAULT 0 COMMENT '感到自己是有效地处理生活中所发生的重要改变',
-  `pss_q6` tinyint NOT NULL DEFAULT 0 COMMENT '对于有能力处理自己私人的问题感到很有信心 ',
-  `pss_q7` tinyint NOT NULL DEFAULT 0 COMMENT '感到事情顺心如意',
-  `pss_q8` tinyint NOT NULL DEFAULT 0 COMMENT '发现自己无法处理所有自己必须做的事情',
-  `pss_q9` tinyint NOT NULL DEFAULT 0 COMMENT '有办法控制生活中恼人的事情',
-  `pss_q10` tinyint NOT NULL DEFAULT 0 COMMENT '常觉得自己是驾驭事情的主人',
-  `pss_q11` tinyint NOT NULL DEFAULT 0 COMMENT '常生气，因为很多事情的发生是超出自己所能控制的',
-  `pss_q12` tinyint NOT NULL DEFAULT 0 COMMENT '.经常想到有些事情是自己必须完成的',
-  `pss_q13` tinyint NOT NULL DEFAULT 0 COMMENT '常能掌握时间安排方式',
-  `pss_q14` tinyint NOT NULL DEFAULT 0 COMMENT '常感到困难的事情堆积如山，而自己无法克服它们',
-  `score` tinyint NOT NULL DEFAULT 0,
+  `pss_q1` tinyint(4) NOT NULL DEFAULT 0 COMMENT '一些无法预期的事情发生而感到心烦意乱',
+  `pss_q2` tinyint(4) NOT NULL DEFAULT 0 COMMENT '感觉无法控制自己生活中重要的事情',
+  `pss_q3` tinyint(4) NOT NULL DEFAULT 0 COMMENT '感到紧张不安和压力',
+  `pss_q4` tinyint(4) NOT NULL DEFAULT 0 COMMENT '成功地处理恼人的生活麻烦',
+  `pss_q5` tinyint(4) NOT NULL DEFAULT 0 COMMENT '感到自己是有效地处理生活中所发生的重要改变',
+  `pss_q6` tinyint(4) NOT NULL DEFAULT 0 COMMENT '对于有能力处理自己私人的问题感到很有信心 ',
+  `pss_q7` tinyint(4) NOT NULL DEFAULT 0 COMMENT '感到事情顺心如意',
+  `pss_q8` tinyint(4) NOT NULL DEFAULT 0 COMMENT '发现自己无法处理所有自己必须做的事情',
+  `pss_q9` tinyint(4) NOT NULL DEFAULT 0 COMMENT '有办法控制生活中恼人的事情',
+  `pss_q10` tinyint(4) NOT NULL DEFAULT 0 COMMENT '常觉得自己是驾驭事情的主人',
+  `pss_q11` tinyint(4) NOT NULL DEFAULT 0 COMMENT '常生气，因为很多事情的发生是超出自己所能控制的',
+  `pss_q12` tinyint(4) NOT NULL DEFAULT 0 COMMENT '.经常想到有些事情是自己必须完成的',
+  `pss_q13` tinyint(4) NOT NULL DEFAULT 0 COMMENT '常能掌握时间安排方式',
+  `pss_q14` tinyint(4) NOT NULL DEFAULT 0 COMMENT '常感到困难的事情堆积如山，而自己无法克服它们',
+  `score` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `u_user_logdate_8`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_8`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `u_user_logdate_8`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_8`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_8` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '这份量表是在询问在最近一个月来，您个人的感受和想法，请您于每一个题项上作答时，去指出您感受或想到某一特定想法的频率。虽然有些问题看是相似，实则是有所差异，所以每一题均需作答。\r\n而作答方式尽量以快速、不假思索方式填答，亦即不要去思虑计算每一题分数背后之意涵，以期确实反应您真实的压力知觉状况。而每一题项皆有下列五种选择。' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 67 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '这份量表是在询问在最近一个月来，您个人的感受和想法，请您于每一个题项上作答时，去指出您感受或想到某一特定想法的频率。虽然有些问题看是相似，实则是有所差异，所以每一题均需作答。\r\n而作答方式尽量以快速、不假思索方式填答，亦即不要去思虑计算每一题分数背后之意涵，以期确实反应您真实的压力知觉状况。而每一题项皆有下列五种选择。' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of perceived_stress_scale
@@ -30728,28 +31033,30 @@ INSERT INTO `perceived_stress_scale` VALUES (61, 212, '2026-01-13', 2, 1, 1, 1, 
 INSERT INTO `perceived_stress_scale` VALUES (62, 211, '2026-01-13', 0, 0, 2, 2, 2, 3, 2, 2, 4, 4, 0, 2, 3, 0, 14);
 INSERT INTO `perceived_stress_scale` VALUES (63, 213, '2026-01-21', 0, 0, 0, 4, 4, 4, 4, 0, 4, 4, 0, 4, 4, 0, 4);
 INSERT INTO `perceived_stress_scale` VALUES (64, 220, '2026-04-01', 2, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 27);
+INSERT INTO `perceived_stress_scale` VALUES (65, 224, '2026-07-14', 2, 2, 3, 2, 2, 2, 3, 2, 2, 3, 1, 3, 1, 1, 27);
+INSERT INTO `perceived_stress_scale` VALUES (66, 181, '2026-07-14', 2, 1, 1, 3, 4, 4, 4, 1, 4, 4, 1, 2, 4, 1, 10);
 
 -- ----------------------------
 -- Table structure for phq9
 -- ----------------------------
 DROP TABLE IF EXISTS `phq9`;
 CREATE TABLE `phq9`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `phq9_q1` tinyint NOT NULL DEFAULT 0,
-  `phq9_q2` tinyint NOT NULL DEFAULT 0,
-  `phq9_q3` tinyint NOT NULL DEFAULT 0,
-  `phq9_q4` tinyint NOT NULL DEFAULT 0,
-  `phq9_q5` tinyint NOT NULL DEFAULT 0,
-  `phq9_q6` tinyint NOT NULL DEFAULT 0,
-  `phq9_q7` tinyint NOT NULL DEFAULT 0,
-  `phq9_q8` tinyint NOT NULL DEFAULT 0,
-  `phq9_q9` tinyint NOT NULL DEFAULT 0,
-  `score` tinyint NOT NULL DEFAULT 0,
+  `phq9_q1` tinyint(4) NOT NULL DEFAULT 0,
+  `phq9_q2` tinyint(4) NOT NULL DEFAULT 0,
+  `phq9_q3` tinyint(4) NOT NULL DEFAULT 0,
+  `phq9_q4` tinyint(4) NOT NULL DEFAULT 0,
+  `phq9_q5` tinyint(4) NOT NULL DEFAULT 0,
+  `phq9_q6` tinyint(4) NOT NULL DEFAULT 0,
+  `phq9_q7` tinyint(4) NOT NULL DEFAULT 0,
+  `phq9_q8` tinyint(4) NOT NULL DEFAULT 0,
+  `phq9_q9` tinyint(4) NOT NULL DEFAULT 0,
+  `score` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_7`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_7`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_7`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_7`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_7` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = 'PHQ-9是国际通用抑郁检测量表之一，共有九个题目。\r\n\r\n在过去的两周里，请根据你生活中出现以下症状的频率回答下面的题目。虽然有些问题看起来相似，但其实对结果都有不同的影响，所以每一题均需作答。而作答方式尽量以快速、不假思索方式填答，亦即不要去思虑计算每一题分数背后之意涵，以期确实反应您真实的状况。' ROW_FORMAT = DYNAMIC;
 
@@ -30762,36 +31069,36 @@ CREATE TABLE `phq9`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `psqi`;
 CREATE TABLE `psqi`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `q1` varchar(8) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
-  `q2` tinyint NOT NULL DEFAULT 0,
-  `q3` varchar(8) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
-  `q4` tinyint NOT NULL DEFAULT 0,
-  `q5a` tinyint NOT NULL DEFAULT 0,
-  `q5b` tinyint NOT NULL DEFAULT 0,
-  `q5c` tinyint NOT NULL DEFAULT 0,
-  `q5d` tinyint NOT NULL DEFAULT 0,
-  `q5e` tinyint NOT NULL DEFAULT 0,
-  `q5f` tinyint NOT NULL DEFAULT 0,
-  `q5g` tinyint NOT NULL DEFAULT 0,
-  `q5h` tinyint NOT NULL DEFAULT 0,
-  `q5i` tinyint NOT NULL DEFAULT 0,
-  `q5j` tinyint NOT NULL DEFAULT 0,
-  `q5j_desc` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
-  `q6` tinyint NOT NULL DEFAULT 0,
-  `q7` tinyint NOT NULL DEFAULT 0,
-  `q8` tinyint NOT NULL DEFAULT 0,
-  `q9` tinyint NOT NULL DEFAULT 0,
-  `score` tinyint NOT NULL DEFAULT 0,
-  `status` tinyint NOT NULL DEFAULT 0,
+  `q1` varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `q2` tinyint(4) NOT NULL DEFAULT 0,
+  `q3` varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `q4` tinyint(4) NOT NULL DEFAULT 0,
+  `q5a` tinyint(4) NOT NULL DEFAULT 0,
+  `q5b` tinyint(4) NOT NULL DEFAULT 0,
+  `q5c` tinyint(4) NOT NULL DEFAULT 0,
+  `q5d` tinyint(4) NOT NULL DEFAULT 0,
+  `q5e` tinyint(4) NOT NULL DEFAULT 0,
+  `q5f` tinyint(4) NOT NULL DEFAULT 0,
+  `q5g` tinyint(4) NOT NULL DEFAULT 0,
+  `q5h` tinyint(4) NOT NULL DEFAULT 0,
+  `q5i` tinyint(4) NOT NULL DEFAULT 0,
+  `q5j` tinyint(4) NOT NULL DEFAULT 0,
+  `q5j_desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `q6` tinyint(4) NOT NULL DEFAULT 0,
+  `q7` tinyint(4) NOT NULL DEFAULT 0,
+  `q8` tinyint(4) NOT NULL DEFAULT 0,
+  `q9` tinyint(4) NOT NULL DEFAULT 0,
+  `score` tinyint(4) NOT NULL DEFAULT 0,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_psqi`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_psqi`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_psqi`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_psqi`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_psqi` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'PSQI 匹兹堡睡眠质量指数' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'PSQI 匹兹堡睡眠质量指数' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of psqi
@@ -30802,7 +31109,7 @@ CREATE TABLE `psqi`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `respiration`;
 CREATE TABLE `respiration`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `userProfilePK` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -30819,15 +31126,15 @@ CREATE TABLE `respiration`  (
   `tomorrowSleepEndTimestampGMT` datetime NULL DEFAULT NULL,
   `tomorrowSleepStartTimestampLocal` datetime NULL DEFAULT NULL,
   `tomorrowSleepEndTimestampLocal` datetime NULL DEFAULT NULL,
-  `lowestRespirationValue` int NULL DEFAULT NULL,
-  `highestRespirationValue` int NULL DEFAULT NULL,
-  `avgWakingRespirationValue` int NULL DEFAULT NULL,
-  `avgSleepRespirationValue` int NULL DEFAULT NULL,
-  `avgTomorrowSleepRespirationValue` int NULL DEFAULT NULL,
+  `lowestRespirationValue` int(11) NULL DEFAULT NULL,
+  `highestRespirationValue` int(11) NULL DEFAULT NULL,
+  `avgWakingRespirationValue` int(11) NULL DEFAULT NULL,
+  `avgSleepRespirationValue` int(11) NULL DEFAULT NULL,
+  `avgTomorrowSleepRespirationValue` int(11) NULL DEFAULT NULL,
   `respirationVersion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25226 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 25233 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of respiration
@@ -31544,23 +31851,30 @@ INSERT INTO `respiration` VALUES (25221, '2026-02-26 00:00:00', 'ccceee00001@163
 INSERT INTO `respiration` VALUES (25223, '2025-12-25 00:00:00', 'ccceee00001@163.com', '12358082', '2025-12-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
 INSERT INTO `respiration` VALUES (25224, '2025-11-06 00:00:00', 'ccceee00001@163.com', '12358082', '2025-11-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
 INSERT INTO `respiration` VALUES (25225, '2026-01-29 00:00:00', 'ccceee00001@163.com', '12358082', '2026-01-29 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
+INSERT INTO `respiration` VALUES (25226, '2026-07-21 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
+INSERT INTO `respiration` VALUES (25227, '2026-07-26 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-26 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
+INSERT INTO `respiration` VALUES (25228, '2026-07-25 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
+INSERT INTO `respiration` VALUES (25229, '2026-07-20 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-20 00:00:00', '2026-07-19 16:00:00', '2026-07-20 12:05:00', '2026-07-20 00:00:00', '2026-07-20 20:05:00', '2026-07-19 17:20:03', '2026-07-20 00:02:03', '2026-07-20 01:20:03', '2026-07-20 08:02:03', NULL, NULL, NULL, NULL, 7, 23, 15, 15, NULL, '200');
+INSERT INTO `respiration` VALUES (25230, '2026-07-24 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-24 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
+INSERT INTO `respiration` VALUES (25231, '2026-07-23 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-23 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
+INSERT INTO `respiration` VALUES (25232, '2026-07-22 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-22 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '200');
 
 -- ----------------------------
 -- Table structure for resting_heart_rate
 -- ----------------------------
 DROP TABLE IF EXISTS `resting_heart_rate`;
 CREATE TABLE `resting_heart_rate`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `userProfileId` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `statisticsStartDate` datetime NULL DEFAULT NULL,
   `statisticsEndDate` datetime NULL DEFAULT NULL,
-  `value` int NULL DEFAULT NULL,
+  `value` int(11) NULL DEFAULT NULL,
   `calendarDate` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25226 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 25233 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of resting_heart_rate
@@ -32277,17 +32591,24 @@ INSERT INTO `resting_heart_rate` VALUES (25221, '2026-02-26 00:00:00', 'ccceee00
 INSERT INTO `resting_heart_rate` VALUES (25223, '2025-12-25 00:00:00', 'ccceee00001@163.com', '12358082', '2025-12-25 00:00:00', '2025-12-25 00:00:00', NULL, NULL);
 INSERT INTO `resting_heart_rate` VALUES (25224, '2025-11-06 00:00:00', 'ccceee00001@163.com', '12358082', '2025-11-06 00:00:00', '2025-11-06 00:00:00', NULL, NULL);
 INSERT INTO `resting_heart_rate` VALUES (25225, '2026-01-29 00:00:00', 'ccceee00001@163.com', '12358082', '2026-01-29 00:00:00', '2026-01-29 00:00:00', NULL, NULL);
+INSERT INTO `resting_heart_rate` VALUES (25226, '2026-07-21 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-21 00:00:00', '2026-07-21 00:00:00', NULL, NULL);
+INSERT INTO `resting_heart_rate` VALUES (25227, '2026-07-26 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-26 00:00:00', '2026-07-26 00:00:00', NULL, NULL);
+INSERT INTO `resting_heart_rate` VALUES (25228, '2026-07-25 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-25 00:00:00', '2026-07-25 00:00:00', NULL, NULL);
+INSERT INTO `resting_heart_rate` VALUES (25229, '2026-07-20 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-20 00:00:00', '2026-07-20 00:00:00', 47, '2026-07-20 00:00:00');
+INSERT INTO `resting_heart_rate` VALUES (25230, '2026-07-24 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-24 00:00:00', '2026-07-24 00:00:00', NULL, NULL);
+INSERT INTO `resting_heart_rate` VALUES (25231, '2026-07-23 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-23 00:00:00', '2026-07-23 00:00:00', NULL, NULL);
+INSERT INTO `resting_heart_rate` VALUES (25232, '2026-07-22 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-22 00:00:00', '2026-07-22 00:00:00', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for role_permission
 -- ----------------------------
 DROP TABLE IF EXISTS `role_permission`;
 CREATE TABLE `role_permission`  (
-  `id` tinyint NOT NULL AUTO_INCREMENT,
-  `role` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户角色，‘user’，‘doctor’，‘admin’',
-  `permission` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户权限（暂时用不到），‘normal’，‘vip’',
+  `id` tinyint(4) NOT NULL AUTO_INCREMENT,
+  `role` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户角色，‘user’，‘doctor’，‘admin’',
+  `permission` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户权限（暂时用不到），‘normal’，‘vip’',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '这一部分设计是为了后端结合shiro框架，更好地进行权限控制' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '这一部分设计是为了后端结合shiro框架，更好地进行权限控制' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_permission
@@ -32301,35 +32622,35 @@ INSERT INTO `role_permission` VALUES (3, 'admin', 'vip');
 -- ----------------------------
 DROP TABLE IF EXISTS `sas`;
 CREATE TABLE `sas`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `sas_q1` tinyint NOT NULL DEFAULT 0,
-  `sas_q2` tinyint NOT NULL DEFAULT 0,
-  `sas_q3` tinyint NOT NULL DEFAULT 0,
-  `sas_q4` tinyint NOT NULL DEFAULT 0,
-  `sas_q5` tinyint NOT NULL DEFAULT 0,
-  `sas_q6` tinyint NOT NULL DEFAULT 0,
-  `sas_q7` tinyint NOT NULL DEFAULT 0,
-  `sas_q8` tinyint NOT NULL DEFAULT 0,
-  `sas_q9` tinyint NOT NULL,
-  `sas_q10` tinyint NOT NULL,
-  `sas_q11` tinyint NOT NULL,
-  `sas_q12` tinyint NOT NULL,
-  `sas_q13` tinyint NOT NULL,
-  `sas_q14` tinyint NOT NULL,
-  `sas_q15` tinyint NOT NULL,
-  `sas_q16` tinyint NOT NULL,
-  `sas_q17` tinyint NOT NULL,
-  `sas_q18` tinyint NOT NULL,
-  `sas_q19` tinyint NOT NULL,
-  `sas_q20` tinyint NOT NULL,
-  `score` tinyint NOT NULL DEFAULT 0,
+  `sas_q1` tinyint(4) NOT NULL DEFAULT 0,
+  `sas_q2` tinyint(4) NOT NULL DEFAULT 0,
+  `sas_q3` tinyint(4) NOT NULL DEFAULT 0,
+  `sas_q4` tinyint(4) NOT NULL DEFAULT 0,
+  `sas_q5` tinyint(4) NOT NULL DEFAULT 0,
+  `sas_q6` tinyint(4) NOT NULL DEFAULT 0,
+  `sas_q7` tinyint(4) NOT NULL DEFAULT 0,
+  `sas_q8` tinyint(4) NOT NULL DEFAULT 0,
+  `sas_q9` tinyint(4) NOT NULL,
+  `sas_q10` tinyint(4) NOT NULL,
+  `sas_q11` tinyint(4) NOT NULL,
+  `sas_q12` tinyint(4) NOT NULL,
+  `sas_q13` tinyint(4) NOT NULL,
+  `sas_q14` tinyint(4) NOT NULL,
+  `sas_q15` tinyint(4) NOT NULL,
+  `sas_q16` tinyint(4) NOT NULL,
+  `sas_q17` tinyint(4) NOT NULL,
+  `sas_q18` tinyint(4) NOT NULL,
+  `sas_q19` tinyint(4) NOT NULL,
+  `sas_q20` tinyint(4) NOT NULL,
+  `score` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_7`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_7`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_7`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_7`(`log_date`) USING BTREE,
   CONSTRAINT `sas_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 131 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = 'PHQ-9是国际通用抑郁检测量表之一，共有九个题目。\r\n\r\n在过去的两周里，请根据你生活中出现以下症状的频率回答下面的题目。虽然有些问题看起来相似，但其实对结果都有不同的影响，所以每一题均需作答。而作答方式尽量以快速、不假思索方式填答，亦即不要去思虑计算每一题分数背后之意涵，以期确实反应您真实的状况。' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 135 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = 'PHQ-9是国际通用抑郁检测量表之一，共有九个题目。\r\n\r\n在过去的两周里，请根据你生活中出现以下症状的频率回答下面的题目。虽然有些问题看起来相似，但其实对结果都有不同的影响，所以每一题均需作答。而作答方式尽量以快速、不假思索方式填答，亦即不要去思虑计算每一题分数背后之意涵，以期确实反应您真实的状况。' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sas
@@ -32363,113 +32684,115 @@ INSERT INTO `sas` VALUES (127, 210, '2026-01-12', 2, 1, 3, 2, 1, 1, 3, 3, 3, 2, 
 INSERT INTO `sas` VALUES (128, 212, '2026-01-13', 1, 1, 1, 1, 3, 1, 1, 1, 3, 2, 1, 1, 3, 1, 1, 2, 3, 1, 1, 2, 37);
 INSERT INTO `sas` VALUES (129, 211, '2026-01-13', 2, 1, 1, 2, 3, 1, 1, 2, 4, 1, 1, 1, 4, 1, 1, 1, 3, 1, 3, 1, 32);
 INSERT INTO `sas` VALUES (130, 213, '2026-01-21', 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 4, 1, 28);
+INSERT INTO `sas` VALUES (131, 224, '2026-07-14', 2, 1, 1, 1, 3, 1, 3, 2, 2, 1, 2, 1, 4, 1, 1, 1, 2, 1, 3, 2, 40);
+INSERT INTO `sas` VALUES (134, 181, '2026-07-14', 1, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 2, 3, 2, 2, 2, 32);
 
 -- ----------------------------
 -- Table structure for scl90
 -- ----------------------------
 DROP TABLE IF EXISTS `scl90`;
 CREATE TABLE `scl90`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `q1` tinyint NOT NULL DEFAULT 0,
-  `q2` tinyint NOT NULL DEFAULT 0,
-  `q3` tinyint NOT NULL DEFAULT 0,
-  `q4` tinyint NOT NULL DEFAULT 0,
-  `q5` tinyint NOT NULL DEFAULT 0,
-  `q6` tinyint NOT NULL DEFAULT 0,
-  `q7` tinyint NOT NULL DEFAULT 0,
-  `q8` tinyint NOT NULL DEFAULT 0,
-  `q9` tinyint NOT NULL DEFAULT 0,
-  `q10` tinyint NOT NULL DEFAULT 0,
-  `q11` tinyint NOT NULL DEFAULT 0,
-  `q12` tinyint NOT NULL DEFAULT 0,
-  `q13` tinyint NOT NULL DEFAULT 0,
-  `q14` tinyint NOT NULL DEFAULT 0,
-  `q15` tinyint NOT NULL DEFAULT 0,
-  `q16` tinyint NOT NULL DEFAULT 0,
-  `q17` tinyint NOT NULL DEFAULT 0,
-  `q18` tinyint NOT NULL DEFAULT 0,
-  `q19` tinyint NOT NULL DEFAULT 0,
-  `q20` tinyint NOT NULL DEFAULT 0,
-  `q21` tinyint NOT NULL DEFAULT 0,
-  `q22` tinyint NOT NULL DEFAULT 0,
-  `q23` tinyint NOT NULL DEFAULT 0,
-  `q24` tinyint NOT NULL DEFAULT 0,
-  `q25` tinyint NOT NULL DEFAULT 0,
-  `q26` tinyint NOT NULL DEFAULT 0,
-  `q27` tinyint NOT NULL DEFAULT 0,
-  `q28` tinyint NOT NULL DEFAULT 0,
-  `q29` tinyint NOT NULL DEFAULT 0,
-  `q30` tinyint NOT NULL DEFAULT 0,
-  `q31` tinyint NOT NULL DEFAULT 0,
-  `q32` tinyint NOT NULL DEFAULT 0,
-  `q33` tinyint NOT NULL DEFAULT 0,
-  `q34` tinyint NOT NULL DEFAULT 0,
-  `q35` tinyint NOT NULL DEFAULT 0,
-  `q36` tinyint NOT NULL DEFAULT 0,
-  `q37` tinyint NOT NULL DEFAULT 0,
-  `q38` tinyint NOT NULL DEFAULT 0,
-  `q39` tinyint NOT NULL DEFAULT 0,
-  `q40` tinyint NOT NULL DEFAULT 0,
-  `q41` tinyint NOT NULL DEFAULT 0,
-  `q42` tinyint NOT NULL DEFAULT 0,
-  `q43` tinyint NOT NULL DEFAULT 0,
-  `q44` tinyint NOT NULL DEFAULT 0,
-  `q45` tinyint NOT NULL DEFAULT 0,
-  `q46` tinyint NOT NULL DEFAULT 0,
-  `q47` tinyint NOT NULL DEFAULT 0,
-  `q48` tinyint NOT NULL DEFAULT 0,
-  `q49` tinyint NOT NULL DEFAULT 0,
-  `q50` tinyint NOT NULL DEFAULT 0,
-  `q51` tinyint NOT NULL DEFAULT 0,
-  `q52` tinyint NOT NULL DEFAULT 0,
-  `q53` tinyint NOT NULL DEFAULT 0,
-  `q54` tinyint NOT NULL DEFAULT 0,
-  `q55` tinyint NOT NULL DEFAULT 0,
-  `q56` tinyint NOT NULL DEFAULT 0,
-  `q57` tinyint NOT NULL DEFAULT 0,
-  `q58` tinyint NOT NULL DEFAULT 0,
-  `q59` tinyint NOT NULL DEFAULT 0,
-  `q60` tinyint NOT NULL DEFAULT 0,
-  `q61` tinyint NOT NULL DEFAULT 0,
-  `q62` tinyint NOT NULL DEFAULT 0,
-  `q63` tinyint NOT NULL DEFAULT 0,
-  `q64` tinyint NOT NULL DEFAULT 0,
-  `q65` tinyint NOT NULL DEFAULT 0,
-  `q66` tinyint NOT NULL DEFAULT 0,
-  `q67` tinyint NOT NULL DEFAULT 0,
-  `q68` tinyint NOT NULL DEFAULT 0,
-  `q69` tinyint NOT NULL DEFAULT 0,
-  `q70` tinyint NOT NULL DEFAULT 0,
-  `q71` tinyint NOT NULL DEFAULT 0,
-  `q72` tinyint NOT NULL DEFAULT 0,
-  `q73` tinyint NOT NULL DEFAULT 0,
-  `q74` tinyint NOT NULL DEFAULT 0,
-  `q75` tinyint NOT NULL DEFAULT 0,
-  `q76` tinyint NOT NULL DEFAULT 0,
-  `q77` tinyint NOT NULL DEFAULT 0,
-  `q78` tinyint NOT NULL DEFAULT 0,
-  `q79` tinyint NOT NULL DEFAULT 0,
-  `q80` tinyint NOT NULL DEFAULT 0,
-  `q81` tinyint NOT NULL DEFAULT 0,
-  `q82` tinyint NOT NULL DEFAULT 0,
-  `q83` tinyint NOT NULL DEFAULT 0,
-  `q84` tinyint NOT NULL DEFAULT 0,
-  `q85` tinyint NOT NULL DEFAULT 0,
-  `q86` tinyint NOT NULL DEFAULT 0,
-  `q87` tinyint NOT NULL DEFAULT 0,
-  `q88` tinyint NOT NULL DEFAULT 0,
-  `q89` tinyint NOT NULL DEFAULT 0,
-  `q90` tinyint NOT NULL DEFAULT 0,
-  `score` smallint NOT NULL DEFAULT 0,
-  `status` tinyint NOT NULL DEFAULT 0,
+  `q1` tinyint(4) NOT NULL DEFAULT 0,
+  `q2` tinyint(4) NOT NULL DEFAULT 0,
+  `q3` tinyint(4) NOT NULL DEFAULT 0,
+  `q4` tinyint(4) NOT NULL DEFAULT 0,
+  `q5` tinyint(4) NOT NULL DEFAULT 0,
+  `q6` tinyint(4) NOT NULL DEFAULT 0,
+  `q7` tinyint(4) NOT NULL DEFAULT 0,
+  `q8` tinyint(4) NOT NULL DEFAULT 0,
+  `q9` tinyint(4) NOT NULL DEFAULT 0,
+  `q10` tinyint(4) NOT NULL DEFAULT 0,
+  `q11` tinyint(4) NOT NULL DEFAULT 0,
+  `q12` tinyint(4) NOT NULL DEFAULT 0,
+  `q13` tinyint(4) NOT NULL DEFAULT 0,
+  `q14` tinyint(4) NOT NULL DEFAULT 0,
+  `q15` tinyint(4) NOT NULL DEFAULT 0,
+  `q16` tinyint(4) NOT NULL DEFAULT 0,
+  `q17` tinyint(4) NOT NULL DEFAULT 0,
+  `q18` tinyint(4) NOT NULL DEFAULT 0,
+  `q19` tinyint(4) NOT NULL DEFAULT 0,
+  `q20` tinyint(4) NOT NULL DEFAULT 0,
+  `q21` tinyint(4) NOT NULL DEFAULT 0,
+  `q22` tinyint(4) NOT NULL DEFAULT 0,
+  `q23` tinyint(4) NOT NULL DEFAULT 0,
+  `q24` tinyint(4) NOT NULL DEFAULT 0,
+  `q25` tinyint(4) NOT NULL DEFAULT 0,
+  `q26` tinyint(4) NOT NULL DEFAULT 0,
+  `q27` tinyint(4) NOT NULL DEFAULT 0,
+  `q28` tinyint(4) NOT NULL DEFAULT 0,
+  `q29` tinyint(4) NOT NULL DEFAULT 0,
+  `q30` tinyint(4) NOT NULL DEFAULT 0,
+  `q31` tinyint(4) NOT NULL DEFAULT 0,
+  `q32` tinyint(4) NOT NULL DEFAULT 0,
+  `q33` tinyint(4) NOT NULL DEFAULT 0,
+  `q34` tinyint(4) NOT NULL DEFAULT 0,
+  `q35` tinyint(4) NOT NULL DEFAULT 0,
+  `q36` tinyint(4) NOT NULL DEFAULT 0,
+  `q37` tinyint(4) NOT NULL DEFAULT 0,
+  `q38` tinyint(4) NOT NULL DEFAULT 0,
+  `q39` tinyint(4) NOT NULL DEFAULT 0,
+  `q40` tinyint(4) NOT NULL DEFAULT 0,
+  `q41` tinyint(4) NOT NULL DEFAULT 0,
+  `q42` tinyint(4) NOT NULL DEFAULT 0,
+  `q43` tinyint(4) NOT NULL DEFAULT 0,
+  `q44` tinyint(4) NOT NULL DEFAULT 0,
+  `q45` tinyint(4) NOT NULL DEFAULT 0,
+  `q46` tinyint(4) NOT NULL DEFAULT 0,
+  `q47` tinyint(4) NOT NULL DEFAULT 0,
+  `q48` tinyint(4) NOT NULL DEFAULT 0,
+  `q49` tinyint(4) NOT NULL DEFAULT 0,
+  `q50` tinyint(4) NOT NULL DEFAULT 0,
+  `q51` tinyint(4) NOT NULL DEFAULT 0,
+  `q52` tinyint(4) NOT NULL DEFAULT 0,
+  `q53` tinyint(4) NOT NULL DEFAULT 0,
+  `q54` tinyint(4) NOT NULL DEFAULT 0,
+  `q55` tinyint(4) NOT NULL DEFAULT 0,
+  `q56` tinyint(4) NOT NULL DEFAULT 0,
+  `q57` tinyint(4) NOT NULL DEFAULT 0,
+  `q58` tinyint(4) NOT NULL DEFAULT 0,
+  `q59` tinyint(4) NOT NULL DEFAULT 0,
+  `q60` tinyint(4) NOT NULL DEFAULT 0,
+  `q61` tinyint(4) NOT NULL DEFAULT 0,
+  `q62` tinyint(4) NOT NULL DEFAULT 0,
+  `q63` tinyint(4) NOT NULL DEFAULT 0,
+  `q64` tinyint(4) NOT NULL DEFAULT 0,
+  `q65` tinyint(4) NOT NULL DEFAULT 0,
+  `q66` tinyint(4) NOT NULL DEFAULT 0,
+  `q67` tinyint(4) NOT NULL DEFAULT 0,
+  `q68` tinyint(4) NOT NULL DEFAULT 0,
+  `q69` tinyint(4) NOT NULL DEFAULT 0,
+  `q70` tinyint(4) NOT NULL DEFAULT 0,
+  `q71` tinyint(4) NOT NULL DEFAULT 0,
+  `q72` tinyint(4) NOT NULL DEFAULT 0,
+  `q73` tinyint(4) NOT NULL DEFAULT 0,
+  `q74` tinyint(4) NOT NULL DEFAULT 0,
+  `q75` tinyint(4) NOT NULL DEFAULT 0,
+  `q76` tinyint(4) NOT NULL DEFAULT 0,
+  `q77` tinyint(4) NOT NULL DEFAULT 0,
+  `q78` tinyint(4) NOT NULL DEFAULT 0,
+  `q79` tinyint(4) NOT NULL DEFAULT 0,
+  `q80` tinyint(4) NOT NULL DEFAULT 0,
+  `q81` tinyint(4) NOT NULL DEFAULT 0,
+  `q82` tinyint(4) NOT NULL DEFAULT 0,
+  `q83` tinyint(4) NOT NULL DEFAULT 0,
+  `q84` tinyint(4) NOT NULL DEFAULT 0,
+  `q85` tinyint(4) NOT NULL DEFAULT 0,
+  `q86` tinyint(4) NOT NULL DEFAULT 0,
+  `q87` tinyint(4) NOT NULL DEFAULT 0,
+  `q88` tinyint(4) NOT NULL DEFAULT 0,
+  `q89` tinyint(4) NOT NULL DEFAULT 0,
+  `q90` tinyint(4) NOT NULL DEFAULT 0,
+  `score` smallint(6) NOT NULL DEFAULT 0,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_scl90`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_scl90`(`log_date` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_logdate_scl90`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_scl90`(`log_date`) USING BTREE,
   CONSTRAINT `fk_user_id_scl90` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'SCL-90 症状自评量表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'SCL-90 症状自评量表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of scl90
@@ -32480,34 +32803,34 @@ CREATE TABLE `scl90`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sds`;
 CREATE TABLE `sds`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `log_date` date NOT NULL,
-  `q1` tinyint NOT NULL DEFAULT 0,
-  `q2` tinyint NOT NULL DEFAULT 0,
-  `q3` tinyint NOT NULL DEFAULT 0,
-  `q4` tinyint NOT NULL DEFAULT 0,
-  `q5` tinyint NOT NULL DEFAULT 0,
-  `q6` tinyint NOT NULL DEFAULT 0,
-  `q7` tinyint NOT NULL DEFAULT 0,
-  `q8` tinyint NOT NULL DEFAULT 0,
-  `q9` tinyint NOT NULL DEFAULT 0,
-  `q10` tinyint NOT NULL DEFAULT 0,
-  `q11` tinyint NOT NULL DEFAULT 0,
-  `q12` tinyint NOT NULL DEFAULT 0,
-  `q13` tinyint NOT NULL DEFAULT 0,
-  `q14` tinyint NOT NULL DEFAULT 0,
-  `q15` tinyint NOT NULL DEFAULT 0,
-  `q16` tinyint NOT NULL DEFAULT 0,
-  `q17` tinyint NOT NULL DEFAULT 0,
-  `q18` tinyint NOT NULL DEFAULT 0,
-  `q19` tinyint NOT NULL DEFAULT 0,
-  `q20` tinyint NOT NULL DEFAULT 0,
-  `score` tinyint NOT NULL DEFAULT 0,
+  `q1` tinyint(4) NOT NULL DEFAULT 0,
+  `q2` tinyint(4) NOT NULL DEFAULT 0,
+  `q3` tinyint(4) NOT NULL DEFAULT 0,
+  `q4` tinyint(4) NOT NULL DEFAULT 0,
+  `q5` tinyint(4) NOT NULL DEFAULT 0,
+  `q6` tinyint(4) NOT NULL DEFAULT 0,
+  `q7` tinyint(4) NOT NULL DEFAULT 0,
+  `q8` tinyint(4) NOT NULL DEFAULT 0,
+  `q9` tinyint(4) NOT NULL DEFAULT 0,
+  `q10` tinyint(4) NOT NULL DEFAULT 0,
+  `q11` tinyint(4) NOT NULL DEFAULT 0,
+  `q12` tinyint(4) NOT NULL DEFAULT 0,
+  `q13` tinyint(4) NOT NULL DEFAULT 0,
+  `q14` tinyint(4) NOT NULL DEFAULT 0,
+  `q15` tinyint(4) NOT NULL DEFAULT 0,
+  `q16` tinyint(4) NOT NULL DEFAULT 0,
+  `q17` tinyint(4) NOT NULL DEFAULT 0,
+  `q18` tinyint(4) NOT NULL DEFAULT 0,
+  `q19` tinyint(4) NOT NULL DEFAULT 0,
+  `q20` tinyint(4) NOT NULL DEFAULT 0,
+  `score` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_logdate_17`(`user_id` ASC, `log_date` ASC) USING BTREE,
-  INDEX `k_log_date_17`(`log_date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `uk_user_logdate_17`(`user_id`, `log_date`) USING BTREE,
+  INDEX `k_log_date_17`(`log_date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sds
@@ -32545,13 +32868,15 @@ INSERT INTO `sds` VALUES (31, 210, '2026-01-12', 2, 2, 1, 4, 3, 3, 2, 2, 2, 3, 2
 INSERT INTO `sds` VALUES (32, 212, '2026-01-13', 1, 2, 1, 3, 4, 4, 2, 1, 2, 3, 3, 2, 1, 3, 1, 2, 3, 2, 1, 4, 46);
 INSERT INTO `sds` VALUES (33, 211, '2026-01-13', 2, 3, 1, 2, 4, 4, 1, 1, 1, 2, 2, 2, 1, 4, 1, 2, 3, 3, 1, 4, 40);
 INSERT INTO `sds` VALUES (34, 213, '2026-01-21', 1, 4, 1, 1, 4, 4, 1, 1, 1, 1, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 25);
+INSERT INTO `sds` VALUES (35, 224, '2026-07-14', 1, 3, 1, 1, 3, 3, 2, 1, 1, 1, 2, 2, 3, 2, 1, 3, 2, 3, 1, 3, 46);
+INSERT INTO `sds` VALUES (36, 181, '2026-07-14', 1, 2, 1, 3, 3, 3, 2, 1, 1, 1, 3, 3, 1, 4, 1, 3, 3, 4, 1, 4, 38);
 
 -- ----------------------------
 -- Table structure for sleep
 -- ----------------------------
 DROP TABLE IF EXISTS `sleep`;
 CREATE TABLE `sleep`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `sleep_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -32577,17 +32902,17 @@ CREATE TABLE `sleep`  (
   `deviceRemCapable` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `retro` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `sleepFromDevice` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `averageRespirationValue` int NULL DEFAULT NULL,
-  `lowestRespirationValue` int NULL DEFAULT NULL,
-  `highestRespirationValue` int NULL DEFAULT NULL,
-  `awakeCount` int NULL DEFAULT NULL,
+  `averageRespirationValue` int(11) NULL DEFAULT NULL,
+  `lowestRespirationValue` int(11) NULL DEFAULT NULL,
+  `highestRespirationValue` int(11) NULL DEFAULT NULL,
+  `awakeCount` int(11) NULL DEFAULT NULL,
   `avgSleepStress` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `ageGroup` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `sleepScoreFeedback` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `sleepScoreInsight` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `sleepScorePersonalizedInsight` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `sleepVersion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `restlessMomentsCount` int NULL DEFAULT NULL,
+  `restlessMomentsCount` int(11) NULL DEFAULT NULL,
   `respirationVersion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `avgOvernightHrv` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `hrvStatus` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -32595,14 +32920,14 @@ CREATE TABLE `sleep`  (
   `restingHeartRate` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `remSleepDataExists` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `sleep_score_overall` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `averageSpO2Value` int NULL DEFAULT NULL,
-  `lowestSpO2Value` int NULL DEFAULT NULL,
-  `highestSpO2Value` int NULL DEFAULT NULL,
+  `averageSpO2Value` int(11) NULL DEFAULT NULL,
+  `lowestSpO2Value` int(11) NULL DEFAULT NULL,
+  `highestSpO2Value` int(11) NULL DEFAULT NULL,
   `averageSpO2HRSleep` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `breathingDisruptionSeverity` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 24883 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 24889 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sleep
@@ -33279,23 +33604,29 @@ INSERT INTO `sleep` VALUES (24878, '2026-02-26 00:00:00', 'ccceee00001@163.com',
 INSERT INTO `sleep` VALUES (24880, '2025-12-25 00:00:00', 'ccceee00001@163.com', NULL, '12358082', '2025-12-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `sleep` VALUES (24881, '2025-11-06 00:00:00', 'ccceee00001@163.com', NULL, '12358082', '2025-11-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `sleep` VALUES (24882, '2026-01-29 00:00:00', 'ccceee00001@163.com', NULL, '12358082', '2026-01-29 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sleep` VALUES (24883, '2026-07-21 00:00:00', 'ccceee00021@163.com', NULL, '12487832', '2026-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sleep` VALUES (24884, '2026-07-26 00:00:00', 'ccceee00021@163.com', NULL, '12487832', '2026-07-26 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sleep` VALUES (24885, '2026-07-25 00:00:00', 'ccceee00021@163.com', NULL, '12487832', '2026-07-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sleep` VALUES (24886, '2026-07-24 00:00:00', 'ccceee00021@163.com', NULL, '12487832', '2026-07-24 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sleep` VALUES (24887, '2026-07-23 00:00:00', 'ccceee00021@163.com', NULL, '12487832', '2026-07-23 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sleep` VALUES (24888, '2026-07-22 00:00:00', 'ccceee00021@163.com', NULL, '12487832', '2026-07-22 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'False', 'False', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'True', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for speak_anytime
 -- ----------------------------
 DROP TABLE IF EXISTS `speak_anytime`;
 CREATE TABLE `speak_anytime`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '用户id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户id',
   `log_date` date NULL DEFAULT NULL COMMENT '记录日期',
   `log_time` time NULL DEFAULT NULL COMMENT '记录时间',
-  `speech_url` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '上传地语音文件地链接地址',
-  `inference` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `infer_cost` int NULL DEFAULT NULL,
+  `speech_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '上传地语音文件地链接地址',
+  `inference` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `infer_cost` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_user_id_5`(`user_id` ASC) USING BTREE,
+  INDEX `fk_user_id_5`(`user_id`) USING BTREE,
   CONSTRAINT `fk_user_id_5` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '随时说文件地址' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '随时说文件地址' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of speak_anytime
@@ -33306,7 +33637,7 @@ CREATE TABLE `speak_anytime`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `spo2`;
 CREATE TABLE `spo2`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `userProfilePK` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -33331,10 +33662,10 @@ CREATE TABLE `spo2`  (
   `latestSpO2TimestampLocal` datetime NULL DEFAULT NULL,
   `avgSleepSpO2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `avgTomorrowSleepSpO2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `spO2SingleValues` int NULL DEFAULT NULL,
+  `spO2SingleValues` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25084 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 25091 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of spo2
@@ -34050,13 +34381,20 @@ INSERT INTO `spo2` VALUES (25079, '2026-02-26 00:00:00', 'ccceee00001@163.com', 
 INSERT INTO `spo2` VALUES (25081, '2025-12-25 00:00:00', 'ccceee00001@163.com', '12358082', '2025-12-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `spo2` VALUES (25082, '2025-11-06 00:00:00', 'ccceee00001@163.com', '12358082', '2025-11-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `spo2` VALUES (25083, '2026-01-29 00:00:00', 'ccceee00001@163.com', '12358082', '2026-01-29 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `spo2` VALUES (25084, '2026-07-21 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `spo2` VALUES (25085, '2026-07-26 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-26 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `spo2` VALUES (25086, '2026-07-25 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `spo2` VALUES (25087, '2026-07-20 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-20 00:00:00', '2026-07-19 16:00:00', '2026-07-20 12:05:00', '2026-07-20 00:00:00', '2026-07-20 20:05:00', '2026-07-19 17:20:03', '2026-07-20 00:02:03', '2026-07-20 01:20:03', '2026-07-20 08:02:03', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `spo2` VALUES (25088, '2026-07-24 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-24 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `spo2` VALUES (25089, '2026-07-23 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-23 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `spo2` VALUES (25090, '2026-07-22 00:00:00', 'ccceee00021@163.com', '12487832', '2026-07-22 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for stats_body_composition
 -- ----------------------------
 DROP TABLE IF EXISTS `stats_body_composition`;
 CREATE TABLE `stats_body_composition`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `userProfileId` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -34067,7 +34405,7 @@ CREATE TABLE `stats_body_composition`  (
   `burnedKilocalories` float NULL DEFAULT NULL,
   `consumedKilocalories` float NULL DEFAULT NULL,
   `remainingKilocalories` float NULL DEFAULT NULL,
-  `totalSteps` int NULL DEFAULT NULL,
+  `totalSteps` int(11) NULL DEFAULT NULL,
   `netCalorieGoal` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `totalDistanceMeters` float NULL DEFAULT NULL,
   `wellnessDistanceMeters` float NULL DEFAULT NULL,
@@ -34129,15 +34467,15 @@ CREATE TABLE `stats_body_composition`  (
   `lastSyncTimestampGMT` datetime NULL DEFAULT NULL,
   `minAvgHeartRate` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `maxAvgHeartRate` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `bodyBatteryChargedValue` int NULL DEFAULT NULL,
-  `bodyBatteryDrainedValue` int NULL DEFAULT NULL,
-  `bodyBatteryHighestValue` int NULL DEFAULT NULL,
-  `bodyBatteryLowestValue` int NULL DEFAULT NULL,
-  `bodyBatteryMostRecentValue` int NULL DEFAULT NULL,
+  `bodyBatteryChargedValue` int(11) NULL DEFAULT NULL,
+  `bodyBatteryDrainedValue` int(11) NULL DEFAULT NULL,
+  `bodyBatteryHighestValue` int(11) NULL DEFAULT NULL,
+  `bodyBatteryLowestValue` int(11) NULL DEFAULT NULL,
+  `bodyBatteryMostRecentValue` int(11) NULL DEFAULT NULL,
   `bodyBatteryDuringSleep` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `bodyBatteryAtWakeTime` int NULL DEFAULT NULL,
+  `bodyBatteryAtWakeTime` int(11) NULL DEFAULT NULL,
   `bodyBatteryVersion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `abnormalHeartRateAlertsCount` int NULL DEFAULT NULL,
+  `abnormalHeartRateAlertsCount` int(11) NULL DEFAULT NULL,
   `averageSpo2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `lowestSpo2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `latestSpo2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -34153,10 +34491,10 @@ CREATE TABLE `stats_body_composition`  (
   `endOfDayBodyBatteryDynamicFeedbackEvent_bodyBatteryLevel` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `endOfDayBodyBatteryDynamicFeedbackEvent_feedbackShortType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `endOfDayBodyBatteryDynamicFeedbackEvent_feedbackLongType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `avgWakingRespirationValue` int NULL DEFAULT NULL,
-  `highestRespirationValue` int NULL DEFAULT NULL,
-  `lowestRespirationValue` int NULL DEFAULT NULL,
-  `latestRespirationValue` int NULL DEFAULT NULL,
+  `avgWakingRespirationValue` int(11) NULL DEFAULT NULL,
+  `highestRespirationValue` int(11) NULL DEFAULT NULL,
+  `lowestRespirationValue` int(11) NULL DEFAULT NULL,
+  `latestRespirationValue` int(11) NULL DEFAULT NULL,
   `latestRespirationTimeGMT` datetime NULL DEFAULT NULL,
   `respirationAlgorithmVersion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `from` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -34171,8 +34509,8 @@ CREATE TABLE `stats_body_composition`  (
   `visceralFat` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `metabolicAge` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `date` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14196 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 14142 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of stats_body_composition
@@ -34409,18 +34747,18 @@ INSERT INTO `stats_body_composition` VALUES (14141, '2025-10-30 00:00:00', 'ccce
 -- ----------------------------
 DROP TABLE IF EXISTS `steps`;
 CREATE TABLE `steps`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NULL DEFAULT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `startGMT` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `endGMT` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `steps` int NULL DEFAULT NULL,
+  `steps` int(11) NULL DEFAULT NULL,
   `pushes` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `primaryActivityLevel` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `activityLevelConstant` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1318370 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1208398 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of steps
@@ -34432,13 +34770,14 @@ INSERT INTO `steps` VALUES (1081584, '2025-08-20 00:00:00', 'ccceee00005@163.com
 INSERT INTO `steps` VALUES (1090163, '2025-08-20 00:00:00', 'ccceee00006@163.com', '2025-08-19T16:00:00.0', '2025-08-19T16:15:00.0', 830, '0', 'active', 'False');
 INSERT INTO `steps` VALUES (1177773, '2025-12-25 00:00:00', 'ccceee00012@163.com', '2025-12-25T00:00:00.0', '2025-12-25T00:15:00.0', 0, '0', 'none', 'True');
 INSERT INTO `steps` VALUES (1208316, '2025-12-27 00:00:00', 'ccceee00009@163.com', '2025-12-26T16:00:00.0', '2025-12-26T16:15:00.0', 0, '0', 'sedentary', 'True');
+INSERT INTO `steps` VALUES (1208317, '2026-07-20 00:00:00', 'ccceee00021@163.com', '2026-07-19T16:00:00.0', '2026-07-19T16:15:00.0', 74, '0', 'sedentary', 'False');
 
 -- ----------------------------
 -- Table structure for stress
 -- ----------------------------
 DROP TABLE IF EXISTS `stress`;
 CREATE TABLE `stress`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `userProfilePK` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `calendarDate` datetime NULL DEFAULT NULL,
@@ -34446,11 +34785,11 @@ CREATE TABLE `stress`  (
   `endTimestampGMT` datetime NULL DEFAULT NULL,
   `maxStressLevel` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `avgStressLevel` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `stressChartValueOffset` int NULL DEFAULT NULL,
+  `stressChartValueOffset` int(11) NULL DEFAULT NULL,
   `stressChartYAxisOrigin` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_entry`(`email` ASC, `calendarDate` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25226 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `unique_entry`(`email`, `calendarDate`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 25233 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of stress
@@ -35167,34 +35506,41 @@ INSERT INTO `stress` VALUES (25221, 'ccceee00001@163.com', '12358082', '2026-02-
 INSERT INTO `stress` VALUES (25223, 'ccceee00001@163.com', '12358082', '2025-12-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `stress` VALUES (25224, 'ccceee00001@163.com', '12358082', '2025-11-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `stress` VALUES (25225, 'ccceee00001@163.com', '12358082', '2026-01-29 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `stress` VALUES (25226, 'ccceee00021@163.com', '12487832', '2026-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `stress` VALUES (25227, 'ccceee00021@163.com', '12487832', '2026-07-26 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `stress` VALUES (25228, 'ccceee00021@163.com', '12487832', '2026-07-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `stress` VALUES (25229, 'ccceee00021@163.com', '12487832', '2026-07-20 00:00:00', '2026-07-19 16:00:00', '2026-07-20 12:05:00', '100', '27', 1, '-1');
+INSERT INTO `stress` VALUES (25230, 'ccceee00021@163.com', '12487832', '2026-07-24 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `stress` VALUES (25231, 'ccceee00021@163.com', '12487832', '2026-07-23 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `stress` VALUES (25232, 'ccceee00021@163.com', '12487832', '2026-07-22 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for user_health_info
 -- ----------------------------
 DROP TABLE IF EXISTS `user_health_info`;
 CREATE TABLE `user_health_info`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '用户id，外键',
-  `sex` enum('男','女') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '男' COMMENT '性别',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户id，外键',
+  `sex` enum('男','女') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '男' COMMENT '性别',
   `birth_date` date NULL DEFAULT NULL COMMENT '出生时间',
-  `height` int NOT NULL DEFAULT 0 COMMENT '身高，单位：厘米（整数）',
+  `height` int(11) NOT NULL DEFAULT 0 COMMENT '身高，单位：厘米（整数）',
   `weight` double(10, 1) NOT NULL DEFAULT 0.0 COMMENT '体重，单位：千克，保留小数点后一位',
-  `doctor_id` bigint NOT NULL COMMENT '属于哪位医生',
-  `depressed` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '（真实标签）抑郁程度标注、诊断结果（格式应为指定的几种级别，如高危、重度、中度和轻度）',
-  `remark` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '（真实标签）备注信息（医生对病人的备注信息，格式无要求）',
+  `doctor_id` bigint(20) NOT NULL COMMENT '属于哪位医生',
+  `depressed` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '（真实标签）抑郁程度标注、诊断结果（格式应为指定的几种级别，如高危、重度、中度和轻度）',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '（真实标签）备注信息（医生对病人的备注信息，格式无要求）',
   `add_timestamp_mils` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间戳',
   `mod_timestamp_mils` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间戳',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `u_user_id_2`(`user_id` ASC) USING BTREE,
-  INDEX `fk_user_id_2`(`user_id` ASC) USING BTREE,
-  INDEX `fk_doctor_id`(`doctor_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 51 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '用户健康信息' ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `u_user_id_2`(`user_id`) USING BTREE,
+  INDEX `fk_user_id_2`(`user_id`) USING BTREE,
+  INDEX `fk_doctor_id`(`doctor_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户健康信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_health_info
 -- ----------------------------
 INSERT INTO `user_health_info` VALUES (2, 3, '男', '2020-10-19', 170, 60.0, 1, '待标注', '待说明', '2020-10-26 16:44:21', '2024-06-10 20:25:52');
-INSERT INTO `user_health_info` VALUES (3, 4, '女', '2020-10-19', 170, 60.0, 1, '待标注', '待说明', '2020-10-26 16:44:49', '2024-06-10 20:25:52');
+INSERT INTO `user_health_info` VALUES (3, 4, '女', '2020-10-19', 170, 60.0, 1, '轻度焦虑\n', '待说明', '2020-10-26 16:44:49', '2026-06-02 11:08:37');
 INSERT INTO `user_health_info` VALUES (13, 2, '男', '2020-10-01', 175, 49.0, 1, '待标注1', '待说明', '2020-11-02 16:55:24', '2024-06-10 20:30:12');
 INSERT INTO `user_health_info` VALUES (14, 170, '女', '2024-06-10', 0, 0.0, 1, '', '', '2024-06-10 20:24:16', '2024-06-10 20:25:52');
 INSERT INTO `user_health_info` VALUES (15, 171, '女', '2001-11-13', 0, 0.0, 1, '', '', '2024-06-12 18:47:31', NULL);
@@ -35232,42 +35578,45 @@ INSERT INTO `user_health_info` VALUES (47, 217, '男', NULL, 0, 0.0, 1, '', '', 
 INSERT INTO `user_health_info` VALUES (48, 218, '男', NULL, 0, 0.0, 1, '', '', '2026-03-27 20:56:21', NULL);
 INSERT INTO `user_health_info` VALUES (49, 219, '男', NULL, 0, 0.0, 1, '', '', '2026-03-28 21:46:14', NULL);
 INSERT INTO `user_health_info` VALUES (50, 220, '男', NULL, 0, 0.0, 1, '', '', '2026-03-29 09:55:04', NULL);
+INSERT INTO `user_health_info` VALUES (51, 221, '男', NULL, 0, 0.0, 1, '', '', '2026-06-01 18:10:01', NULL);
+INSERT INTO `user_health_info` VALUES (52, 222, '男', NULL, 0, 0.0, 1, '', '', '2026-06-02 09:19:12', NULL);
+INSERT INTO `user_health_info` VALUES (53, 224, '女', NULL, 0, 0.0, 1, '', '', '2026-06-02 11:01:43', NULL);
 
 -- ----------------------------
 -- Table structure for user_info
 -- ----------------------------
 DROP TABLE IF EXISTS `user_info`;
 CREATE TABLE `user_info`  (
-  `user_id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户id',
-  `phone` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '手机号码、唯一',
-  `user_name` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户名、唯一',
-  `password` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '数据库不存储原始密码，存MD5散列值，校验的时候判断的是密码散列值是否相同',
-  `role` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT 'user' COMMENT '用户角色：用户（0）、医生（1）、管理员（2）',
-  `permission` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT 'normal' COMMENT '用户权限',
-  `real_name` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT '' COMMENT '用户真实姓名',
-  `identity_number` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '用户身份证号，唯一',
-  `city` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '用户所在城市',
-  `province` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '用户所在省份',
-  `country` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '用户所在国家',
-  `avatar` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '用户头像地址',
-  `nwpu` tinyint NOT NULL DEFAULT 0 COMMENT '用于标注是否npwu用户，默认0（false），1（true）',
+  `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户id',
+  `phone` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '手机号码、唯一',
+  `user_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名、唯一',
+  `password` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '数据库不存储原始密码，存MD5散列值，校验的时候判断的是密码散列值是否相同',
+  `role` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'user' COMMENT '用户角色：用户（0）、医生（1）、管理员（2）',
+  `permission` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'normal' COMMENT '用户权限',
+  `real_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '用户真实姓名',
+  `identity_number` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户身份证号，唯一',
+  `city` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户所在城市',
+  `province` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户所在省份',
+  `country` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户所在国家',
+  `avatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户头像地址',
+  `nwpu` tinyint(4) NOT NULL DEFAULT 0 COMMENT '用于标注是否npwu用户，默认0（false），1（true）',
   `add_timestamp_mils` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间戳',
   `mod_timestamp_mils` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间戳',
-  `nwpu_id` int NULL DEFAULT NULL,
-  `type` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
+  `nwpu_id` int(11) NULL DEFAULT NULL,
+  `type` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `push_connected` datetime NULL DEFAULT NULL,
-  `email` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '用户手环登录邮箱',
-  `garminPassword` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '用户手环登录密码',
+  `email` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户手环登录邮箱',
+  `garminPassword` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户手环登录密码',
   PRIMARY KEY (`user_id`) USING BTREE,
-  UNIQUE INDEX `u_user_name`(`user_name` ASC) USING BTREE COMMENT '用户名唯一',
-  UNIQUE INDEX `u_phone`(`phone` ASC) USING BTREE COMMENT '手机号码唯一',
-  UNIQUE INDEX `u_identity_number`(`identity_number` ASC) USING BTREE COMMENT '身份证号唯一'
-) ENGINE = InnoDB AUTO_INCREMENT = 221 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '用户基本信息' ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `u_user_name`(`user_name`) USING BTREE COMMENT '用户名唯一',
+  UNIQUE INDEX `u_phone`(`phone`) USING BTREE COMMENT '手机号码唯一',
+  UNIQUE INDEX `u_identity_number`(`identity_number`) USING BTREE COMMENT '身份证号唯一'
+) ENGINE = InnoDB AUTO_INCREMENT = 225 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户基本信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_info
 -- ----------------------------
-INSERT INTO `user_info` VALUES (2, '18392183603', 'chf', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'chf', NULL, '北京市', '北京市', '12', '', 0, '2020-10-26 15:50:54', '2026-03-25 23:43:11', NULL, NULL, '2026-03-25 23:43:11', '', '');
+INSERT INTO `user_info` VALUES (2, '18392183603', 'chf', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'chf', NULL, '北京市', '北京市', '12', '', 0, '2020-10-26 15:50:54', '2026-07-13 15:20:54', NULL, NULL, '2026-07-13 15:20:54', '', '');
 INSERT INTO `user_info` VALUES (3, '12222222222', 'xm', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'xm', NULL, '北京市', '北京市', '12', '', 0, '2020-10-26 15:50:54', '2025-08-07 13:23:44', NULL, NULL, NULL, '', '');
 INSERT INTO `user_info` VALUES (4, '14444444444', 'zyy', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'zyy', NULL, '北京市', '北京市', '12', '', 0, '2020-10-26 15:50:54', '2025-08-07 13:23:45', NULL, NULL, '2024-06-12 18:28:53', '', '');
 INSERT INTO `user_info` VALUES (170, '13333333333', 'test', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '测试', NULL, '深圳市', '广东省', '中国', '', 0, '2024-06-10 20:24:16', '2025-08-07 13:23:46', NULL, NULL, '2024-06-23 22:02:44', '', '');
@@ -35275,7 +35624,7 @@ INSERT INTO `user_info` VALUES (171, '13939948323', 'cyk', 'e10adc3949ba59abbe56
 INSERT INTO `user_info` VALUES (174, '15236254632', 'lx', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', 'lx', NULL, '西安市', '陕西省', '中国', '', 1, '2024-06-21 12:52:41', '2025-08-07 13:23:49', NULL, NULL, '2025-07-30 19:33:52', '', '');
 INSERT INTO `user_info` VALUES (179, '18735482563', 'whm', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', 'whm', NULL, '西安市', '陕西省', '中国', '', 1, '2024-06-21 12:57:13', '2025-08-07 13:23:56', NULL, NULL, '2025-07-22 21:42:39', '', '');
 INSERT INTO `user_info` VALUES (180, '15291816176', 'mln', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'mln', '666666666666666666666', '西安市', '陕西省', '中国', '', 1, '2025-07-24 15:58:08', '2025-10-13 10:48:42', NULL, NULL, '2025-09-18 20:27:25', '', '');
-INSERT INTO `user_info` VALUES (181, '12327813781', 'xtt', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'xtt', NULL, '西安市', '陕西省', '中国', '', 1, '2025-07-24 16:06:38', '2026-04-18 22:18:00', NULL, NULL, '2026-04-18 22:18:00', '', '');
+INSERT INTO `user_info` VALUES (181, '12327813781', 'xtt', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'xtt', NULL, '西安市', '陕西省', '中国', '', 1, '2025-07-24 16:06:38', '2026-07-27 13:03:11', NULL, NULL, '2026-07-27 13:03:11', 'ccceee00021@163.com', 'End98765432.');
 INSERT INTO `user_info` VALUES (182, '12345678901', 'hjc', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'hjc', NULL, '西安市', '陕西省', '中国', '', 1, '2025-08-07 13:18:05', '2025-10-13 10:48:47', NULL, NULL, '2025-09-11 21:44:14', '', '');
 INSERT INTO `user_info` VALUES (183, '12233445566', 'wsy', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'wsy', NULL, '西安市', '陕西省', '中国', '', 1, '2025-08-07 13:19:48', '2025-10-13 10:48:50', NULL, NULL, '2025-09-24 10:36:23', '', '');
 INSERT INTO `user_info` VALUES (184, '33333333333', 'test2', 'e10adc3949ba59abbe56e057f20f883e', 'doctor', 'vip', 'D_00002', NULL, '西安市', '陕西省', '中国', '', 1, '2025-08-07 17:44:58', '2025-10-14 09:14:14', NULL, NULL, '2025-10-14 09:14:14', 'ccceee00020@163.com', 'Moonlight123.');
@@ -35303,22 +35652,25 @@ INSERT INTO `user_info` VALUES (216, '19918141032', '就很棒', 'e10adc3949ba59
 INSERT INTO `user_info` VALUES (217, '18392183903', '18392183603', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '', NULL, '', '', '', '', 0, '2026-03-27 16:39:59', '2026-03-27 17:15:01', NULL, NULL, '2026-03-27 17:15:01', '', '');
 INSERT INTO `user_info` VALUES (218, '19918141031', '晓叶1', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '', NULL, '', '', '', '', 0, '2026-03-27 20:56:21', '2026-03-28 15:01:14', NULL, NULL, '2026-03-28 15:01:14', '', '');
 INSERT INTO `user_info` VALUES (219, '18323765631', '晓叶2', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '', NULL, '', '', '', '', 0, '2026-03-28 21:46:14', '2026-03-29 09:53:34', NULL, NULL, '2026-03-29 09:53:34', '', '');
-INSERT INTO `user_info` VALUES (220, '18323765634', '晓叶', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '', NULL, '', '', '', '', 0, '2026-03-29 09:55:04', '2026-04-06 11:00:51', NULL, NULL, '2026-04-06 11:00:51', '', '');
+INSERT INTO `user_info` VALUES (220, '18323765634', '晓叶', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '', NULL, '', '', '', '', 0, '2026-03-29 09:55:04', '2026-07-27 10:12:10', NULL, NULL, '2026-07-27 10:12:10', '', '');
+INSERT INTO `user_info` VALUES (221, '18148490981', 'wyy', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '', NULL, '', '', '', '', 0, '2026-06-01 18:10:01', '2026-06-12 14:27:41', NULL, NULL, '2026-06-12 14:27:41', '', '');
+INSERT INTO `user_info` VALUES (222, '13153464692', 'sshyu', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '', NULL, '', '', '', '', 0, '2026-06-02 09:19:12', '2026-06-02 11:03:28', NULL, NULL, '2026-06-02 11:03:28', '', '');
+INSERT INTO `user_info` VALUES (224, '13153464693', 'shy', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'normal', '', NULL, '西安市', '陕西省', '中国', '', 1, '2026-06-02 11:01:43', '2026-07-23 10:46:05', NULL, NULL, '2026-07-23 10:46:05', 'ccceee00022@163.com', 'Abc123Abc123@');
 
 -- ----------------------------
 -- Table structure for video
 -- ----------------------------
 DROP TABLE IF EXISTS `video`;
 CREATE TABLE `video`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL COMMENT '用户id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户id',
   `log_date` date NULL DEFAULT NULL,
   `log_time` time NULL DEFAULT NULL,
   `video_url` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
   `inference` varchar(16) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `infer_cost` int NULL DEFAULT NULL,
+  `infer_cost` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_userid_video`(`user_id` ASC) USING BTREE,
+  INDEX `fk_userid_video`(`user_id`) USING BTREE,
   CONSTRAINT `fk_userid_video` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = DYNAMIC;
 

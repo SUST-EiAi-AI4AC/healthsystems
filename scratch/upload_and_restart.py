@@ -28,13 +28,23 @@ print(f"JAR size: {file_size / 1024 / 1024:.1f} MB")
 CHUNK_SIZE = 65536   # 64 KB chunks
 
 
+import socket
+
 def connect_ssh():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(60)
+    local_ips = [ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith('198.18.')]
+    if local_ips:
+        sock.bind((local_ips[0], 0))
+    sock.connect((hostname, 22))
+
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(
         hostname,
         username=username,
         password=password,
+        sock=sock,
         timeout=60,
         banner_timeout=60,
         auth_timeout=60,
@@ -90,7 +100,7 @@ def upload_via_stdin(ssh, local_path, remote_path):
     print(f"Upload finished in {time.time()-start:.1f}s")
 
 
-MAX_RETRIES = 3
+MAX_RETRIES = 10
 ssh = None
 
 for attempt in range(1, MAX_RETRIES + 1):
@@ -99,6 +109,14 @@ for attempt in range(1, MAX_RETRIES + 1):
         ssh = connect_ssh()
         print("Connected.")
         upload_via_stdin(ssh, local_jar, remote_jar)
+        
+        local_cert = os.path.join(project_root, r"scratch\www.nwpuhs.cn_cert_chain.pem")
+        local_key = os.path.join(project_root, r"scratch\www.nwpuhs.cn_key.key")
+        if os.path.exists(local_cert) and os.path.exists(local_key):
+            print("\nUploading SSL certificates for Nginx...")
+            upload_via_stdin(ssh, local_cert, "/etc/pki/nginx/www.nwpuhs.cn_cert_chain.pem")
+            upload_via_stdin(ssh, local_key, "/etc/pki/nginx/private/www.nwpuhs.cn_key.key")
+            print("Nginx SSL certificates uploaded successfully.")
         break
     except Exception as e:
         print(f"Attempt {attempt} failed: {e}")
@@ -109,7 +127,7 @@ for attempt in range(1, MAX_RETRIES + 1):
             pass
         ssh = None
         if attempt < MAX_RETRIES:
-            wait = 15 * attempt
+            wait = 10 + 10 * attempt
             print(f"Retrying in {wait}s...")
             time.sleep(wait)
         else:
@@ -117,9 +135,9 @@ for attempt in range(1, MAX_RETRIES + 1):
             sys.exit(1)
 
 # ── Restart service ──────────────────────────────────────────────────────────
-print("\nRestarting healthsystem service...")
+print("\nReloading Nginx and Restarting healthsystem service...")
 _, stdout, stderr = ssh.exec_command(
-    "systemctl restart healthsystem && sleep 10 && systemctl is-active healthsystem",
+    "nginx -t && systemctl reload nginx && systemctl restart healthsystem && sleep 10 && systemctl is-active healthsystem",
     timeout=90
 )
 out = stdout.read().decode('utf-8', errors='ignore').strip()
@@ -130,7 +148,7 @@ if err:
 
 # ── Port check ───────────────────────────────────────────────────────────────
 time.sleep(3)
-_, stdout, _ = ssh.exec_command("ss -lntp | grep -E ':(8081|1443)'", timeout=15)
+_, stdout, _ = ssh.exec_command("ss -lntp | grep -E ':(8081|1443|443)'", timeout=15)
 port_out = stdout.read().decode('utf-8', errors='ignore').strip()
 print("Listening ports:")
 print(port_out if port_out else "  (service still starting - check again in 30s)")

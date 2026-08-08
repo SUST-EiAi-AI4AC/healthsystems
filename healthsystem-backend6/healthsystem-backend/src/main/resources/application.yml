@@ -11,7 +11,7 @@ server:
     #    key-store-password: ql9x9jx17dt4799
     #    key-store-type: JKS
     key-store: classpath:nwpuhs.cn.pfx
-    key-store-password: yz3ximrk
+    key-store-password: jofk8tsq
     key-store-type: PKCS12
 
 mybatis:
