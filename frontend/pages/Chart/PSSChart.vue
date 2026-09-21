@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<div class="title">
-			最近{{this.pageSize}}次的压力量表测试结果
+			{{ ($i18n && $i18n.currentLang === 'en') ? ('Perceived Stress Results (Last ' + pageSize + ' Times)') : ('最近' + pageSize + '次的压力量表测试结果') }}
 		</div>
 
 		<div class="dr-wrapper">
@@ -9,16 +9,10 @@
 			<l-echart class="PSSscore" ref="PSSscore" @finished="initDrawPSSscore"></l-echart>
 		</div>
 
-		<p class="note">
-			注：
-			<b style="color: rgb(110, 210, 100)">绿色</b>标识分数<b>最大值</b>，
-			<b style="color: rgb(234, 129, 87)">橙色</b>标识分数<b>最小值</b>，
-			<b>虚线</b>标识分数<b>平均值</b>
-		</p>
+		<p class="note" v-html="$t('mineSub.chartDetail.chartNote')"></p>
 
 		<div class="box-card">
-			<p>量表测试结果<b>不是</b>专业医生的诊断结果。如果测试结果不甚良好，您<b>不必慌张</b>，我们建议您积极调节心态并及时寻求医生或心理医师的帮助。
-			</p>
+			<p v-html="$t('mineSub.chartDetail.chartDisclaimer')"></p>
 		</div>
 
 		<basic-table :columns="columns" :data="tableData">
@@ -47,33 +41,7 @@
 				charts: '',
 				opinionData: [],
 				PSSdateData: [], // 睡眠日期
-				PSSscoreData: [], // 睡眠时长
-				columns: [{
-						fieldName: 'score',
-						fieldDesc: '分数段'
-					},
-					{
-						fieldName: 'exp',
-						fieldDesc: '分数说明'
-					},
-					{
-						fieldName: 'text',
-						fieldDesc: '医生建议'
-					}
-				],
-				tableData: [{
-					score: '0-19分',
-					exp: '低压力感知',
-					text: '您对自己当前的生活有足够的掌控和控制，请继续保持'
-				}, {
-					score: '20-39分',
-					exp: '中等压力感知',
-					text: '您偶尔会有一段时间压力太多，请注意自我调节'
-				}, {
-					score: '40-56分',
-					exp: '高压力感知',
-					text: '建议您寻找朋友同学或者心理医生进行进一步沟通'
-				}]
+				PSSscoreData: [] // 睡眠时长
 			}
 		},
 		methods: {
@@ -313,8 +281,23 @@
 				})
 			}
 		},
+		computed: {
+			columns() {
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				return [
+					{ fieldName: 'scoreSection', fieldDesc: isEn ? 'Score Range' : '分数段' },
+					{ fieldName: 'explanation', fieldDesc: isEn ? 'Explanation' : '分数说明' },
+					{ fieldName: 'advice', fieldDesc: isEn ? 'Advice' : '建议' }
+				];
+			}
+		},
 		onLoad(parms) {
 			this.getData();
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: (this.$i18n && this.$i18n.currentLang === 'en') ? 'Stress Charts' : '压力评估记录'
+			});
 		}
 	}
 </script>

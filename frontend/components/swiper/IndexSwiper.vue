@@ -8,7 +8,7 @@
 			<!-- <router-link to="/pages/pagerouters/pagerouter1"> -->
 				<image class="swiper-img" src="../../static/images/index/emo22.jpg" ></image>
 				<div class="box-data">
-					<span>年轻人都想上岸，“岸”的尽头是什么<br></span>
+					<span>{{ $t('index.swiper1') }}<br></span>
 				</div>
 			<!-- </router-link> -->
 
@@ -17,7 +17,7 @@
 			<!-- <router-link to="/pages/pagerouters/pagerouter2"> -->
 				<image class="swiper-img" src="../../static/images/index/emo33.jpeg"></image>
 				<div class="box-data">
-					<span>大学生“向上社交”：功利工具还是成长利器<br></span>
+					<span>{{ $t('index.swiper2') }}<br></span>
 				</div>
 			<!-- </router-link> -->
 		</swiper-item>
@@ -25,7 +25,7 @@
 			<!-- <router-link to="/pages/pagerouters/pagerouter3"> -->
 				<image class="swiper-img" src="../../static/images/index/emo44.jpg"></image>
 				<div class="box-data">
-					<span>“毒鸡汤”危害心理 <br></span>
+					<span>{{ $t('index.swiper3') }}<br></span>
 				</div>
 			<!-- </router-link> -->
 		</swiper-item>
@@ -33,7 +33,7 @@
 			<!-- <router-link to="/pages/pagerouters/pagerouter4"> -->
 				<image class="swiper-img" src="../../static/images/index/emo55.jpg"></image>
 				<div class="box-data">
-					<span>你在生活中出现过“情绪劳动”吗？<br></span>
+					<span>{{ $t('index.swiper4') }}<br></span>
 				</div>
 			<!-- </router-link> -->
 		</swiper-item>
@@ -41,7 +41,7 @@
 			<!-- <router-link to="/pages/pagerouters/pagerouter5"> -->
 				<image class="swiper-img" src="../../static/images/index/emo66.jpg"></image>
 				<div class="box-data">
-					<span>走近回避型依恋者 如何寻找真爱？<br></span>
+					<span>{{ $t('index.swiper5') }}<br></span>
 				</div>
 			<!-- </router-link> -->
 		</swiper-item>
@@ -49,7 +49,7 @@
 			<!-- <router-link to="/pages/pagerouters/pagerouter6"> -->
 				<image class="swiper-img" src="../../static/images/index/emo77.jpg"></image>
 				<div class="box-data">
-					<span>年轻人社交趋势：交“零糖”朋友 寻“吗喽”减压<br></span>
+					<span>{{ $t('index.swiper6') }}<br></span>
 				</div>
 			<!-- </router-link> -->
 		</swiper-item>
@@ -57,7 +57,7 @@
 			<!-- <router-link to="/pages/pagerouters/pagerouter7"> -->
 				<image class="swiper-img" src="../../static/images/index/emo88.jpg"></image>
 				<div class="box-data">
-					<span>站上人生新关口！<br>毕业季，如何应对“戒断反应”</span>
+					<span>{{ $t('index.swiper7') }}</span>
 				</div>
 			<!-- </router-link> -->
 		</swiper-item>

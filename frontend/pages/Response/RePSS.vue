@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<h2 class="title">您的压力测评报告</h2>
+		<h2 class="title">{{ $t('mineSub.response.rePssTitle') }}</h2>
 
 		<div class="main">
 			<div class="rating center">
@@ -13,8 +13,8 @@
 				</p>
 			</div>
 
-			<button type="primary" plain @click="jump()" style="width: 90%;">返回首页</button>
-			<button type="warning" plain @click="history()" style="margin-top: 15rpx; width: 90%;" >历史记录</button>
+			<button type="primary" plain @click="jump()" style="width: 90%;">{{ $t('mineSub.response.backHome') }}</button>
+			<button type="warning" plain @click="history()" style="margin-top: 15rpx; width: 90%;" >{{ $t('mineSub.response.viewHistory') }}</button>
 
 		</div>
 	</view>
@@ -44,17 +44,17 @@
 				sas: [{
 						l: 0,
 						h: 19,
-						desc: '低压力感知'
+						descKey: 'pssLevelLow'
 					},
 					{
 						l: 20,
 						h: 39,
-						desc: '中等压力感知'
+						descKey: 'pssLevelModerate'
 					},
 					{
 						l: 40,
 						h: 56,
-						desc: '高压力感知'
+						descKey: 'pssLevelHigh'
 					}
 				],
 			}
@@ -91,16 +91,16 @@
 
 			getResult() {
 				const context =
-					"不过不要惊慌，此结果仅反映您最近一个月的压力状态，可能是当前工作生活状态变化的正常反应，不代表焦虑障碍。建议您积极调节情绪并定期测评，一般随着时间的推移会逐渐改善。如果长期持续此状态，"
+					this.$t('mineSub.response.pssContext')
 				const adviceArray = [
-					"最好咨询心理医生或心理医学工作者。",
-					"建议咨询心理医生或精神科医生。",
-					"一定要看心理医生或精神科医生。"
+					this.$t('mineSub.response.adviceCounselorBest'),
+					this.$t('mineSub.response.adviceSeeDoctor'),
+					this.$t('mineSub.response.adviceMustSeeDoctor')
 				];
 				let al = -1;
 				this.sas.find((v, i) => {
 					if (this.anxietyScore <= v.h) {
-						this.anxietyDescription = v.desc;
+						this.anxietyDescription = this.$t('mineSub.response.' + v.descKey);
 						al = i - 1
 						return true
 					}
@@ -108,11 +108,10 @@
 				})
 
 				if (al === -1) {
-					this.review = "您现在各项指标都很正常，";
-					this.advice = "祝您生活愉快！";
+					this.review = this.$t('mineSub.response.reviewNormal');
+					this.advice = this.$t('mineSub.response.wishNormal');
 				} else if (al >= 0) {
-					//焦虑
-					this.review = "根据量表测试分数显示，您现在已经是" + this.anxietyDescription + "了，";
+					this.review = this.$t('mineSub.response.reviewLevelPrefix') + this.anxietyDescription + this.$t('mineSub.response.reviewLevelSuffix');
 					this.advice = context + adviceArray[al];
 				}
 			},
@@ -134,6 +133,11 @@
 		},
 		onLoad(parms) {
 			this.getData();
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('mineSub.response.rePssTitle') || '您的压力测评报告'
+			});
 		},
 	}
 </script>

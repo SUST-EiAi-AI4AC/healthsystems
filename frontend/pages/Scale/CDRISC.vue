@@ -1,8 +1,8 @@
 <template>
 	<view class="page">
 		<view class="intro-card">
-			<text class="intro-title">CD-RISC 心理弹性量表</text>
-			<text class="intro-text">请根据以下描述，选择最符合您<text style="color:#e74c3c;">最近情况</text>的选项（0=完全不对，4=几乎总是对）。</text>
+			<text class="intro-title">{{ $t('scales.cdrisc.title') }}</text>
+			<text class="intro-text">{{ $t('scales.cdrisc.instruction') }}</text>
 		</view>
 
 		<view class="progress-wrap">
@@ -13,14 +13,14 @@
 		</view>
 
 		<view class="score-hint">
-			<view v-for="s in scoreLabels" :key="s.value" class="hint-item">
+			<view v-for="s in currentScoreLabels" :key="s.value" class="hint-item">
 				<text class="hint-score">{{ s.value }}</text>
 				<text class="hint-label">{{ s.label }}</text>
 			</view>
 		</view>
 
 		<view class="form-box">
-			<view class="question-label">{{ currentPage }}. {{ questions[currentPage - 1] }}</view>
+			<view class="question-label">{{ currentPage }}. {{ currentQuestions[currentPage - 1] }}</view>
 			<view class="score-row">
 				<view v-for="s in 5" :key="s" class="score-btn"
 					:class="{ selected: form['q' + currentPage] === (s - 1) }"
@@ -31,9 +31,9 @@
 		</view>
 
 		<view class="nav-btns">
-			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">上一题</button>
-			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">下一题</button>
-			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">提交</button>
+			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">{{ $t('scales.common.prev') }}</button>
+			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">{{ $t('scales.common.next') }}</button>
+			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">{{ $t('scales.common.submit') }}</button>
 		</view>
 	</view>
 </template>
@@ -80,6 +80,21 @@
 					'当我遇到阻碍时，我会想方设法克服'
 				]
 			};
+		},
+		computed: {
+			currentScoreLabels() {
+				const labels = this.$t('scales.cdrisc.scoreLabels');
+				return (Array.isArray(labels) && labels.length === 5) ? labels : this.scoreLabels;
+			},
+			currentQuestions() {
+				const q = this.$t('scales.cdrisc.questions');
+				return (Array.isArray(q) && q.length === 25) ? q : this.questions;
+			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('scales.cdrisc.title') || 'CD-RISC 心理弹性量表'
+			});
 		},
 		created() {
 			for (let i = 1; i <= 25; i++) {
@@ -128,9 +143,11 @@
 					sh.push(entry);
 					uni.setStorageSync('scale_history', sh);
 				} catch(e) {}
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				const displayLevel = isEn ? (score >= 80 ? 'Excellent Resilience' : score >= 60 ? 'Good Resilience' : score >= 40 ? 'Moderate Resilience' : 'Low Resilience') : level;
 				uni.showModal({
-					title: '提交成功',
-					content: `CD-RISC总分：${score}/100\n${level}`,
+					title: this.$t('scales.common.submitSuccess') || '提交成功',
+					content: isEn ? `CD-RISC Total Score: ${score}/100\n${displayLevel}` : `CD-RISC总分：${score}/100\n${level}`,
 					showCancel: false,
 					success: () => { uni.navigateBack(); }
 				});

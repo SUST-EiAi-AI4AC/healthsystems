@@ -16,8 +16,12 @@
 		},
 
 		onShow() {
+			const lang = (this.$i18n ? this.$i18n.currentLang : uni.getStorageSync('app_language')) || 'zh';
 			//加载
-			this.websrc = "/hybrid/html/video/video_new.html?token=" + uni.getStorageSync('token');
+			this.websrc = "/hybrid/html/video/video_new.html?token=" + uni.getStorageSync('token') + "&lang=" + lang;
+			uni.setNavigationBarTitle({
+				title: this.$t('video.navTitle') || (lang === 'en' ? 'Mini Interview' : '迷你访谈')
+			});
 		},
 		methods: {
 			handlePostMessage: function(data) {

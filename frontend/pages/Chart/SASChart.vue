@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<div class="title">
-			最近{{this.pageSize}}次的焦虑量表测试结果
+			{{ ($i18n && $i18n.currentLang === 'en') ? ('Anxiety Assessment Results (Last ' + pageSize + ' Times)') : ('最近' + pageSize + '次的焦虑量表测试结果') }}
 		</div>
 
 		<div class="dr-wrapper">
@@ -9,16 +9,10 @@
 			<l-echart class="SAS" ref="SAS" @finished="initDrawSAS"></l-echart>
 		</div>
 
-		<p class="note">
-			注：
-			<b style="color: rgb(110, 210, 100)">绿色</b>标识分数<b>最大值</b>，
-			<b style="color: rgb(85, 156, 255)">蓝色</b>标识分数<b>最小值</b>，
-			<b>虚线</b>标识分数<b>平均值</b>
-		</p>
+		<p class="note" v-html="$t('mineSub.chartDetail.chartNote')"></p>
 
 		<div class="box-card">
-			<p>量表测试结果<b>不是</b>专业医生的诊断结果。如果测试结果不甚良好，您<b>不必慌张</b>，我们建议您积极调节心态并及时寻求医生或心理医师的帮助。
-			</p>
+			<p v-html="$t('mineSub.chartDetail.chartDisclaimer')"></p>
 		</div>
 
 		<basic-table :columns="columns" :data="tableData">
@@ -46,41 +40,7 @@
 				//数据类型为数组
 				sasData: [],
 				logDate: [],
-				score: [],
-				columns: [{
-						fieldName: 'scoreSection',
-						fieldDesc: '分数段'
-					},
-					{
-						fieldName: 'explanation',
-						fieldDesc: '分数说明'
-					},
-					{
-						fieldName: 'advice',
-						fieldDesc: '医生建议'
-					}
-				],
-				tableData: [{
-						scoreSection: '0-49',
-						explanation: '没有焦虑症',
-						advice: '注意自我保重'
-					},
-					{
-						scoreSection: '50-59',
-						explanation: '可能有轻微焦虑症',
-						advice: '建议咨询心理医生或心理医学工作者'
-					},
-					{
-						scoreSection: '60-69',
-						explanation: '可能有中度焦虑症',
-						advice: '最好咨询心理医生或心理医学工作者'
-					},
-					{
-						scoreSection: '70-100',
-						explanation: '可能有重度焦虑症',
-						advice: '一定要看心理医生或精神科医生'
-					}
-				]
+				score: []
 			}
 		},
 		methods: {
@@ -126,101 +86,76 @@
 				}
 			},
 			drawScore() {
-				// 绘制图表
-				// 配置项option的文档：https://echarts.apache.org/zh/option.html#title
-				chartsSAS.setOption({
-					// 线的颜色，默认是红色
-					color: ["white"],
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				const scoreName = isEn ? 'Test Score' : '测试得分';
+				const dateName = isEn ? 'Date' : '日期';
+				const ptsName = isEn ? 'Score' : '分数';
+				const maxName = isEn ? 'Max' : '最大值';
+				const minName = isEn ? 'Min' : '最小值';
+				const avgName = isEn ? 'Average' : '平均值';
 
-					//提示框部分，就是鼠标放上去能显示数据的透明框
+				chartsSAS.setOption({
+					color: ["white"],
 					tooltip: {
 						trigger: 'axis',
-						triggerOn: 'mousemove', //网页版时，鼠标放上去就会显示，不用点那个数据点，但手机版需要点击
-
-						//坐标轴指示器，坐标轴触发有效
+						triggerOn: 'mousemove',
 						axisPointer: {
 							type: "shadow"
 						},
-
-						//提示框需要显示的内容及格式
 						formatter: function(param) {
 							param = param[0];
 							return [
-								'日期:' + param.name + '\n',
-								'分数:' + param.value + '分'
+								(isEn ? 'Date: ' : '日期:') + param.name + '\n',
+								(isEn ? 'Score: ' : '分数:') + param.value + (isEn ? ' pts' : '分')
 							].join('');
 						}
 					},
-
-					//直角坐标系底板
 					grid: {},
-
-					//图例，右上角说明图表中绘制了几个数据的那个东西
 					legend: {
 						left: 'right',
-						data: ['测试得分'],
+						data: [scoreName],
 						textStyle: {
 							color: "white"
 						},
-						selectedMode: false, //点击图例是否改变现在的显示状态
+						selectedMode: false,
 					},
-
-					//直角坐标系 X 轴
 					xAxis: {
-						name: "日期", //坐标轴单位
+						name: dateName,
 						data: this.logDate,
-
-						//坐标轴刻度标签
 						axisLabel: {
-							interval: 0, //X轴信息全部显示
-							rotate: -30, //坐标轴刻度标签倾斜，便于显示所有数据
-							color: "white", //刻度标签文字的颜色
+							interval: 0,
+							rotate: -30,
+							color: "white",
 						},
-
-						//刻度线
-						axisTick: { // 刻度线和标签对齐
-							alignWithLabel: true
-						},
-
-						//坐标轴
-						axisLine: {
-							lineStyle: {
-								color: "white", // 坐标轴颜色
-							}
-						},
-					},
-
-					//直角坐标系Y轴
-					yAxis: {
-						name: "分数", //坐标轴单位
-
-						//坐标轴刻度标签
-						axisLabel: {
-							color: "white"
-						},
-
-						//刻度线
 						axisTick: {
 							alignWithLabel: true
 						},
-
-						//坐标轴
+						axisLine: {
+							lineStyle: {
+								color: "white",
+							}
+						},
+					},
+					yAxis: {
+						name: ptsName,
+						axisLabel: {
+							color: "white"
+						},
+						axisTick: {
+							alignWithLabel: true
+						},
 						axisLine: {
 							lineStyle: {
 								color: "white"
 							}
 						},
-
-						//分隔线
 						splitLine: {
 							show: false
 						}
 					},
-
-					//数据及绘图
 					series: [{
-						name: "测试得分",
-						type: 'line', //图表类型，折线图
+						name: scoreName,
+						type: 'line',
 						smooth: true,
 						data: this.score,
 						itemStyle: {
@@ -230,19 +165,18 @@
 								}
 							}
 						},
-
 						markPoint: {
-							symbol: 'pin', //标记(气泡)的图形
-							symbolSize: 40, //标记(气泡)的大小
+							symbol: 'pin',
+							symbolSize: 40,
 							itemStyle: {
-								color: 'rgb(85, 156, 255)', //图形的颜色。
-								borderColor: '#000', //图形的描边颜色。支持的颜色格式同 color，不支持回调函数。
-								borderWidth: 0, //描边线宽。为 0 时无描边。
-								borderType: 'solid', //柱条的描边类型，默认为实线，支持 ‘solid’, ‘dashed’, ‘dotted’。
+								color: 'rgb(85, 156, 255)',
+								borderColor: '#000',
+								borderWidth: 0,
+								borderType: 'solid',
 							},
 							data: [{
 									type: 'max',
-									name: '最大值',
+									name: maxName,
 									label: {
 										formatter: '{c}'
 									},
@@ -252,7 +186,7 @@
 								},
 								{
 									type: 'min',
-									name: '最小值',
+									name: minName,
 									label: {
 										formatter: '{c}'
 									},
@@ -262,11 +196,10 @@
 								}
 							]
 						},
-
 						markLine: {
 							data: [{
 								type: 'average',
-								name: '平均值',
+								name: avgName,
 								label: {
 									formatter: '{c}'
 								},
@@ -279,8 +212,37 @@
 				})
 			}
 		},
+		computed: {
+			columns() {
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				return [
+					{ fieldName: 'scoreSection', fieldDesc: isEn ? 'Score Range' : '分数段' },
+					{ fieldName: 'explanation', fieldDesc: isEn ? 'Explanation' : '分数说明' },
+					{ fieldName: 'advice', fieldDesc: isEn ? 'Advice' : '建议' }
+				];
+			},
+			tableData() {
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				return isEn ? [
+					{ scoreSection: '0-49', explanation: 'No anxiety', advice: 'Take good care of yourself' },
+					{ scoreSection: '50-59', explanation: 'Possible mild anxiety', advice: 'Consult a counselor or doctor' },
+					{ scoreSection: '60-69', explanation: 'Possible moderate anxiety', advice: 'Better to consult a mental health specialist' },
+					{ scoreSection: '70-100', explanation: 'Possible severe anxiety', advice: 'Must seek psychiatric or doctor evaluation' }
+				] : [
+					{ scoreSection: '0-49', explanation: '没有焦虑症', advice: '注意自我保重' },
+					{ scoreSection: '50-59', explanation: '可能有轻微焦虑症', advice: '建议咨询心理医生或心理医学工作者' },
+					{ scoreSection: '60-69', explanation: '可能有中度焦虑症', advice: '最好咨询心理医生或心理医学工作者' },
+					{ scoreSection: '70-100', explanation: '可能有重度焦虑症', advice: '一定要看心理医生或精神科医生' }
+				];
+			}
+		},
 		onLoad(parms) {
 			this.getData();
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: (this.$i18n && this.$i18n.currentLang === 'en') ? 'Anxiety Charts' : '焦虑评估记录'
+			});
 		}
 	}
 </script>

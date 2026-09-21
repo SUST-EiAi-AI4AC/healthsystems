@@ -3,7 +3,7 @@
 		<!-- Tab 标签栏 -->
 		<view class="tab-bar">
 			<view
-				v-for="(tab, index) in tabs"
+				v-for="(tab, index) in localizedTabs"
 				:key="index"
 				class="tab-item"
 				:class="{ active: currentTab === index }"
@@ -30,24 +30,24 @@
 						<image class="chat-banner-avatar" src="https://img2.baidu.com/it/u=2073205204,3558835398&fm=253&app=138&f=JPEG?w=380&h=380" mode="aspectFill" />
 						<view class="chat-banner-info">
 							<view class="chat-banner-title-row">
-								<text class="chat-banner-name">心晴</text>
-								<view class="chat-banner-tag">AI 心理助手</view>
+								<text class="chat-banner-name">{{ $t('heal.aiAssistantName') }}</text>
+								<view class="chat-banner-tag">{{ $t('heal.aiRoleTag') }}</view>
 								<!-- 在线状态贴靠 AI 心理助手标签 -->
 								<view class="chat-banner-status-inline">
 									<view class="chat-banner-dot online"></view>
-									<text class="chat-banner-online-text">在线</text>
+									<text class="chat-banner-online-text">{{ $t('heal.online') }}</text>
 								</view>
 								<!-- 音量开启/关闭按钮 -->
 								<view class="chat-banner-volume" @click.stop="toggleVolume">
-									<text class="volume-icon">{{ isVolumeEnabled ? '🔊 音量开' : '🔇 音量关' }}</text>
+									<text class="volume-icon">{{ isVolumeEnabled ? $t('heal.volumeOn') : $t('heal.volumeOff') }}</text>
 								</view>
 							</view>
-							<text class="chat-banner-desc">24h专业倾听，温暖陪伴，随时为你解忧 🌸</text>
+							<text class="chat-banner-desc">{{ $t('heal.chatBannerDesc') }}</text>
 						</view>
 						<!-- 历史对话入口按钮 -->
 						<view class="history-entry-btn" @click="openHistoryPanel">
 							<text class="history-entry-icon">🕐</text>
-							<text class="history-entry-text">历史</text>
+							<text class="history-entry-text">{{ $t('heal.history') }}</text>
 						</view>
 					</view>
 
@@ -101,14 +101,14 @@
 				<scroll-view :scroll-y="!diaryScrollLocked" class="game-page diary-page-scroll">
 					<!-- 顶部日期 -->
 					<view class="diary-header">
-						<text class="diary-today-label">今天</text>
+						<text class="diary-today-label">{{ $t('heal.todayLabel') }}</text>
 						<text class="diary-today-date">{{ todayStr }}</text>
 					</view>
 
 					<!-- 今日写日记入口 -->
 					<view class="diary-write-card">
 						<view class="diary-mood-row">
-							<text class="diary-mood-label">今日心情</text>
+							<text class="diary-mood-label">{{ $t('heal.todayMoodLabel') }}</text>
 							<view class="mood-selector">
 								<text
 									v-for="(m, idx) in moods"
@@ -121,14 +121,14 @@
 						</view>
 						<view class="diary-input-row">
 							<view class="diary-placeholder" @click="showDiaryModal = true">
-								<text class="diary-placeholder-text">{{ selectedDiaryText || '记录此刻的心情...' }}</text>
+								<text class="diary-placeholder-text">{{ selectedDiaryText || $t('heal.recordMoodPlaceholder') }}</text>
 							</view>
 						</view>
 					</view>
 
 					<!-- 日记列表 -->
 					<view class="diary-list">
-						<text class="section-title">往日记录</text>
+						<text class="section-title">{{ $t('heal.pastRecordsTitle') }}</text>
 						<!-- 左滑删除容器 -->
 						<view
 							v-for="(entry, idx) in diaryEntries"
@@ -151,7 +151,7 @@
 								<view class="diary-entry-body">
 									<view class="diary-entry-top">
 										<text class="diary-entry-date">{{ entry.date }}</text>
-										<text class="diary-entry-mood-name">{{ moods[entry.moodIndex].label }}</text>
+										<text class="diary-entry-mood-name">{{ $t(moods[entry.moodIndex].labelKey) || moods[entry.moodIndex].label }}</text>
 									</view>
 									<text class="diary-entry-content">{{ entry.content }}</text>
 									<!-- 图片预览行 -->
@@ -168,7 +168,7 @@
 							</view>
 							<!-- 左滑露出的删除按钮 -->
 							<view class="diary-swipe-del" @click.stop="deleteDiary(idx)">
-								<text class="diary-swipe-del-text">删除</text>
+								<text class="diary-swipe-del-text">{{ $t('common.delete') }}</text>
 							</view>
 						</view>
 					</view>
@@ -184,12 +184,12 @@
 							<image class="game-hero-img" src="https://image.9game.cn/s/9game/g/2021/1/28/207154297.png" mode="aspectFill"></image>
 						</view>
 						<view class="game-hero-info">
-							<text class="game-hero-title">神庙逃亡 2</text>
-							<text class="game-hero-sub">Holi Festival · 跑酷闯关</text>
+							<text class="game-hero-title">{{ $t('heal.gameHeroTitle') }}</text>
+							<text class="game-hero-sub">{{ $t('heal.gameHeroSub') }}</text>
 							<view class="game-hero-tags">
-								<view class="game-tag">🎯 动作</view>
-								<view class="game-tag">⚡ 跑酷</view>
-								<view class="game-tag">🌈 节日</view>
+								<view class="game-tag">{{ $t('heal.gameTagAction') }}</view>
+								<view class="game-tag">{{ $t('heal.gameTagParkour') }}</view>
+								<view class="game-tag">{{ $t('heal.gameTagFestival') }}</view>
 							</view>
 						</view>
 					</view>
@@ -198,36 +198,36 @@
 					<view class="game-launch-wrap">
 						<view class="game-launch-btn" @click="openGameInBrowser">
 							<text class="game-launch-icon">▶</text>
-							<text class="game-launch-text">开始游戏</text>
+							<text class="game-launch-text">{{ $t('heal.startGame') }}</text>
 						</view>
-						<text class="game-launch-hint">将在浏览器中全屏运行</text>
+						<text class="game-launch-hint">{{ $t('heal.gameLaunchHint') }}</text>
 					</view>
 
 					<!-- 游戏介绍 -->
 					<view class="game-desc-card">
-						<text class="game-desc-title">🎮 游戏简介</text>
-						<text class="game-desc-text">神庙逃亡 2 是一款经典无尽跑酷游戏。在 Holi Festival 节日版本中，奔跑在五彩缤纷的世界里，躲避障碍、转弯跳跃，释放压力，享受奔跑的快感！</text>
+						<text class="game-desc-title">{{ $t('heal.gameDescTitle') }}</text>
+						<text class="game-desc-text">{{ $t('heal.gameDescText') }}</text>
 					</view>
 
 					<!-- 操作指引 -->
 					<view class="game-guide-card">
-						<text class="game-desc-title">📱 操作说明</text>
+						<text class="game-desc-title">{{ $t('heal.gameGuideTitle') }}</text>
 						<view class="game-guide-list">
 							<view class="game-guide-item">
 								<text class="game-guide-icon">👆</text>
-								<text class="game-guide-label">上滑 — 跳跃</text>
+								<text class="game-guide-label">{{ $t('heal.gameGuideJump') }}</text>
 							</view>
 							<view class="game-guide-item">
 								<text class="game-guide-icon">👇</text>
-								<text class="game-guide-label">下滑 — 下蹲</text>
+								<text class="game-guide-label">{{ $t('heal.gameGuideSlide') }}</text>
 							</view>
 							<view class="game-guide-item">
 								<text class="game-guide-icon">👈</text>
-								<text class="game-guide-label">左滑 — 左转</text>
+								<text class="game-guide-label">{{ $t('heal.gameGuideLeft') }}</text>
 							</view>
 							<view class="game-guide-item">
 								<text class="game-guide-icon">👉</text>
-								<text class="game-guide-label">右滑 — 右转</text>
+								<text class="game-guide-label">{{ $t('heal.gameGuideRight') }}</text>
 							</view>
 						</view>
 					</view>
@@ -266,14 +266,14 @@
 								<view class="voice-wave-bar b4"></view>
 								<view class="voice-wave-bar b5"></view>
 							</view>
-							<text class="voice-status-text">{{ isTranscribing ? '识别中...' : '松开结束 · 上滑取消' }}</text>
+							<text class="voice-status-text">{{ isTranscribing ? ($i18n && $i18n.currentLang === 'en' ? 'Transcribing...' : '识别中...') : ($i18n && $i18n.currentLang === 'en' ? 'Release to send · Slide up to cancel' : '松开结束 · 上滑取消') }}</text>
 						</view>
 						<!-- 正常输入框（录音时隐藏） -->
 						<textarea
 							v-if="!isRecording && !isTranscribing"
 							class="chat-input"
 							v-model="inputText"
-							placeholder="说说你的感受，或长按语音输入..."
+							:placeholder="$t('heal.inputPlaceholder')"
 							placeholder-style="color:#b0bec5;font-size:0.88em;"
 							:auto-height="false"
 							maxlength="500"
@@ -325,7 +325,7 @@
 		<view class="modal-mask" v-if="showDiaryModal" @click.self="showDiaryModal = false">
 			<view class="modal-box">
 				<view class="modal-header">
-					<text class="modal-title">写日记</text>
+					<text class="modal-title">{{ $t('heal.newDiaryModalTitle') || '写日记' }}</text>
 					<text class="modal-close" @click="showDiaryModal = false">✕</text>
 				</view>
 				<view class="modal-mood-row">
@@ -340,7 +340,7 @@
 				<textarea
 					class="modal-textarea"
 					v-model="newDiaryText"
-					placeholder="今天发生了什么？有什么感受想记录下来？"
+					:placeholder="$t('heal.newDiaryPlaceholder')"
 					placeholder-style="color:#b0bec5"
 					maxlength="500"
 				/>
@@ -359,8 +359,8 @@
 					</view>
 				</view>
 				<view class="modal-footer">
-					<view class="modal-cancel-btn" @click="showDiaryModal = false">取消</view>
-					<view class="modal-save-btn" @click="saveDiary">保存</view>
+					<view class="modal-cancel-btn" @click="showDiaryModal = false">{{ $t('common.cancel') }}</view>
+					<view class="modal-save-btn" @click="saveDiary">{{ $t('common.save') }}</view>
 				</view>
 			</view>
 		</view>
@@ -369,7 +369,7 @@
 		<view class="modal-mask" v-if="showEditModal" @click.self="showEditModal = false">
 			<view class="modal-box">
 				<view class="modal-header">
-					<text class="modal-title">编辑日记</text>
+					<text class="modal-title">{{ $t('heal.editDiaryModalTitle') }}</text>
 					<text class="modal-close" @click="showEditModal = false">✕</text>
 				</view>
 				<view class="modal-mood-row">
@@ -384,7 +384,7 @@
 				<textarea
 					class="modal-textarea"
 					v-model="editDiaryText"
-					placeholder="修改日记内容..."
+					:placeholder="$t('heal.editDiaryPlaceholder')"
 					placeholder-style="color:#b0bec5"
 					maxlength="500"
 				/>
@@ -403,8 +403,8 @@
 					</view>
 				</view>
 				<view class="modal-footer">
-					<view class="modal-cancel-btn" @click="showEditModal = false">取消</view>
-					<view class="modal-save-btn" @click="saveEdit">保存修改</view>
+					<view class="modal-cancel-btn" @click="showEditModal = false">{{ $t('common.cancel') }}</view>
+					<view class="modal-save-btn" @click="saveEdit">{{ $t('heal.saveEdit') }}</view>
 				</view>
 			</view>
 		</view>
@@ -413,17 +413,17 @@
 		<view class="history-panel-mask" v-if="showHistoryPanel" @click.self="showHistoryPanel = false">
 			<view class="history-panel">
 				<view class="history-panel-header">
-					<text class="history-panel-title">历史对话</text>
-					<view class="history-new-btn" @click="startNewSession">新对话</view>
+					<text class="history-panel-title">{{ $t('heal.historyPanelTitle') }}</text>
+					<view class="history-new-btn" @click="startNewSession">{{ $t('heal.newSessionBtn') }}</view>
 					<text class="history-panel-close" @click="showHistoryPanel = false">✕</text>
 				</view>
 				<scroll-view scroll-y class="history-list">
 					<view v-if="isLoadingHistory" class="history-loading">
-						<text>加载中...</text>
+						<text>{{ $t('common.loading') }}</text>
 					</view>
 					<view v-else-if="historySessionList.length === 0" class="history-empty">
-						<text>暂无历史对话</text>
-						<text class="history-empty-hint">发送消息时将自动实时保存记录 🌸</text>
+						<text>{{ $t('heal.noHistory') }}</text>
+						<text class="history-empty-hint">🌸</text>
 					</view>
 					<view
 						v-for="s in historySessionList"
@@ -441,7 +441,7 @@
 				</scroll-view>
 				<view class="history-panel-footer">
 					<view class="history-autosave-tip">
-						<text>✨ 对话内容实时自动保存中</text>
+						<text>{{ $t('heal.historySaveTip') }}</text>
 					</view>
 				</view>
 			</view>
@@ -452,6 +452,7 @@
 <script>
 import config from '@/nxTemp/config/index.config.js';
 import http from '@/nxTemp/config/requestConfig';
+import { updateTabBarLanguage } from '@/locale/tabbar';
 export default {
 	data() {
 		const DEFAULT_USER_AVATAR = 'https://api.dicebear.com/7.x/lorelei/svg?seed=Alex&backgroundColor=c8f0d8';
@@ -497,11 +498,11 @@ export default {
 			// --- 日记 ---
 			todayStr,
 			moods: [
-				{ emoji: '😄', label: '开心' },
-				{ emoji: '😊', label: '平静' },
-				{ emoji: '😐', label: '一般' },
-				{ emoji: '😔', label: '难过' },
-				{ emoji: '😰', label: '焦虑' }
+				{ emoji: '😄', labelKey: 'heal.moodHappy', label: '开心' },
+				{ emoji: '😊', labelKey: 'heal.moodCalm', label: '平静' },
+				{ emoji: '😐', labelKey: 'heal.moodNormal', label: '一般' },
+				{ emoji: '😔', labelKey: 'heal.moodSad', label: '难过' },
+				{ emoji: '😰', labelKey: 'heal.moodAnxious', label: '焦虑' }
 			],
 			selectedMood: 1,
 			showDiaryModal: false,
@@ -527,6 +528,16 @@ export default {
 		};
 	},
 
+	computed: {
+		localizedTabs() {
+			return [
+				this.$t('heal.tabChat'),
+				this.$t('heal.tabDiary'),
+				this.$t('heal.tabGame')
+			];
+		}
+	},
+
 	onLoad(options) {
 		if (options && options.tab !== undefined) {
 			this.currentTab = parseInt(options.tab) || 0;
@@ -538,6 +549,24 @@ export default {
 		// 每次进入页面同步用户头像
 		const saved = uni.getStorageSync('userAvatar');
 		if (saved) this.userAvatar = saved;
+		uni.setNavigationBarTitle({
+			title: this.$t('heal.navTitle')
+		});
+		const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+		updateTabBarLanguage(isEn ? 'en' : 'zh');
+
+		// 默认欢迎语双语同步
+		if (this.chatMessages && this.chatMessages.length === 1 && this.chatMessages[0].role === 'ai') {
+			this.chatMessages[0].text = isEn
+				? 'Hi there 🌸 I am Sunny, your personal mental health assistant. How are you feeling today? What would you like to talk about?'
+				: '你好呀 🌸 我是心晴，你的专属心理助手。今天感觉怎么样？有什么想聊的吗？';
+		}
+
+		// 日期双语格式
+		const now = new Date();
+		this.todayStr = isEn
+			? now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+			: `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日`;
 	},
 
 	methods: {

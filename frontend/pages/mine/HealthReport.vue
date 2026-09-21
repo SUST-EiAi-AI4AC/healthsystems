@@ -4,21 +4,21 @@
 		<view class="banner">
 			<view class="banner-inner">
 				<view class="banner-title-row">
-					<view class="banner-title">综合健康报告</view>
+					<view class="banner-title">{{ $t('mineSub.healthReport.bannerTitle') }}</view>
 					<view class="history-btn" @click="showHistory = true">
 						<text class="history-icon">📅</text>
-						<text class="history-text">历史记录</text>
+						<text class="history-text">{{ $t('mineSub.healthReport.historyBtn') }}</text>
 					</view>
 				</view>
 				<view class="banner-sub">{{ reportDate }}</view>
-				<view class="banner-user">{{ userName }} 的健康档案</view>
+				<view class="banner-user">{{ userName }} {{ $t('mineSub.healthReport.userProfile') }}</view>
 			</view>
 		</view>
 
 		<!-- 加载状态 -->
 		<view v-if="loading" class="loading-box">
 			<view class="loading-spinner"></view>
-			<view class="loading-text">正在汇总健康数据...</view>
+			<view class="loading-text">{{ $t('mineSub.healthReport.loadingText') }}</view>
 		</view>
 
 		<view v-else>
@@ -28,7 +28,7 @@
 					<view class="section-icon-wrap" style="background: linear-gradient(135deg,#11998e,#38ef7d)">
 						<text class="section-icon-text">综</text>
 					</view>
-					<text class="section-title">总体健康评分</text>
+					<text class="section-title">{{ $t('mineSub.healthReport.overallTitle') }}</text>
 				</view>
 				<view class="score-row">
 					<view class="score-circle" :style="{ background: overallScoreGradient }">
@@ -36,7 +36,7 @@
 						<view class="score-label">/ 100</view>
 					</view>
 					<view class="score-desc-box">
-						<view class="score-level" :style="{ color: overallLevelColor }">{{ overallLevel }}</view>
+						<view class="score-level" :style="{ color: overallLevelColor }">{{ translateLevel(overallLevel) }}</view>
 						<view class="score-tip">{{ overallTip }}</view>
 					</view>
 				</view>
@@ -48,7 +48,7 @@
 					<view class="section-icon-wrap" style="background: linear-gradient(135deg,#4facfe,#00f2fe)">
 						<text class="section-icon-text">雷</text>
 					</view>
-					<text class="section-title">6维度健康雷达图</text>
+					<text class="section-title">{{ $t('mineSub.healthReport.radarTitle') }}</text>
 				</view>
 				<view class="radar-wrap" v-if="!showHistory && !showHistoryDetail">
 					<l-echart ref="radarChart" class="radar-chart" @finished="initRadar"></l-echart>
@@ -56,7 +56,7 @@
 				<view class="radar-legend">
 					<view v-for="(item, idx) in radarDims" :key="idx" class="legend-item">
 						<view class="legend-dot" :style="{ background: item.color }"></view>
-						<view class="legend-name">{{ item.name }}</view>
+						<view class="legend-name">{{ getRadarDimName(idx, item.name) }}</view>
 						<view class="legend-val">{{ item.value }}</view>
 					</view>
 				</view>
@@ -68,7 +68,7 @@
 					<view class="section-icon-wrap" style="background: linear-gradient(135deg,#f7971e,#ffd200)">
 						<text class="section-icon-text">画</text>
 					</view>
-					<text class="section-title">AI评估画画</text>
+					<text class="section-title">{{ $t('mineSub.healthReport.htpSectionTitle') }}</text>
 					<text class="section-badge badge-htp">HTP 房树人</text>
 				</view>
 				<view v-if="htpHasData">
@@ -100,8 +100,8 @@
 				</view>
 				<view v-else class="module-empty">
 					<text class="empty-icon">🎨</text>
-					<text class="empty-text">尚未完成 HTP 绘画测验</text>
-					<text class="empty-hint">前往 AI评估 → 画画 完成测验后可查看分析</text>
+					<text class="empty-text">{{ $i18n && $i18n.currentLang === 'en' ? 'HTP drawing test not completed yet' : '尚未完成 HTP 绘画测验' }}</text>
+					<text class="empty-hint">{{ $i18n && $i18n.currentLang === 'en' ? 'Go to AI Assessment → Drawing to complete test' : '前往 AI评估 → 画画 完成测验后可查看分析' }}</text>
 				</view>
 			</view>
 
@@ -111,29 +111,29 @@
 					<view class="section-icon-wrap" style="background: linear-gradient(135deg,#667eea,#764ba2)">
 						<text class="section-icon-text">自</text>
 					</view>
-					<text class="section-title">自助测评</text>
-					<text class="section-badge badge-self">7项量表</text>
+					<text class="section-title">{{ $t('mineSub.healthReport.scaleSectionTitle') }}</text>
+					<text class="section-badge badge-self">{{ $i18n && $i18n.currentLang === 'en' ? '7 Scales' : '7项量表' }}</text>
 				</view>
 				<view v-if="selfHasData">
 					<view class="scale-grid">
 						<view v-for="(item, si) in selfScales" :key="si" class="scale-mini-card" :style="{ borderLeftColor: item.color }">
 							<view class="scale-mini-header">
 								<text class="scale-mini-name">{{ item.name }}</text>
-								<view class="scale-mini-tag" :style="{ background: item.color + '22', color: item.color }">{{ item.level || '暂无' }}</view>
+								<view class="scale-mini-tag" :style="{ background: item.color + '22', color: item.color }">{{ translateLevel(item.level) }}</view>
 							</view>
-							<text class="scale-mini-fullname">{{ item.fullName }}</text>
+							<text class="scale-mini-fullname">{{ getScaleFullName(item) }}</text>
 							<text class="scale-mini-val" :style="{ color: item.color }">{{ item.scoreText || '--' }}</text>
 						</view>
 					</view>
 					<view class="module-summary" v-if="selfSummary">
-						<text class="summary-label">综合小结</text>
+						<text class="summary-label">{{ $i18n && $i18n.currentLang === 'en' ? 'Summary' : '综合小结' }}</text>
 						<text class="summary-text">{{ selfSummary }}</text>
 					</view>
 				</view>
 				<view v-else class="module-empty">
 					<text class="empty-icon">📋</text>
-					<text class="empty-text">尚未完成自助量表测评</text>
-					<text class="empty-hint">完成 SCL-90、IPAQ、PARS-3、MAIA-2、CD-RISC、OCEAN、PSQI 后可查看</text>
+					<text class="empty-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Self-assessment not completed yet' : '尚未完成自助量表测评' }}</text>
+					<text class="empty-hint">{{ $i18n && $i18n.currentLang === 'en' ? 'Complete SCL-90, IPAQ, PARS-3, MAIA-2, CD-RISC, OCEAN, PSQI to view' : '完成 SCL-90、IPAQ、PARS-3、MAIA-2、CD-RISC、OCEAN、PSQI 后可查看' }}</text>
 				</view>
 			</view>
 
@@ -143,8 +143,8 @@
 					<view class="section-icon-wrap" style="background: linear-gradient(135deg,#f093fb,#f5576c)">
 						<text class="section-icon-text">医</text>
 					</view>
-					<text class="section-title">健康评估</text>
-					<text class="section-badge badge-doctor">3项量表</text>
+					<text class="section-title">{{ $t('index.healthAssessTitle') }}</text>
+					<text class="section-badge badge-doctor">{{ $i18n && $i18n.currentLang === 'en' ? '3 Scales' : '3项量表' }}</text>
 				</view>
 				<view v-if="doctorHasData">
 					<view class="doctor-metrics">
@@ -152,25 +152,25 @@
 							<view class="doctor-metric-left">
 								<view class="doctor-metric-icon" :style="{ background: item.iconBg }">{{ item.emoji }}</view>
 								<view class="doctor-metric-info">
-									<text class="doctor-metric-name">{{ item.name }}</text>
-									<text class="doctor-metric-sub">{{ item.sub }}</text>
+									<text class="doctor-metric-name">{{ getDoctorScaleName(item) }}</text>
+									<text class="doctor-metric-sub">{{ getDoctorScaleSub(item) }}</text>
 								</view>
 							</view>
 							<view class="doctor-metric-right">
 								<text class="doctor-metric-val" :style="{ color: item.color }">{{ item.scoreText || '--' }}</text>
-								<view class="doctor-metric-tag" :style="{ background: item.color + '22', color: item.color }">{{ item.level || '暂无' }}</view>
+								<view class="doctor-metric-tag" :style="{ background: item.color + '22', color: item.color }">{{ translateLevel(item.level) }}</view>
 							</view>
 						</view>
 					</view>
 					<view class="module-summary" v-if="doctorSummary">
-						<text class="summary-label">综合小结</text>
+						<text class="summary-label">{{ $i18n && $i18n.currentLang === 'en' ? 'Summary' : '综合小结' }}</text>
 						<text class="summary-text">{{ doctorSummary }}</text>
 					</view>
 				</view>
 				<view v-else class="module-empty">
 					<text class="empty-icon">🏥</text>
-					<text class="empty-text">尚未完成健康评估量表</text>
-					<text class="empty-hint">完成 SDS（抑郁）、PSS（压力）、SAS（焦虑）后可查看</text>
+					<text class="empty-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Health assessment not completed yet' : '尚未完成健康评估量表' }}</text>
+					<text class="empty-hint">{{ $i18n && $i18n.currentLang === 'en' ? 'Complete SDS, PSS, SAS to view analysis' : '完成 SDS（抑郁）、PSS（压力）、SAS（焦虑）后可查看' }}</text>
 				</view>
 			</view>
 
@@ -180,27 +180,27 @@
 					<view class="section-icon-wrap" style="background: linear-gradient(135deg,#43e97b,#38f9d7)">
 						<text class="section-icon-text">环</text>
 					</view>
-					<text class="section-title">智能手环数据</text>
-					<text class="section-badge badge-bracelet">实时同步</text>
+					<text class="section-title">{{ $t('mineSub.healthReport.braceletSectionTitle') }}</text>
+					<text class="section-badge badge-bracelet">{{ $i18n && $i18n.currentLang === 'en' ? 'Realtime' : '实时同步' }}</text>
 				</view>
 				<view v-if="braceletHasData">
 					<view class="bracelet-grid">
 						<view v-for="(item, bi) in braceletMetrics" :key="bi" class="bracelet-item" :style="{ background: item.bg }">
 							<text class="bracelet-item-icon">{{ item.icon }}</text>
 							<text class="bracelet-item-val">{{ item.value }}</text>
-							<text class="bracelet-item-unit">{{ item.unit }}</text>
-							<text class="bracelet-item-label">{{ item.label }}</text>
+							<text class="bracelet-item-unit">{{ getMetricUnit(item.unit) }}</text>
+							<text class="bracelet-item-label">{{ getMetricLabel(item) }}</text>
 						</view>
 					</view>
 					<view class="bracelet-status-row">
 						<view class="bracelet-status-dot"></view>
-						<text class="bracelet-status-text">数据来源：Garmin 智能手环实时同步</text>
+						<text class="bracelet-status-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Source: Garmin Smartband Real-time Sync' : '数据来源：Garmin 智能手环实时同步' }}</text>
 					</view>
 				</view>
 				<view v-else class="module-empty">
 					<text class="empty-icon">⌚</text>
-					<text class="empty-text">未检测到手环数据</text>
-					<text class="empty-hint">请绑定 Garmin 手环并同步数据后查看</text>
+					<text class="empty-text">{{ $i18n && $i18n.currentLang === 'en' ? 'No wristband data detected' : '未检测到手环数据' }}</text>
+					<text class="empty-hint">{{ $i18n && $i18n.currentLang === 'en' ? 'Please connect Garmin band to sync data' : '请绑定 Garmin 手环并同步数据后查看' }}</text>
 				</view>
 			</view>
 
@@ -210,28 +210,28 @@
 					<view class="section-icon-wrap" style="background: linear-gradient(135deg,#f6d365,#fda085)">
 						<text class="section-icon-text">析</text>
 					</view>
-					<text class="section-title">智能分析与个性化建议</text>
+					<text class="section-title">{{ $i18n && $i18n.currentLang === 'en' ? 'Smart Analysis & Advice' : '智能分析与个性化建议' }}</text>
 				</view>
 				<!-- Tab 切换按钮 -->
 				<view class="advice-tab-row">
 					<view class="advice-tab-btn" :class="activeAdviceTab === 'htp' ? 'advice-tab-active advice-tab-htp' : ''" @click="activeAdviceTab = 'htp'">
 						<text class="advice-tab-dot" style="background:#f7971e"></text>
-						<text class="advice-tab-text">HTP画画</text>
+						<text class="advice-tab-text">{{ $i18n && $i18n.currentLang === 'en' ? 'HTP Drawing' : 'HTP画画' }}</text>
 						<text class="advice-tab-badge" v-if="adviceMap.htp.length">{{ adviceMap.htp.length }}</text>
 					</view>
 					<view class="advice-tab-btn" :class="activeAdviceTab === 'self' ? 'advice-tab-active advice-tab-self' : ''" @click="activeAdviceTab = 'self'">
 						<text class="advice-tab-dot" style="background:#764ba2"></text>
-						<text class="advice-tab-text">自助测评</text>
+						<text class="advice-tab-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Self Scales' : '自助测评' }}</text>
 						<text class="advice-tab-badge" v-if="adviceMap.self.length">{{ adviceMap.self.length }}</text>
 					</view>
 					<view class="advice-tab-btn" :class="activeAdviceTab === 'doctor' ? 'advice-tab-active advice-tab-doctor' : ''" @click="activeAdviceTab = 'doctor'">
 						<text class="advice-tab-dot" style="background:#f5576c"></text>
-						<text class="advice-tab-text">健康评估</text>
+						<text class="advice-tab-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Health Eval' : '健康评估' }}</text>
 						<text class="advice-tab-badge" v-if="adviceMap.doctor.length">{{ adviceMap.doctor.length }}</text>
 					</view>
 					<view class="advice-tab-btn" :class="activeAdviceTab === 'bracelet' ? 'advice-tab-active advice-tab-bracelet' : ''" @click="activeAdviceTab = 'bracelet'">
 						<text class="advice-tab-dot" style="background:#43e97b"></text>
-						<text class="advice-tab-text">手环</text>
+						<text class="advice-tab-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Smartband' : '手环' }}</text>
 						<text class="advice-tab-badge" v-if="adviceMap.bracelet.length">{{ adviceMap.bracelet.length }}</text>
 					</view>
 				</view>
@@ -248,15 +248,15 @@
 				</view>
 				<view v-if="!adviceMap[activeAdviceTab] || adviceMap[activeAdviceTab].length === 0" class="advice-empty">
 					<text class="empty-icon">💡</text>
-					<text class="empty-text">完成对应测评后将为您生成精准的个性化建议</text>
+					<text class="empty-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Personalized advice will be generated once assessments are completed' : '完成对应测评后将为您生成精准的个性化建议' }}</text>
 				</view>
 			</view>
 
 			<!-- 数据说明 -->
 			<view class="section-card tips-card">
-				<view class="tips-title">数据说明</view>
-				<view class="tips-text">本报告综合 HTP 绘画测验、10项心理量表、智能手环实时数据生成。</view>
-				<view class="tips-text warn-text">量表测试结果不是专业医生的诊断结果，如有疑虑请及时咨询专业医生。</view>
+				<view class="tips-title">{{ $i18n && $i18n.currentLang === 'en' ? 'Data Notice' : '数据说明' }}</view>
+				<view class="tips-text">{{ $i18n && $i18n.currentLang === 'en' ? 'This report integrates HTP drawing test, 10 psychological scales, and smartband data.' : '本报告综合 HTP 绘画测验、10项心理量表、智能手环实时数据生成。' }}</view>
+				<view class="tips-text warn-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Results are for reference only. Please consult professionals for clinical advice.' : '量表测试结果不是专业医生的诊断结果，如有疑虑请及时咨询专业医生。' }}</view>
 			</view>
 
 			<view class="footer-space"></view>
@@ -267,7 +267,7 @@
 			<view class="history-modal">
 				<!-- 弹窗头部 -->
 				<view class="history-header">
-					<text class="history-modal-title">历史健康报告</text>
+					<text class="history-modal-title">{{ $i18n && $i18n.currentLang === 'en' ? 'Historical Health Reports' : '历史健康报告' }}</text>
 					<view class="history-close" @click="showHistory = false">
 						<text class="close-icon">✕</text>
 					</view>
@@ -280,28 +280,28 @@
 						:class="activeFilter === 'all' ? 'filter-active' : ''"
 						@click="activeFilter = 'all'; loadHistoryReports()"
 					>
-						全部
+						{{ $i18n && $i18n.currentLang === 'en' ? 'All' : '全部' }}
 					</view>
 					<view 
 						class="filter-btn" 
 						:class="activeFilter === 'day' ? 'filter-active' : ''"
 						@click="activeFilter = 'day'; loadHistoryReports()"
 					>
-						按日
+						{{ $i18n && $i18n.currentLang === 'en' ? 'Daily' : '按日' }}
 					</view>
 					<view 
 						class="filter-btn" 
 						:class="activeFilter === 'week' ? 'filter-active' : ''"
 						@click="activeFilter = 'week'; loadHistoryReports()"
 					>
-						按周
+						{{ $i18n && $i18n.currentLang === 'en' ? 'Weekly' : '按周' }}
 					</view>
 					<view 
 						class="filter-btn" 
 						:class="activeFilter === 'month' ? 'filter-active' : ''"
 						@click="activeFilter = 'month'; loadHistoryReports()"
 					>
-						按月
+						{{ $i18n && $i18n.currentLang === 'en' ? 'Monthly' : '按月' }}
 					</view>
 				</view>
 
@@ -309,8 +309,8 @@
 				<scroll-view scroll-y class="history-list">
 					<view v-if="historyReports.length === 0" class="history-empty">
 						<text class="empty-icon">📋</text>
-						<text class="empty-text">暂无历史报告记录</text>
-						<text class="empty-hint">完成健康评估后将自动生成历史报告</text>
+						<text class="empty-text">{{ $i18n && $i18n.currentLang === 'en' ? 'No historical report records' : '暂无历史报告记录' }}</text>
+						<text class="empty-hint">{{ $i18n && $i18n.currentLang === 'en' ? 'Reports will be generated after assessments are completed' : '完成健康评估后将自动生成历史报告' }}</text>
 					</view>
 					<view 
 						v-for="(report, idx) in historyReports" 
@@ -325,12 +325,12 @@
 							</view>
 							<view class="history-score-badge" :style="{ background: getScoreGradient(report.overallScore) }">
 								<text class="score-num">{{ report.overallScore }}</text>
-								<text class="score-unit">分</text>
+								<text class="score-unit">{{ $i18n && $i18n.currentLang === 'en' ? 'pts' : '分' }}</text>
 							</view>
 						</view>
 						<view class="history-item-content">
 							<view class="history-level" :style="{ color: getLevelColor(report.overallLevel) }">
-								{{ report.overallLevel }}
+								{{ translateLevel(report.overallLevel) }}
 							</view>
 							<view class="history-metrics">
 								<view class="metric-chip">
@@ -352,10 +352,10 @@
 							</view>
 						</view>
 						<view class="history-item-footer">
-							<text class="data-sources-tag">数据来源：{{ report.dataSources && report.dataSources.length > 0 ? report.dataSources.join('、') : '健康数据' }}</text>
+							<text class="data-sources-tag">{{ $i18n && $i18n.currentLang === 'en' ? 'Source: ' : '数据来源：' }}{{ report.dataSources && report.dataSources.length > 0 ? report.dataSources.join($i18n.currentLang === 'en' ? ', ' : '、') : ($i18n && $i18n.currentLang === 'en' ? 'Health Data' : '健康数据') }}</text>
 							<view class="history-delete-btn" @click.stop="deleteHistoryReport(report)">
 								<text class="delete-icon">🗑️</text>
-								<text class="delete-text">删除</text>
+								<text class="delete-text">{{ $t('common.delete') }}</text>
 							</view>
 						</view>
 					</view>
@@ -369,7 +369,7 @@
 				<!-- 详情头部 -->
 				<view class="detail-header">
 					<view class="detail-header-left">
-						<text class="detail-title">历史报告详情</text>
+						<text class="detail-title">{{ $i18n && $i18n.currentLang === 'en' ? 'Report Details' : '历史报告详情' }}</text>
 						<text class="detail-date">{{ currentHistoryReport.reportDate }}</text>
 					</view>
 					<view class="detail-close" @click="showHistoryDetail = false">
@@ -388,29 +388,29 @@
 						<view class="detail-level" :style="{ color: getLevelColor(currentHistoryReport.overallLevel) }">
 							{{ currentHistoryReport.overallLevel }}
 						</view>
-						<view class="detail-tip">{{ currentHistoryReport.overallTip || '暂无建议' }}</view>
+						<view class="detail-tip">{{ currentHistoryReport.overallTip || ($i18n && $i18n.currentLang === 'en' ? 'No advice yet' : '暂无建议') }}</view>
 					</view>
 
 					<!-- 量表数据 -->
 					<view class="detail-section" v-if="currentHistoryReport.scaleData">
-						<view class="detail-section-title">心理量表评估</view>
+						<view class="detail-section-title">{{ $i18n && $i18n.currentLang === 'en' ? 'Psychological Scale Evaluation' : '心理量表评估' }}</view>
 						<view class="scale-detail-grid">
 							<view class="scale-detail-item">
-								<text class="scale-name">SDS（抑郁）</text>
+								<text class="scale-name">{{ $i18n && $i18n.currentLang === 'en' ? 'SDS (Depression)' : 'SDS（抑郁）' }}</text>
 								<text class="scale-value" :style="{ color: getLevelColor(currentHistoryReport.scaleData.sdsLevel) }">
 									{{ currentHistoryReport.scaleData.sds || '--' }}
 								</text>
 								<text class="scale-level">{{ currentHistoryReport.scaleData.sdsLevel || '--' }}</text>
 							</view>
 							<view class="scale-detail-item">
-								<text class="scale-name">PSS（压力）</text>
+								<text class="scale-name">{{ $i18n && $i18n.currentLang === 'en' ? 'PSS (Stress)' : 'PSS（压力）' }}</text>
 								<text class="scale-value" :style="{ color: getLevelColor(currentHistoryReport.scaleData.pssLevel) }">
 									{{ currentHistoryReport.scaleData.pss || '--' }}
 								</text>
 								<text class="scale-level">{{ currentHistoryReport.scaleData.pssLevel || '--' }}</text>
 							</view>
 							<view class="scale-detail-item">
-								<text class="scale-name">SAS（焦虑）</text>
+								<text class="scale-name">{{ $i18n && $i18n.currentLang === 'en' ? 'SAS (Anxiety)' : 'SAS（焦虑）' }}</text>
 								<text class="scale-value" :style="{ color: getLevelColor(currentHistoryReport.scaleData.sasLevel) }">
 									{{ currentHistoryReport.scaleData.sas || '--' }}
 								</text>
@@ -421,41 +421,41 @@
 
 					<!-- 手环数据 -->
 					<view class="detail-section" v-if="currentHistoryReport.braceletData">
-						<view class="detail-section-title">智能手环数据</view>
+						<view class="detail-section-title">{{ $i18n && $i18n.currentLang === 'en' ? 'Smartband Data' : '智能手环数据' }}</view>
 						<view class="bracelet-detail-grid">
 							<view class="bracelet-detail-item">
 								<text class="bracelet-icon">❤️</text>
-								<text class="bracelet-label">心率</text>
+								<text class="bracelet-label">{{ $t('mineSub.healthReport.braceletMetrics.heartRate') || '心率' }}</text>
 								<text class="bracelet-value">{{ currentHistoryReport.braceletData.heartRate || '--' }}</text>
 								<text class="bracelet-unit">bpm</text>
 							</view>
 							<view class="bracelet-detail-item">
 								<text class="bracelet-icon">💤</text>
-								<text class="bracelet-label">睡眠</text>
+								<text class="bracelet-label">{{ $t('mineSub.healthReport.braceletMetrics.sleep') || '睡眠' }}</text>
 								<text class="bracelet-value">{{ currentHistoryReport.braceletData.sleep || '--' }}</text>
-								<text class="bracelet-unit">分</text>
+								<text class="bracelet-unit">{{ $i18n && $i18n.currentLang === 'en' ? 'pts' : '分' }}</text>
 							</view>
 							<view class="bracelet-detail-item">
 								<text class="bracelet-icon">🚶</text>
-								<text class="bracelet-label">步数</text>
+								<text class="bracelet-label">{{ $t('mineSub.healthReport.braceletMetrics.activity') || '步数' }}</text>
 								<text class="bracelet-value">{{ formatSteps(currentHistoryReport.braceletData.steps) }}</text>
-								<text class="bracelet-unit">步</text>
+								<text class="bracelet-unit">{{ $i18n && $i18n.currentLang === 'en' ? 'steps' : '步' }}</text>
 							</view>
 							<view class="bracelet-detail-item">
 								<text class="bracelet-icon">🩸</text>
-								<text class="bracelet-label">血氧</text>
+								<text class="bracelet-label">{{ $t('mineSub.healthReport.braceletMetrics.spo2') || '血氧' }}</text>
 								<text class="bracelet-value">{{ currentHistoryReport.braceletData.spo2 || '--' }}</text>
 								<text class="bracelet-unit">%</text>
 							</view>
 							<view class="bracelet-detail-item">
 								<text class="bracelet-icon">🧠</text>
-								<text class="bracelet-label">压力</text>
+								<text class="bracelet-label">{{ $t('mineSub.healthReport.braceletMetrics.stress') || '压力' }}</text>
 								<text class="bracelet-value">{{ currentHistoryReport.braceletData.stress || '--' }}</text>
 								<text class="bracelet-unit"></text>
 							</view>
 							<view class="bracelet-detail-item">
 								<text class="bracelet-icon">⚡</text>
-								<text class="bracelet-label">能量</text>
+								<text class="bracelet-label">{{ $t('mineSub.healthReport.braceletMetrics.bodyBattery') || '能量' }}</text>
 								<text class="bracelet-value">{{ currentHistoryReport.braceletData.battery || '--' }}</text>
 								<text class="bracelet-unit"></text>
 							</view>
@@ -464,7 +464,7 @@
 
 					<!-- 健康建议 -->
 					<view class="detail-section" v-if="currentHistoryReport.advice">
-						<view class="detail-section-title">个性化健康建议</view>
+						<view class="detail-section-title">{{ $i18n && $i18n.currentLang === 'en' ? 'Personalized Health Advice' : '个性化健康建议' }}</view>
 						<view class="advice-detail-list">
 							<view v-for="(item, idx) in currentHistoryReport.advice" :key="idx" class="advice-detail-item">
 								<text class="advice-dot">•</text>
@@ -477,10 +477,10 @@
 				<!-- 底部按钮 -->
 				<view class="detail-footer">
 					<view class="detail-btn primary" @click="exportHistoryReport">
-						<text>导出报告</text>
+						<text>{{ $i18n && $i18n.currentLang === 'en' ? 'Export Report' : '导出报告' }}</text>
 					</view>
 					<view class="detail-btn" @click="showHistoryDetail = false">
-						<text>关闭</text>
+						<text>{{ $t('common.close') || '关闭' }}</text>
 					</view>
 				</view>
 			</view>
@@ -560,11 +560,20 @@
 			}
 		},
 
+		computed: {
+			isEn() {
+				return this.$i18n && this.$i18n.currentLang === 'en';
+			}
+		},
+
 		onLoad() {
 			this.init()
 		},
 
 		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('mineSub.healthReport.navTitle') || '健康报告'
+			});
 			// 每次页面显示时刷新历史记录
 			if (this.showHistory) {
 				this.loadHistoryReports()
@@ -577,13 +586,119 @@
 		},
 
 		methods: {
+			getScaleFullName(item) {
+				if (this.$i18n && this.$i18n.currentLang === 'en') {
+					const map = {
+						'SCL-90': 'Symptom Checklist-90',
+						'IPAQ': 'Physical Activity Questionnaire',
+						'PARS-3': 'Physical Activity Rating Scale',
+						'MAIA-2': 'Interoceptive Awareness Scale',
+						'CD-RISC': 'Resilience Scale',
+						'OCEAN': 'Big Five Personality Scale',
+						'PSQI': 'Sleep Quality Index'
+					};
+					return map[item.name] || item.fullName;
+				}
+				return item.fullName;
+			},
+			getDoctorScaleName(item) {
+				if (this.$i18n && this.$i18n.currentLang === 'en') {
+					const map = {
+						'SDS': 'Depression (SDS)',
+						'PSS': 'Perceived Stress (PSS)',
+						'SAS': 'Anxiety (SAS)'
+					};
+					return map[item.key] || item.name;
+				}
+				return item.name;
+			},
+			getDoctorScaleSub(item) {
+				if (this.$i18n && this.$i18n.currentLang === 'en') {
+					const map = {
+						'SDS': 'Depression Scale',
+						'PSS': 'Stress Scale',
+						'SAS': 'Anxiety Scale'
+					};
+					return map[item.key] || item.sub;
+				}
+				return item.sub;
+			},
+			translateLevel(level) {
+				if (!level || level === '--' || level === '暂无') {
+					return (this.$i18n && this.$i18n.currentLang === 'en') ? 'N/A' : (level || '暂无');
+				}
+				if (this.$i18n && this.$i18n.currentLang === 'en') {
+					const map = {
+						'正常': 'Normal',
+						'轻度': 'Mild',
+						'中度': 'Moderate',
+						'重度': 'Severe',
+						'无抑郁': 'No Depression',
+						'轻度抑郁': 'Mild Depression',
+						'中度抑郁': 'Moderate Depression',
+						'重度抑郁': 'Severe Depression',
+						'无焦虑': 'No Anxiety',
+						'轻度焦虑': 'Mild Anxiety',
+						'中度焦虑': 'Moderate Anxiety',
+						'重度焦虑': 'Severe Anxiety',
+						'压力较低': 'Low Stress',
+						'压力适中': 'Moderate Stress',
+						'压力较高': 'High Stress',
+						'优秀': 'Excellent',
+						'良好': 'Good',
+						'一般': 'Average',
+						'需关注': 'Attention Advised',
+						'心理弹性优秀': 'Excellent Resilience',
+						'心理弹性良好': 'Good Resilience',
+						'心理弹性中等': 'Moderate Resilience',
+						'心理弹性较低，建议关注': 'Low Resilience',
+						'睡眠质量良好': 'Good Sleep Quality',
+						'睡眠质量一般': 'Fair Sleep Quality',
+						'睡眠质量较差，建议就医': 'Poor Sleep Quality'
+					};
+					return map[level] || level;
+				}
+				return level;
+			},
+			getRadarDimName(idx, defaultName) {
+				if (this.$i18n && this.$i18n.currentLang === 'en') {
+					const enNames = ['Mood', 'Stress Mgmt', 'Anxiety', 'Activity', 'Sleep Quality', 'Resilience'];
+					return enNames[idx] || defaultName;
+				}
+				return defaultName;
+			},
+			getMetricLabel(item) {
+				if (this.$i18n && this.$i18n.currentLang === 'en') {
+					const map = {
+						'心率': 'Heart Rate',
+						'睡眠得分': 'Sleep Score',
+						'步数': 'Steps',
+						'血氧': 'SpO2',
+						'压力均值': 'Stress Avg',
+						'身体能量': 'Body Battery'
+					};
+					return map[item.label] || item.label;
+				}
+				return item.label;
+			},
+			getMetricUnit(unit) {
+				if (this.$i18n && this.$i18n.currentLang === 'en') {
+					if (unit === '分') return 'pts';
+					if (unit === '步') return 'steps';
+				}
+				return unit;
+			},
 			async init() {
 				this.loading = true
 				const userInfo = uni.getStorageSync('userInfo') || {}
-				this.userName = userInfo.userName || '用户'
+				this.userName = userInfo.userName || (this.$i18n && this.$i18n.currentLang === 'en' ? 'User' : '用户')
 				const now = new Date()
 				const pad = n => String(n).padStart(2, '0')
-				this.reportDate = `${now.getFullYear()}年${pad(now.getMonth() + 1)}月${pad(now.getDate())}日`
+				if (this.$i18n && this.$i18n.currentLang === 'en') {
+					this.reportDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+				} else {
+					this.reportDate = `${now.getFullYear()}年${pad(now.getMonth() + 1)}月${pad(now.getDate())}日`
+				}
 				await Promise.all([
 					this.loadHTPData(),
 					this.loadScaleHistory(),
@@ -632,14 +747,19 @@
 						})
 						if (selfCount > 0) {
 							this.selfHasData = true
-							this.selfSummary = `已完成 ${selfCount}/7 项量表测评，完成度 ${Math.round(selfCount / 7 * 100)}%。`
+							this.selfSummary = this.isEn
+								? `Completed ${selfCount}/7 self-assessment scales (${Math.round(selfCount / 7 * 100)}% coverage).`
+								: `已完成 ${selfCount}/7 项量表测评，完成度 ${Math.round(selfCount / 7 * 100)}%。`
 						}
 						let docCount = 0
 						this.doctorScales.forEach(s => {
 							const d = latestMap[s.key]
 							if (d) { s.scoreText = d.scoreText || String(d.totalScore || '--'); s.level = d.level || '--'; s.color = this.getLevelColor(s.level); docCount++ }
 						})
-						if (docCount > 0) { this.doctorHasData = true; this.doctorSummary = `已完成 ${docCount}/3 项医评量表。` }
+						if (docCount > 0) {
+							this.doctorHasData = true
+							this.doctorSummary = this.isEn ? `Completed ${docCount}/3 clinician-rated scales.` : `已完成 ${docCount}/3 项医评量表。`
+						}
 					} catch (e) {}
 					resolve()
 				})
@@ -696,26 +816,28 @@
 				const sum = this.radarDims.reduce((s, d, i) => s + (Number(d.value) || 0) * w[i], 0);
 				this.overallScore = Math.round(sum) || 60;
 				const sources = []
-				if (this.htpHasData)     sources.push('HTP画画')
-				if (this.selfHasData)    sources.push('自助量表')
-				if (this.doctorHasData)  sources.push('医评量表')
-				if (this.braceletHasData) sources.push('智能手环')
-				const srcText = sources.length > 0 ? `已整合 ${sources.join('、')} 等 ${sources.length} 项数据源。` : '完成更多测评可提升评分准确度。'
+				if (this.htpHasData)     sources.push(this.isEn ? 'HTP Drawing' : 'HTP画画')
+				if (this.selfHasData)    sources.push(this.isEn ? 'Self Scales' : '自助量表')
+				if (this.doctorHasData)  sources.push(this.isEn ? 'Clinician Scales' : '医评量表')
+				if (this.braceletHasData) sources.push(this.isEn ? 'Smartband' : '智能手环')
+				const srcText = sources.length > 0
+					? (this.isEn ? `Integrated ${sources.length} data source(s): ${sources.join(', ')}.` : `已整合 ${sources.join('、')} 等 ${sources.length} 项数据源。`)
+					: (this.isEn ? 'Complete more assessments to improve accuracy.' : '完成更多测评可提升评分准确度。')
 				if (this.overallScore >= 85) {
 					this.overallLevel = '优秀'; this.overallLevelColor = '#27ae60'
-					this.overallTip = '您的心理健康状况非常不错，请继续保持良好的生活习惯。'
+					this.overallTip = this.isEn ? 'Your mental health is in great shape. Keep up the good habits!' : '您的心理健康状况非常不错，请继续保持良好的生活习惯。'
 					this.overallScoreGradient = 'linear-gradient(135deg,#43e97b,#38f9d7)'
 				} else if (this.overallScore >= 70) {
 					this.overallLevel = '良好'; this.overallLevelColor = '#2980b9'
-					this.overallTip = '整体状态还不错，可适当关注一些小细节，让自己过得更舒服。'
+					this.overallTip = this.isEn ? 'Overall status is good. Pay attention to the small details to feel even better.' : '整体状态还不错，可适当关注一些小细节，让自己过得更舒服。'
 					this.overallScoreGradient = 'linear-gradient(135deg,#4facfe,#00f2fe)'
 				} else if (this.overallScore >= 55) {
 					this.overallLevel = '一般'; this.overallLevelColor = '#f39c12'
-					this.overallTip = '最近可能有些疲惫，不妨慢下来好好休息，关注一下自己的心理状态。'
+					this.overallTip = this.isEn ? 'You may be feeling a bit tired lately. Slow down, rest well, and check in with yourself.' : '最近可能有些疲惫，不妨慢下来好好休息，关注一下自己的心理状态。'
 					this.overallScoreGradient = 'linear-gradient(135deg,#fda085,#f6d365)'
 				} else {
 					this.overallLevel = '需关注'; this.overallLevelColor = '#e74c3c'
-					this.overallTip = '最近内心可能有些负担，记得给自己一些关爱，必要时可以找人倾诉心里话。'
+					this.overallTip = this.isEn ? 'You may be carrying some emotional weight lately. Be kind to yourself and talk to someone when needed.' : '最近内心可能有些负担，记得给自己一些关爱，必要时可以找人倾诉心里话。'
 					this.overallScoreGradient = 'linear-gradient(135deg,#f093fb,#f5576c)'
 				}
 			},
@@ -726,34 +848,34 @@
 				if (this.htpHasData && this.htpLatest) {
 					const sc = this.htpLatest.score || 0
 					if (sc < 50) {
-						htpList.push({ icon: '🎨', iconBg: 'linear-gradient(135deg,#f7971e,#ffd200)', title: 'HTP展现潜在心理压力', desc: '画画分析显示心理状态需关注，建议通过绘画、运动来释放情绪，必要时寻求面谈支持。', source: '来源：AI画画分析' })
+						htpList.push({ icon: '🎨', iconBg: 'linear-gradient(135deg,#f7971e,#ffd200)', title: this.isEn ? 'HTP Reveals Potential Stress' : 'HTP展现潜在心理压力', desc: this.isEn ? 'Drawing analysis suggests your mental state needs attention. Release emotions through drawing or exercise, and seek face-to-face support if necessary.' : '画画分析显示心理状态需关注，建议通过绘画、运动来释放情绪，必要时寻求面谈支持。', source: this.isEn ? 'Source: AI Drawing Analysis' : '来源：AI画画分析' })
 					} else if (sc >= 80) {
-						htpList.push({ icon: '🌟', iconBg: 'linear-gradient(135deg,#f7971e,#ffd200)', title: 'HTP心理状态良好', desc: '画画分析显示心理状态较好，继续活跃创作有助于心理健康。', source: '来源：AI画画分析' })
+						htpList.push({ icon: '🌟', iconBg: 'linear-gradient(135deg,#f7971e,#ffd200)', title: this.isEn ? 'Good Psychological State (HTP)' : 'HTP心理状态良好', desc: this.isEn ? 'Drawing analysis shows a positive mental state. Staying creatively active supports your mental health.' : '画画分析显示心理状态较好，继续活跃创作有助于心理健康。', source: this.isEn ? 'Source: AI Drawing Analysis' : '来源：AI画画分析' })
 					} else {
-						htpList.push({ icon: '🖌️', iconBg: 'linear-gradient(135deg,#f7971e,#ffd200)', title: 'HTP状态中等', desc: '画画分析显示心理状态尚可，可适当增加创意性活动丰富情感表达。', source: '来源：AI画画分析' })
+						htpList.push({ icon: '🖌️', iconBg: 'linear-gradient(135deg,#f7971e,#ffd200)', title: this.isEn ? 'Moderate HTP Status' : 'HTP状态中等', desc: this.isEn ? 'Drawing analysis shows a fair mental state. Try adding more creative activities to enrich emotional expression.' : '画画分析显示心理状态尚可，可适当增加创意性活动丰富情感表达。', source: this.isEn ? 'Source: AI Drawing Analysis' : '来源：AI画画分析' })
 					}
 
 				} else {
-					htpList.push({ icon: '🎨', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: '尚未完成HTP测验', desc: '前往「AI评估 → 画画」完成房树人绘画测验，解锁专属心理状态分析。', source: '系统提示' })
+					htpList.push({ icon: '🎨', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: this.isEn ? 'HTP Test Not Completed' : '尚未完成HTP测验', desc: this.isEn ? 'Go to AI Assessment → Drawing to complete the House-Tree-Person test and unlock your personalized psychological analysis.' : '前往「AI评估 → 画画」完成房树人绘画测验，解锁专属心理状态分析。', source: this.isEn ? 'System Notice' : '系统提示' })
 				}
 
 				// 自助测评建议
 				const selfList = []
 				if (this.selfHasData) {
 					const scl = this.selfScales.find(s => s.key === 'SCL-90')
-					if (scl && scl.level && scl.level.includes('阳性')) selfList.push({ icon: '🧠', iconBg: 'linear-gradient(135deg,#667eea,#764ba2)', title: 'SCL-90出现阳性症状', desc: '心理症状评定量表显示存在阳性症状，建议寻求专业心理评估，不要独自承受压力。', source: '来源：SCL-90量表' })
-					else if (scl && scl.level && scl.level.includes('正常')) selfList.push({ icon: '✅', iconBg: 'linear-gradient(135deg,#667eea,#764ba2)', title: 'SCL-90心理症状正常', desc: '心理症状评定结果在正常范围内，继续保持良好的生活方式。', source: '来源：SCL-90量表' })
+					if (scl && scl.level && scl.level.includes('阳性')) selfList.push({ icon: '🧠', iconBg: 'linear-gradient(135deg,#667eea,#764ba2)', title: this.isEn ? 'SCL-90 Positive Symptoms Detected' : 'SCL-90出现阳性症状', desc: this.isEn ? 'The symptom checklist shows positive symptoms. We recommend a professional psychological evaluation — do not bear the pressure alone.' : '心理症状评定量表显示存在阳性症状，建议寻求专业心理评估，不要独自承受压力。', source: this.isEn ? 'Source: SCL-90 Scale' : '来源：SCL-90量表' })
+					else if (scl && scl.level && scl.level.includes('正常')) selfList.push({ icon: '✅', iconBg: 'linear-gradient(135deg,#667eea,#764ba2)', title: this.isEn ? 'SCL-90 Within Normal Range' : 'SCL-90心理症状正常', desc: this.isEn ? 'Your symptom checklist results are within the normal range. Keep up your healthy lifestyle.' : '心理症状评定结果在正常范围内，继续保持良好的生活方式。', source: this.isEn ? 'Source: SCL-90 Scale' : '来源：SCL-90量表' })
 					const psqi = this.selfScales.find(s => s.key === 'PSQI')
-					if (psqi && psqi.scoreText !== '--' && parseFloat(psqi.scoreText) > 7) selfList.push({ icon: '💤', iconBg: 'linear-gradient(135deg,#d4e6ff,#a8c8ff)', title: '睡眠质量需改善', desc: 'PSQI评分偏高，建议固定作息时间、睡前1小时放下手机、睡前可尝试冥想放松。', source: '来源：PSQI量表' })
+					if (psqi && psqi.scoreText !== '--' && parseFloat(psqi.scoreText) > 7) selfList.push({ icon: '💤', iconBg: 'linear-gradient(135deg,#d4e6ff,#a8c8ff)', title: this.isEn ? 'Sleep Quality Needs Improvement' : '睡眠质量需改善', desc: this.isEn ? 'Your PSQI score is high. Try a fixed sleep schedule, no phone 1 hour before bed, and bedtime meditation.' : 'PSQI评分偏高，建议固定作息时间、睡前1小时放下手机、睡前可尝试冥想放松。', source: this.isEn ? 'Source: PSQI Scale' : '来源：PSQI量表' })
 					const ipaq = this.selfScales.find(s => s.key === 'IPAQ')
-					if (ipaq && ipaq.level && ipaq.level.includes('低')) selfList.push({ icon: '🏃', iconBg: 'linear-gradient(135deg,#43e97b,#38f9d7)', title: '体力活动水平偏低', desc: 'IPAQ显示体力活动不足，建议每天30分钟散步、爬楼梯或骑行，循序渐进增加运动量。', source: '来源：IPAQ量表' })
+					if (ipaq && ipaq.level && ipaq.level.includes('低')) selfList.push({ icon: '🏃', iconBg: 'linear-gradient(135deg,#43e97b,#38f9d7)', title: this.isEn ? 'Physical Activity Below Target' : '体力活动水平偏低', desc: this.isEn ? 'IPAQ shows insufficient activity. Aim for a 30-minute daily walk, stair climbing, or cycling, and increase gradually.' : 'IPAQ显示体力活动不足，建议每天30分钟散步、爬楼梯或骑行，循序渐进增加运动量。', source: this.isEn ? 'Source: IPAQ Scale' : '来源：IPAQ量表' })
 					const cdrisc = this.selfScales.find(s => s.key === 'CD-RISC')
-					if (cdrisc && cdrisc.scoreText !== '--' && parseFloat(cdrisc.scoreText) < 65) selfList.push({ icon: '🌱', iconBg: 'linear-gradient(135deg,#43e97b,#38f9d7)', title: '心理弹性有待提升', desc: 'CD-RISC显示心理弹性偏低，建议积极参与社交活动、学习正念认知疗法增强抗压能力。', source: '来源：CD-RISC量表' })
+					if (cdrisc && cdrisc.scoreText !== '--' && parseFloat(cdrisc.scoreText) < 65) selfList.push({ icon: '🌱', iconBg: 'linear-gradient(135deg,#43e97b,#38f9d7)', title: this.isEn ? 'Resilience Could Be Strengthened' : '心理弹性有待提升', desc: this.isEn ? 'CD-RISC shows relatively low resilience. Social activities and mindfulness practice can help build coping capacity.' : 'CD-RISC显示心理弹性偏低，建议积极参与社交活动、学习正念认知疗法增强抗压能力。', source: this.isEn ? 'Source: CD-RISC Scale' : '来源：CD-RISC量表' })
 					const maia = this.selfScales.find(s => s.key === 'MAIA-2')
-					if (maia && maia.scoreText !== '--') selfList.push({ icon: '🔍', iconBg: 'linear-gradient(135deg,#a18cd1,#fbc2eb)', title: '关注身体内感受', desc: 'MAIA-2评估您对身体信号的觉察能力，定期进行身体扫描冥想有助于提升内感受意识。', source: '来源：MAIA-2量表' })
-					if (selfList.length === 0) selfList.push({ icon: '🎯', iconBg: 'linear-gradient(135deg,#667eea,#764ba2)', title: '自助测评结果良好', desc: '各项自助量表结果均在正常范围内，保持现有的生活习惯和心理状态。', source: '来源：自助量表综合' })
+					if (maia && maia.scoreText !== '--') selfList.push({ icon: '🔍', iconBg: 'linear-gradient(135deg,#a18cd1,#fbc2eb)', title: this.isEn ? 'Notice Your Body Signals' : '关注身体内感受', desc: this.isEn ? 'MAIA-2 evaluates your awareness of bodily signals. Regular body-scan meditation helps improve interoceptive awareness.' : 'MAIA-2评估您对身体信号的觉察能力，定期进行身体扫描冥想有助于提升内感受意识。', source: this.isEn ? 'Source: MAIA-2 Scale' : '来源：MAIA-2量表' })
+					if (selfList.length === 0) selfList.push({ icon: '🎯', iconBg: 'linear-gradient(135deg,#667eea,#764ba2)', title: this.isEn ? 'Self-Assessment Results Are Good' : '自助测评结果良好', desc: this.isEn ? 'All self-assessment results are within the normal range. Keep up your current lifestyle and mindset.' : '各项自助量表结果均在正常范围内，保持现有的生活习惯和心理状态。', source: this.isEn ? 'Source: Self-Assessment Scales' : '来源：自助量表综合' })
 				} else {
-					selfList.push({ icon: '📋', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: '尚未完成自助测评', desc: '前往「AI评估 → 测评」完成SCL-90等7项量表，获取精准的心理健康评估建议。', source: '系统提示' })
+					selfList.push({ icon: '📋', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: this.isEn ? 'Self-Assessment Not Completed' : '尚未完成自助测评', desc: this.isEn ? 'Go to AI Assessment → Scales to complete SCL-90 and other 6 scales for precise mental health advice.' : '前往「AI评估 → 测评」完成SCL-90等7项量表，获取精准的心理健康评估建议。', source: this.isEn ? 'System Notice' : '系统提示' })
 				}
 
 				// 健康评估建议
@@ -762,24 +884,24 @@
 					const sas = this.doctorScales.find(s => s.key === 'SAS')
 					if (sas && sas.scoreText !== '--') {
 						const v = parseFloat(sas.scoreText)
-						if (v >= 70) doctorList.push({ icon: '🌊', iconBg: 'linear-gradient(135deg,#f093fb,#f5576c)', title: '重度焦虑，请及时就医', desc: 'SAS显示重度焦虑，建议尽快预约精神科或心理科医生进行专业评估和干预。', source: '来源：SAS量表' })
-						else if (v >= 50) doctorList.push({ icon: '😟', iconBg: 'linear-gradient(135deg,#f093fb,#f5576c)', title: '焦虑症状需关注', desc: '建议进行腹式深呼吸练习（4-7-8呼吸法），减少咖啡因和糖分摄入，保持规律作息。', source: '来源：SAS量表' })
-						else doctorList.push({ icon: '✅', iconBg: 'linear-gradient(135deg,#f093fb,#f5576c)', title: '焦虑水平正常', desc: 'SAS焦虑评分在正常范围，当前心理状态稳定，继续保持。', source: '来源：SAS量表' })
+						if (v >= 70) doctorList.push({ icon: '🌊', iconBg: 'linear-gradient(135deg,#f093fb,#f5576c)', title: this.isEn ? 'Severe Anxiety — Seek Professional Care' : '重度焦虑，请及时就医', desc: this.isEn ? 'SAS indicates severe anxiety. Please schedule a psychiatric or psychological evaluation as soon as possible.' : 'SAS显示重度焦虑，建议尽快预约精神科或心理科医生进行专业评估和干预。', source: this.isEn ? 'Source: SAS Scale' : '来源：SAS量表' })
+						else if (v >= 50) doctorList.push({ icon: '😟', iconBg: 'linear-gradient(135deg,#f093fb,#f5576c)', title: this.isEn ? 'Anxiety Symptoms Need Attention' : '焦虑症状需关注', desc: this.isEn ? 'Try abdominal deep-breathing (4-7-8 method), reduce caffeine and sugar intake, and keep a regular routine.' : '建议进行腹式深呼吸练习（4-7-8呼吸法），减少咖啡因和糖分摄入，保持规律作息。', source: this.isEn ? 'Source: SAS Scale' : '来源：SAS量表' })
+						else doctorList.push({ icon: '✅', iconBg: 'linear-gradient(135deg,#f093fb,#f5576c)', title: this.isEn ? 'Anxiety Level Is Normal' : '焦虑水平正常', desc: this.isEn ? 'Your SAS score is within the normal range and your current state is stable. Keep it up.' : 'SAS焦虑评分在正常范围，当前心理状态稳定，继续保持。', source: this.isEn ? 'Source: SAS Scale' : '来源：SAS量表' })
 					}
 					const pss = this.doctorScales.find(s => s.key === 'PSS')
 					if (pss && pss.scoreText !== '--') {
 						const v = parseFloat(pss.scoreText)
-						if (v > 26) doctorList.push({ icon: '🧘', iconBg: 'linear-gradient(135deg,#a18cd1,#fbc2eb)', title: '感知压力偏高', desc: '建议通过有氧运动、冥想训练或与信任朋友倾诉来有效释放压力，避免长期积压。', source: '来源：PSS量表' })
-						else doctorList.push({ icon: '💆', iconBg: 'linear-gradient(135deg,#a18cd1,#fbc2eb)', title: '压力管理状态良好', desc: 'PSS压力评分处于健康范围，您的压力应对机制运作良好。', source: '来源：PSS量表' })
+						if (v > 26) doctorList.push({ icon: '🧘', iconBg: 'linear-gradient(135deg,#a18cd1,#fbc2eb)', title: this.isEn ? 'Perceived Stress Is High' : '感知压力偏高', desc: this.isEn ? 'Release stress through aerobic exercise, meditation, or talking with a trusted friend; avoid long-term buildup.' : '建议通过有氧运动、冥想训练或与信任朋友倾诉来有效释放压力，避免长期积压。', source: this.isEn ? 'Source: PSS Scale' : '来源：PSS量表' })
+						else doctorList.push({ icon: '💆', iconBg: 'linear-gradient(135deg,#a18cd1,#fbc2eb)', title: this.isEn ? 'Stress Management Is Good' : '压力管理状态良好', desc: this.isEn ? 'Your PSS score is within a healthy range — your coping mechanisms are working well.' : 'PSS压力评分处于健康范围，您的压力应对机制运作良好。', source: this.isEn ? 'Source: PSS Scale' : '来源：PSS量表' })
 					}
 					const sds = this.doctorScales.find(s => s.key === 'SDS')
 					if (sds && sds.scoreText !== '--') {
 						const v = parseFloat(sds.scoreText)
-						if (v >= 53) doctorList.push({ icon: '😔', iconBg: 'linear-gradient(135deg,#fa709a,#fee140)', title: 'SDS显示抑郁倾向', desc: '建议增加户外活动、社交联系，寻求心理咨询师帮助，避免独自压抑情绪。', source: '来源：SDS量表' })
-						else doctorList.push({ icon: '😊', iconBg: 'linear-gradient(135deg,#fa709a,#fee140)', title: '抑郁风险较低', desc: 'SDS结果正常，情绪状态良好，坚持运动和规律作息能维持良好心理状态。', source: '来源：SDS量表' })
+						if (v >= 53) doctorList.push({ icon: '😔', iconBg: 'linear-gradient(135deg,#fa709a,#fee140)', title: this.isEn ? 'SDS Suggests Depressive Tendency' : 'SDS显示抑郁倾向', desc: this.isEn ? 'Increase outdoor activities and social contact, consider counseling, and avoid suppressing emotions alone.' : '建议增加户外活动、社交联系，寻求心理咨询师帮助，避免独自压抑情绪。', source: this.isEn ? 'Source: SDS Scale' : '来源：SDS量表' })
+						else doctorList.push({ icon: '😊', iconBg: 'linear-gradient(135deg,#fa709a,#fee140)', title: this.isEn ? 'Low Depression Risk' : '抑郁风险较低', desc: this.isEn ? 'Your SDS result is normal and your mood is stable. Regular exercise and routine help maintain it.' : 'SDS结果正常，情绪状态良好，坚持运动和规律作息能维持良好心理状态。', source: this.isEn ? 'Source: SDS Scale' : '来源：SDS量表' })
 					}
 				} else {
-					doctorList.push({ icon: '🏥', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: '尚未完成健康评估量表', desc: '前往「AI评估 → 评估」完成SDS、PSS、SAS三项医评量表，获取专业建议。', source: '系统提示' })
+					doctorList.push({ icon: '🏥', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: this.isEn ? 'Health Scales Not Completed' : '尚未完成健康评估量表', desc: this.isEn ? 'Go to AI Assessment → Evaluation to complete SDS, PSS, and SAS for professional advice.' : '前往「AI评估 → 评估」完成SDS、PSS、SAS三项医评量表，获取专业建议。', source: this.isEn ? 'System Notice' : '系统提示' })
 				}
 
 				// 手环建议
@@ -787,27 +909,27 @@
 				if (this.braceletHasData) {
 					const hr = this.braceletMetrics[0].value
 					if (hr !== '--') {
-						if (Number(hr) > 100) braceletList.push({ icon: '❤️', iconBg: 'linear-gradient(135deg,#ffecd2,#fcb69f)', title: '静息心率偏高', desc: `当前静息心率 ${hr} bpm，偏高。建议增加有氧运动（慢跑、游泳），坚持4-6周可有效降低静息心率。`, source: '来源：Garmin手环' })
-						else if (Number(hr) < 50) braceletList.push({ icon: '❤️', iconBg: 'linear-gradient(135deg,#ffecd2,#fcb69f)', title: '静息心率偏低', desc: `当前静息心率 ${hr} bpm，如无规律锻炼习惯建议咨询医生检查。`, source: '来源：Garmin手环' })
-						else braceletList.push({ icon: '❤️', iconBg: 'linear-gradient(135deg,#ffecd2,#fcb69f)', title: '心率状态正常', desc: `静息心率 ${hr} bpm，处于健康范围（50-100 bpm），心血管功能良好。`, source: '来源：Garmin手环' })
+						if (Number(hr) > 100) braceletList.push({ icon: '❤️', iconBg: 'linear-gradient(135deg,#ffecd2,#fcb69f)', title: this.isEn ? 'Resting Heart Rate Is High' : '静息心率偏高', desc: this.isEn ? `Current resting heart rate ${hr} bpm is high. Aerobic exercise (jogging, swimming) for 4-6 weeks can effectively lower it.` : `当前静息心率 ${hr} bpm，偏高。建议增加有氧运动（慢跑、游泳），坚持4-6周可有效降低静息心率。`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
+						else if (Number(hr) < 50) braceletList.push({ icon: '❤️', iconBg: 'linear-gradient(135deg,#ffecd2,#fcb69f)', title: this.isEn ? 'Resting Heart Rate Is Low' : '静息心率偏低', desc: this.isEn ? `Current resting heart rate ${hr} bpm. If you do not exercise regularly, consider consulting a doctor.` : `当前静息心率 ${hr} bpm，如无规律锻炼习惯建议咨询医生检查。`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
+						else braceletList.push({ icon: '❤️', iconBg: 'linear-gradient(135deg,#ffecd2,#fcb69f)', title: this.isEn ? 'Heart Rate Is Normal' : '心率状态正常', desc: this.isEn ? `Resting heart rate ${hr} bpm is within the healthy range (50-100 bpm) — good cardiovascular function.` : `静息心率 ${hr} bpm，处于健康范围（50-100 bpm），心血管功能良好。`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
 					}
 					const sl = this.braceletMetrics[1].value
 					if (sl !== '--') {
-						if (Number(sl) < 60) braceletList.push({ icon: '💤', iconBg: 'linear-gradient(135deg,#d4e6ff,#a8c8ff)', title: '睡眠得分偏低', desc: `手环监测睡眠得分 ${sl}，偏低。建议保持固定入睡时间、减少深夜蓝光暴露、睡前进行放松练习。`, source: '来源：Garmin手环' })
-						else braceletList.push({ icon: '💤', iconBg: 'linear-gradient(135deg,#d4e6ff,#a8c8ff)', title: '睡眠质量不错', desc: `手环监测睡眠得分 ${sl}，表现良好，继续保持规律作息。`, source: '来源：Garmin手环' })
+						if (Number(sl) < 60) braceletList.push({ icon: '💤', iconBg: 'linear-gradient(135deg,#d4e6ff,#a8c8ff)', title: this.isEn ? 'Sleep Score Is Low' : '睡眠得分偏低', desc: this.isEn ? `Band-tracked sleep score ${sl} is low. Keep a fixed bedtime, reduce late-night blue light, and relax before sleep.` : `手环监测睡眠得分 ${sl}，偏低。建议保持固定入睡时间、减少深夜蓝光暴露、睡前进行放松练习。`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
+						else braceletList.push({ icon: '💤', iconBg: 'linear-gradient(135deg,#d4e6ff,#a8c8ff)', title: this.isEn ? 'Good Sleep Quality' : '睡眠质量不错', desc: this.isEn ? `Band-tracked sleep score ${sl} looks good. Keep up your regular routine.` : `手环监测睡眠得分 ${sl}，表现良好，继续保持规律作息。`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
 					}
 					const sv = this.braceletMetrics[4].value
-					if (sv !== '--' && Number(sv) > 50) braceletList.push({ icon: '🌿', iconBg: 'linear-gradient(135deg,#f3e7ff,#d4b8ff)', title: '手环监测压力偏高', desc: `平均压力值 ${sv}（>50），建议进行5分钟正念呼吸训练、午间短暂户外散步放松身心。`, source: '来源：Garmin手环' })
+					if (sv !== '--' && Number(sv) > 50) braceletList.push({ icon: '🌿', iconBg: 'linear-gradient(135deg,#f3e7ff,#d4b8ff)', title: this.isEn ? 'Band Stress Level Is High' : '手环监测压力偏高', desc: this.isEn ? `Average stress ${sv} (>50). Try a 5-minute mindful breathing session or a short outdoor walk at noon.` : `平均压力值 ${sv}（>50），建议进行5分钟正念呼吸训练、午间短暂户外散步放松身心。`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
 					const spo2 = this.braceletMetrics[3].value
-					if (spo2 !== '--' && Number(spo2) < 95) braceletList.push({ icon: '🩸', iconBg: 'linear-gradient(135deg,#ffe0cc,#ffb38a)', title: '血氧饱和度偏低', desc: `血氧 ${spo2}% 低于正常值（≥95%），建议到通风处活动，如持续偏低请及时就医。`, source: '来源：Garmin手环' })
+					if (spo2 !== '--' && Number(spo2) < 95) braceletList.push({ icon: '🩸', iconBg: 'linear-gradient(135deg,#ffe0cc,#ffb38a)', title: this.isEn ? 'Blood Oxygen Is Low' : '血氧饱和度偏低', desc: this.isEn ? `SpO2 ${spo2}% is below normal (≥95%). Move to a well-ventilated area; seek medical care if it stays low.` : `血氧 ${spo2}% 低于正常值（≥95%），建议到通风处活动，如持续偏低请及时就医。`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
 					const steps = this.braceletMetrics[2].value
 					if (steps !== '--') {
 						const stepsNum = Number(String(steps).replace(/,/g, ''))
-						if (stepsNum < 6000) braceletList.push({ icon: '🚶', iconBg: 'linear-gradient(135deg,#d4fce8,#96e6a1)', title: '今日步数不足', desc: `今日步数 ${steps} 步，建议目标1万步。可利用碎片时间步行、选择爬楼梯替代电梯。`, source: '来源：Garmin手环' })
-						else braceletList.push({ icon: '🚶', iconBg: 'linear-gradient(135deg,#d4fce8,#96e6a1)', title: '今日步数达标', desc: `今日步数 ${steps} 步，完成了充足的日常活动量，很棒！`, source: '来源：Garmin手环' })
+						if (stepsNum < 6000) braceletList.push({ icon: '🚶', iconBg: 'linear-gradient(135deg,#d4fce8,#96e6a1)', title: this.isEn ? 'Daily Steps Below Target' : '今日步数不足', desc: this.isEn ? `Today: ${steps} steps. Aim for 10,000 — use short walks and take stairs instead of elevators.` : `今日步数 ${steps} 步，建议目标1万步。可利用碎片时间步行、选择爬楼梯替代电梯。`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
+						else braceletList.push({ icon: '🚶', iconBg: 'linear-gradient(135deg,#d4fce8,#96e6a1)', title: this.isEn ? 'Daily Steps Goal Reached' : '今日步数达标', desc: this.isEn ? `Today: ${steps} steps — plenty of daily activity. Great job!` : `今日步数 ${steps} 步，完成了充足的日常活动量，很棒！`, source: this.isEn ? 'Source: Garmin Band' : '来源：Garmin手环' })
 					}
 				} else {
-					braceletList.push({ icon: '⌚', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: '未检测到手环数据', desc: '请绑定 Garmin 智能手环并同步数据，可实时监测心率、睡眠、步数、血氧等健康指标。', source: '系统提示' })
+					braceletList.push({ icon: '⌚', iconBg: 'linear-gradient(135deg,#e0e0e0,#bdbdbd)', title: this.isEn ? 'No Band Data Detected' : '未检测到手环数据', desc: this.isEn ? 'Please pair your Garmin smartband and sync data to monitor heart rate, sleep, steps, SpO2, and more.' : '请绑定 Garmin 智能手环并同步数据，可实时监测心率、睡眠、步数、血氧等健康指标。', source: this.isEn ? 'System Notice' : '系统提示' })
 				}
 
 				this.adviceMap = { htp: htpList, self: selfList, doctor: doctorList, bracelet: braceletList }
@@ -828,7 +950,7 @@
 						splitLine: { lineStyle: { color: 'rgba(91,141,238,0.3)' } },
 						axisLine:  { lineStyle: { color: 'rgba(91,141,238,0.3)' } }
 					},
-					series: [{ type: 'radar', data: [{ value: this.radarDims.map(d => d.value), name: '健康指数', symbol: 'circle', symbolSize: 6,
+					series: [{ type: 'radar', data: [{ value: this.radarDims.map(d => d.value), name: this.isEn ? 'Health Index' : '健康指数', symbol: 'circle', symbolSize: 6,
 						areaStyle: { color: { type: 'radial', x: 0.5, y: 0.5, r: 0.5, colorStops: [{ offset: 0, color: 'rgba(91,141,238,0.6)' },{ offset: 1, color: 'rgba(91,141,238,0.1)' }] } },
 						lineStyle: { color: '#5b8dee', width: 2 }, itemStyle: { color: '#5b8dee' } }] }]
 				})
@@ -875,10 +997,10 @@
 						},
 						advice: this.adviceList.map(a => a.desc),
 						dataSources: [
-							...(this.htpHasData ? ['HTP 画画'] : []),
-							...(this.selfHasData ? ['自助量表'] : []),
-							...(this.doctorHasData ? ['医评量表'] : []),
-							...(this.braceletHasData ? ['智能手环'] : [])
+							...(this.htpHasData ? [this.isEn ? 'HTP Drawing' : 'HTP 画画'] : []),
+							...(this.selfHasData ? [this.isEn ? 'Self Scales' : '自助量表'] : []),
+							...(this.doctorHasData ? [this.isEn ? 'Clinician Scales' : '医评量表'] : []),
+							...(this.braceletHasData ? [this.isEn ? 'Smartband' : '智能手环'] : [])
 						]
 					}
 					
@@ -952,8 +1074,8 @@
 			// 删除指定历史报告
 			deleteHistoryReport(report) {
 				uni.showModal({
-					title: '确认删除',
-					content: `确定要删除 ${report.reportDate} 的健康报告吗？`,
+					title: this.isEn ? 'Confirm Deletion' : '确认删除',
+					content: this.isEn ? `Are you sure you want to delete the health report of ${report.reportDate}?` : `确定要删除 ${report.reportDate} 的健康报告吗？`,
 					confirmColor: '#e74c3c',
 					success: (res) => {
 						if (res.confirm) {
@@ -963,7 +1085,7 @@
 								uni.setStorageSync('health_report_history', updated)
 								this.loadHistoryReports()
 								uni.showToast({
-									title: '已删除',
+									title: this.isEn ? 'Deleted' : '已删除',
 									icon: 'success'
 								})
 							} catch (e) {
@@ -977,7 +1099,9 @@
 			// 获取星期几
 			getWeekDay(dateStr) {
 				const date = new Date(dateStr)
-				const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+				const weekDays = this.isEn
+					? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+					: ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 				return weekDays[date.getDay()]
 			},
 

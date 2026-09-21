@@ -1,8 +1,8 @@
 <template>
 	<view class="page">
 		<view class="intro-card">
-			<text class="intro-title">PSQI 匹兹堡睡眠质量指数</text>
-			<text class="intro-text">以下问题询问您<text style="color:#e74c3c;">过去1个月</text>的睡眠习惯，请根据最近一个月多数夜晚的实际情况填写。</text>
+			<text class="intro-title">{{ $t('scales.psqi.title') }}</text>
+			<view class="intro-text" v-html="$t('scales.psqi.intro')"></view>
 		</view>
 
 		<view class="progress-wrap">
@@ -14,14 +14,14 @@
 
 		<view class="form-box">
 			<view v-if="currentPage === 1">
-				<view class="question-label">1. 近1个月，晚上通常<text class="highlight">几点上床睡觉</text>？</view>
+				<view class="question-label" v-html="$t('scales.psqi.q1')"></view>
 				<div class="input-row">
-					<input type="text" class="text-input" v-model="form.q1" placeholder="例如：22:30" />
+					<input type="text" class="text-input" v-model="form.q1" :placeholder="$t('scales.psqi.q1Placeholder')" />
 				</div>
 			</view>
 
 			<view v-if="currentPage === 2">
-				<view class="question-label">2. 近1个月，从上床到<text class="highlight">入睡通常需要多长时间</text>（分钟）？</view>
+				<view class="question-label" v-html="$t('scales.psqi.q2')"></view>
 				<view class="option-row">
 					<view v-for="item in sleepLatencyOptions" :key="item.value"
 						class="select-btn" :class="{ selected: form.q2 === item.value }" @click="form.q2 = item.value">
@@ -31,14 +31,14 @@
 			</view>
 
 			<view v-if="currentPage === 3">
-				<view class="question-label">3. 近1个月，通常<text class="highlight">早晨几点起床</text>？</view>
+				<view class="question-label" v-html="$t('scales.psqi.q3')"></view>
 				<div class="input-row">
-					<input type="text" class="text-input" v-model="form.q3" placeholder="例如：7:00" />
+					<input type="text" class="text-input" v-model="form.q3" :placeholder="$t('scales.psqi.q3Placeholder')" />
 				</div>
 			</view>
 
 			<view v-if="currentPage === 4">
-				<view class="question-label">4. 近1个月，每晚通常<text class="highlight">实际睡眠时间</text>有多少小时？（不等于卧床时间）</view>
+				<view class="question-label" v-html="$t('scales.psqi.q4')"></view>
 				<view class="option-row">
 					<view v-for="item in sleepDurationOptions" :key="item.value"
 						class="select-btn" :class="{ selected: form.q4 === item.value }" @click="form.q4 = item.value">
@@ -48,7 +48,7 @@
 			</view>
 
 			<view v-if="currentPage === 5">
-				<view class="question-label">5. 近1个月，您是否因为以下原因而睡眠不好：<text class="highlight">入睡困难（30分钟内不能入睡）</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5a')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5a === item.value }" @click="form.q5a = item.value">
@@ -59,7 +59,7 @@
 			</view>
 
 			<view v-if="currentPage === 6">
-				<view class="question-label">6. 近1个月，您是否因为以下原因睡眠不好：<text class="highlight">夜间易醒或早醒</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5b')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5b === item.value }" @click="form.q5b = item.value">
@@ -70,7 +70,7 @@
 			</view>
 
 			<view v-if="currentPage === 7">
-				<view class="question-label">7. 近1个月，您是否因为以下原因睡眠不好：<text class="highlight">起夜上厕所</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5c')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5c === item.value }" @click="form.q5c = item.value">
@@ -81,7 +81,7 @@
 			</view>
 
 			<view v-if="currentPage === 8">
-				<view class="question-label">8. 近1个月，您是否因为以下原因睡眠不好：<text class="highlight">呼吸不畅</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5d')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5d === item.value }" @click="form.q5d = item.value">
@@ -92,7 +92,7 @@
 			</view>
 
 			<view v-if="currentPage === 9">
-				<view class="question-label">9. 近1个月，您是否因为以下原因睡眠不好：<text class="highlight">咳嗽或鼾声高</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5e')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5e === item.value }" @click="form.q5e = item.value">
@@ -103,7 +103,7 @@
 			</view>
 
 			<view v-if="currentPage === 10">
-				<view class="question-label">10. 近1个月，您是否因为以下原因睡眠不好：<text class="highlight">感觉冷</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5f')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5f === item.value }" @click="form.q5f = item.value">
@@ -114,7 +114,7 @@
 			</view>
 
 			<view v-if="currentPage === 11">
-				<view class="question-label">11. 近1个月，您是否因为以下原因睡眠不好：<text class="highlight">感觉太热</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5g')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5g === item.value }" @click="form.q5g = item.value">
@@ -125,7 +125,7 @@
 			</view>
 
 			<view v-if="currentPage === 12">
-				<view class="question-label">12. 近1个月，您是否因为以下原因睡眠不好：<text class="highlight">做噩梦</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5h')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5h === item.value }" @click="form.q5h = item.value">
@@ -136,7 +136,7 @@
 			</view>
 
 			<view v-if="currentPage === 13">
-				<view class="question-label">13. 近1个月，您是否因为以下原因睡眠不好：<text class="highlight">疼痛不适</text></view>
+				<view class="question-label" v-html="$t('scales.psqi.q5i')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5i === item.value }" @click="form.q5i = item.value">
@@ -147,9 +147,9 @@
 			</view>
 
 			<view v-if="currentPage === 14">
-				<view class="question-label">14. 近1个月，有无其他影响睡眠的事情？若有，请描述频率</view>
+				<view class="question-label" v-html="$t('scales.psqi.q5j')"></view>
 				<div class="input-row">
-					<textarea class="text-area" v-model="form.q5j_desc" placeholder="请描述（可选）"></textarea>
+					<textarea class="text-area" v-model="form.q5j_desc" :placeholder="$t('scales.psqi.q5jPlaceholder')"></textarea>
 				</div>
 				<view class="radio-list" style="margin-top:10px;">
 					<view v-for="item in freqOptions" :key="item.value"
@@ -161,7 +161,7 @@
 			</view>
 
 			<view v-if="currentPage === 15">
-				<view class="question-label">15. 近1个月，总体来说，您认为自己的<text class="highlight">睡眠质量</text>如何？</view>
+				<view class="question-label" v-html="$t('scales.psqi.q6')"></view>
 				<view class="radio-list">
 					<view v-for="item in qualityOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q6 === item.value }" @click="form.q6 = item.value">
@@ -172,7 +172,7 @@
 			</view>
 
 			<view v-if="currentPage === 16">
-				<view class="question-label">16. 近1个月，您是否服用<text class="highlight">催眠药物（包括医生处方或非处方）</text>？</view>
+				<view class="question-label" v-html="$t('scales.psqi.q7')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q7 === item.value }" @click="form.q7 = item.value">
@@ -183,7 +183,7 @@
 			</view>
 
 			<view v-if="currentPage === 17">
-				<view class="question-label">17. 近1个月，您在<text class="highlight">开车、吃饭或从事社会活动</text>时是否难以保持清醒？</view>
+				<view class="question-label" v-html="$t('scales.psqi.q8')"></view>
 				<view class="radio-list">
 					<view v-for="item in freqOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q8 === item.value }" @click="form.q8 = item.value">
@@ -194,7 +194,7 @@
 			</view>
 
 			<view v-if="currentPage === 18">
-				<view class="question-label">18. 近1个月，您在积极完成工作方面是否存在<text class="highlight">困难</text>？</view>
+				<view class="question-label" v-html="$t('scales.psqi.q9')"></view>
 				<view class="radio-list">
 					<view v-for="item in difficultyOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q9 === item.value }" @click="form.q9 = item.value">
@@ -206,9 +206,9 @@
 		</view>
 
 		<view class="nav-btns">
-			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">上一题</button>
-			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">下一题</button>
-			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">提交</button>
+			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">{{ $t('scales.common.prev') }}</button>
+			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">{{ $t('scales.common.next') }}</button>
+			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">{{ $t('scales.common.submit') }}</button>
 		</view>
 	</view>
 </template>
@@ -224,38 +224,35 @@
 					q5a: null, q5b: null, q5c: null, q5d: null, q5e: null,
 					q5f: null, q5g: null, q5h: null, q5i: null, q5j: null, q5j_desc: '',
 					q6: null, q7: null, q8: null, q9: null
-				},
-				freqOptions: [
-					{ value: 0, label: '近1个月内没有' },
-					{ value: 1, label: '每周不足1次' },
-					{ value: 2, label: '每周1～2次' },
-					{ value: 3, label: '每周3次或以上' }
-				],
-				sleepLatencyOptions: [
-					{ value: 0, label: '≤15分钟' },
-					{ value: 1, label: '16～30分钟' },
-					{ value: 2, label: '31～60分钟' },
-					{ value: 3, label: '>60分钟' }
-				],
-				sleepDurationOptions: [
-					{ value: 0, label: '>7小时' },
-					{ value: 1, label: '6～7小时' },
-					{ value: 2, label: '5～6小时' },
-					{ value: 3, label: '<5小时' }
-				],
-				qualityOptions: [
-					{ value: 0, label: '很好' },
-					{ value: 1, label: '较好' },
-					{ value: 2, label: '较差' },
-					{ value: 3, label: '很差' }
-				],
-				difficultyOptions: [
-					{ value: 0, label: '没有困难' },
-					{ value: 1, label: '一点困难' },
-					{ value: 2, label: '较多困难' },
-					{ value: 3, label: '很大困难' }
-				]
+				}
 			};
+		},
+		computed: {
+			freqOptions() {
+				const list = this.$t('scales.psqi.freqOptions');
+				return Array.isArray(list) ? list.map((label, value) => ({ value, label })) : [];
+			},
+			sleepLatencyOptions() {
+				const list = this.$t('scales.psqi.sleepLatencyOptions');
+				return Array.isArray(list) ? list.map((label, value) => ({ value, label })) : [];
+			},
+			sleepDurationOptions() {
+				const list = this.$t('scales.psqi.sleepDurationOptions');
+				return Array.isArray(list) ? list.map((label, value) => ({ value, label })) : [];
+			},
+			qualityOptions() {
+				const list = this.$t('scales.psqi.qualityOptions');
+				return Array.isArray(list) ? list.map((label, value) => ({ value, label })) : [];
+			},
+			difficultyOptions() {
+				const list = this.$t('scales.psqi.difficultyOptions');
+				return Array.isArray(list) ? list.map((label, value) => ({ value, label })) : [];
+			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('scales.psqi.navTitle')
+			});
 		},
 		methods: {
 			prevPage() { if (this.currentPage > 1) this.currentPage--; },
@@ -278,7 +275,12 @@
 				const http = (await import('@/nxTemp/config/requestConfig')).default
 				const config = (await import('@/nxTemp/config/index.config')).default
 				const score = this.calcScore();
-				let level = score <= 5 ? '睡眠质量良好' : score <= 10 ? '睡眠质量一般' : '睡眠质量较差，建议就医';
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+
+				let levelZh = score <= 5 ? '睡眠质量良好' : score <= 10 ? '睡眠质量一般' : '睡眠质量较差，建议就医';
+				let levelEn = score <= 5 ? 'Good Sleep Quality' : score <= 10 ? 'Fair Sleep Quality' : 'Poor Sleep Quality, medical consultation recommended';
+				let displayLevel = isEn ? levelEn : levelZh;
+
 				const payload = {
 					status: 2,
 					q1: this.form.q1 || '',
@@ -297,7 +299,7 @@
 					date: new Date().toLocaleDateString(),
 					form: this.form,
 					score,
-					level
+					level: displayLevel
 				};
 				let history = uni.getStorageSync('psqi_history') || [];
 				history.unshift(record);
@@ -305,14 +307,14 @@
 				// 写入统一历史记录
 				try {
 					const entry = {
-						scale: 'PSQI', scaleName: '匹兹堡睡眠质量指数',
+						scale: 'PSQI', scaleName: isEn ? 'Pittsburgh Sleep Quality Index' : '匹兹堡睡眠质量指数',
 						date: new Date().toLocaleString(),
 						totalScore: score,
-						level,
+						level: displayLevel,
 						levelColor: score <= 5 ? '#43e97b' : score <= 10 ? '#fda085' : '#f5576c',
-						scoreText: `总分 ${score}`,
-						dims: [], comment: `PSQI总分：${score}\n${level}`,
-						rawScores: { 'PSQI总分': score, '睡眠质量': level }
+						scoreText: isEn ? `Total Score ${score}` : `总分 ${score}`,
+						dims: [], comment: isEn ? `PSQI Total: ${score}\n${displayLevel}` : `PSQI总分：${score}\n${displayLevel}`,
+						rawScores: { [isEn ? 'PSQI Score' : 'PSQI总分']: score, [isEn ? 'Sleep Quality' : '睡眠质量']: displayLevel }
 					};
 					const sh = uni.getStorageSync('scale_history') || [];
 					sh.push(entry);
@@ -320,8 +322,8 @@
 				} catch(e) {}
 
 				uni.showModal({
-					title: '提交成功',
-					content: `PSQI总分：${score}\n${level}`,
+					title: this.$t('scales.common.submitSuccess') || '提交成功',
+					content: isEn ? `PSQI Total Score: ${score}\n${displayLevel}` : `PSQI总分：${score}\n${displayLevel}`,
 					showCancel: false,
 					success: () => { uni.navigateBack(); }
 				});

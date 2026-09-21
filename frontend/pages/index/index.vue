@@ -1,5 +1,22 @@
 <template>
-	<view>
+	<view class="index-page-wrapper">
+		<!-- 顶部左侧高质感中英文一键切换胶囊按钮 -->
+		<view class="lang-switch-capsule" @click.stop="handleToggleLanguage" id="langSwitchBtn">
+			<view class="lang-globe-wrap">
+				<text class="lang-globe-icon">🌐</text>
+			</view>
+			<view class="lang-slider-bg">
+				<view class="lang-option" :class="{ active: currentLang === 'zh' }">
+					<text class="lang-text">中</text>
+				</view>
+				<view class="lang-option" :class="{ active: currentLang === 'en' }">
+					<text class="lang-text">EN</text>
+				</view>
+				<!-- 滑动的指示高亮小胶囊 -->
+				<view class="lang-active-pill" :class="{ 'is-en': currentLang === 'en' }"></view>
+			</view>
+		</view>
+
 		<div class="content-all2">
 			<view class="swiper-container-wrap">
 				<IndexSwiper></IndexSwiper>
@@ -14,10 +31,10 @@
 							<div class="qe-icon-wrap">
 								<text class="qe-icon">✦</text>
 							</div>
-							<div class="qe-tag">每日填报</div>
+							<div class="qe-tag">{{ $t('index.quickEntryTag') }}</div>
 						</div>
-						<div class="qe-large-title">日常状态</div>
-						<div class="qe-large-desc">每日晚八点后提交1次</div>
+						<div class="qe-large-title">{{ $t('index.dailyReportTitle') }}</div>
+						<div class="qe-large-desc">{{ $t('index.dailyReportDesc') }}</div>
 					</div>
 					<div class="qe-circle qe-circle-1"></div>
 					<div class="qe-circle qe-circle-2"></div>
@@ -29,8 +46,8 @@
 							<div class="qe-small-icon-wrap">
 								<text class="qe-small-icon">♡</text>
 							</div>
-							<div class="qe-small-title">健康评估</div>
-							<div class="qe-small-desc">3大科学心理量表</div>
+							<div class="qe-small-title">{{ $t('index.healthAssessTitle') }}</div>
+							<div class="qe-small-desc">{{ $t('index.healthAssessDesc') }}</div>
 						</div>
 						<div class="qe-circle qe-circle-s1"></div>
 					</div>
@@ -39,8 +56,8 @@
 							<div class="qe-small-icon-wrap">
 								<text class="qe-small-icon">⊞</text>
 							</div>
-							<div class="qe-small-title">手环数据</div>
-							<div class="qe-small-desc">连接 GARMIN 智能手环</div>
+							<div class="qe-small-title">{{ $t('index.braceletTitle') }}</div>
+							<div class="qe-small-desc">{{ $t('index.braceletDesc') }}</div>
 						</div>
 						<div class="qe-circle qe-circle-s2"></div>
 					</div>
@@ -51,11 +68,11 @@
 			<div class="content">
 				<div @click="DepressionVideo" class="box hover" id="depressionvideo">
 					<div class="box-content">
-						<div class="box-title">迷你访谈</div>
-						<div class="box-en">Mini-interviews Assessment</div>
+						<div class="box-title">{{ $t('index.miniInterviewTitle') }}</div>
+						<div class="box-en">{{ $t('index.miniInterviewSub') }}</div>
 						<div class="custom-divider" text-align="center" />
 						<div class="box-data">
-							<span>说说最近的事和心情吧</span>
+							<span>{{ $t('index.miniInterviewDesc') }}</span>
 						</div>
 						<div class="image-container">
 							<image class="box-img" src="../../static/images/index/set/in2.png"></image>
@@ -64,11 +81,11 @@
 				</div>
 				<div @click="goHeal" class="box hover" id="braceletData">
 					<div class="box-content">
-						<div class="box-title">疗愈</div>
-						<div class="box-en">Healing</div>
+						<div class="box-title">{{ $t('index.healingCardTitle') }}</div>
+						<div class="box-en">{{ $t('index.healingCardSub') }}</div>
 						<div class="custom-divider" text-align="center" />
 						<div class="box-data">
-							<span>24h聊天/游戏/日记陪伴</span>
+							<span>{{ $t('index.healingCardDesc') }}</span>
 						</div>
 						<div class="image-container">
 							<image class="box-img" src="../../static/images/index/set/in2.png"></image>
@@ -77,7 +94,7 @@
 				</div>
 			</div>
 			<!-- <u-divider class="custom-divider" text-align="center" /> -->
-			<div class="title-2">{{ warmText }}</div>
+			<div class="title-2">{{ displayWarmText }}</div>
 			<!-- <div class="content">
 				<div @click="" class="box hover" id="dailyReport">
 					<div class="box-content">
@@ -127,8 +144,9 @@
 	import {
 		testApi
 	} from "@/nxTemp/apis/index.js";
+	import { updateTabBarLanguage } from "@/locale/tabbar";
 
-	const WARM_TEXTS = [
+	const WARM_TEXTS_ZH = [
 		"保持好心情，让生活处处充满色彩。",
 		"无论晴雨，愿你今天也是充满阳光的一天。",
 		"慢下来，深呼吸，生活其实有很多美好在等你。",
@@ -139,6 +157,19 @@
 		"在属于自己的节奏里，慢慢走，总会遇到温暖的阳光。",
 		"愿你的世界温润饱满，有花香，有暖阳，也有好梦。",
 		"生活不必太完美，适度放松，保持内心的平静就好。"
+	];
+
+	const WARM_TEXTS_EN = [
+		"Keep a cheerful heart and color your world with joy.",
+		"Rain or shine, may your day be bright and full of sunshine.",
+		"Slow down, breathe deeply, and embrace the wonders ahead.",
+		"Smile to yourself; you are stronger and braver than you know.",
+		"Every sunrise is a fresh start—may gentle flowers bloom within.",
+		"Care for yourself and listen within; you are doing wonderfully.",
+		"Today is worth cherishing—may warmth and love surround you.",
+		"Walk in your own rhythm; gentle sunshine will always meet you.",
+		"May your days be peaceful, blessed with blossoms and sweet dreams.",
+		"Life needs no perfection—relax, breathe, and enjoy inner peace."
 	];
 
 	export default {
@@ -152,8 +183,18 @@
 					birthDate: ''
 				},
 				hasBasicInfo: true,
-				warmText: "保持好心情，让生活处处充满色彩。"
+				warmTextIndex: 0
 			};
+		},
+
+		computed: {
+			currentLang() {
+				return this.$i18n ? this.$i18n.currentLang : 'zh';
+			},
+			displayWarmText() {
+				const list = this.currentLang === 'en' ? WARM_TEXTS_EN : WARM_TEXTS_ZH;
+				return list[this.warmTextIndex] || list[0];
+			}
 		},
 
 		components: {
@@ -184,12 +225,28 @@
 
 		onShow(parms) {
 			this.getBasicInfoStatus();
-			const randomIndex = Math.floor(Math.random() * WARM_TEXTS.length);
-			this.warmText = WARM_TEXTS[randomIndex];
+			this.warmTextIndex = Math.floor(Math.random() * WARM_TEXTS_ZH.length);
+			updateTabBarLanguage(this.currentLang);
+			uni.setNavigationBarTitle({
+				title: this.$t('index.navTitle')
+			});
 		},
 
 		onUnload() {},
 		methods: {
+			handleToggleLanguage() {
+				const newLang = this.$i18n.switchLang();
+				uni.showToast({
+					title: newLang === 'zh' ? '已切换至简体中文' : 'Switched to English',
+					icon: 'none',
+					duration: 1200
+				});
+				uni.setNavigationBarTitle({
+					title: this.$t('index.navTitle')
+				});
+				updateTabBarLanguage(newLang);
+			},
+
 			getBasicInfoStatus() {
 				http.get("/basicInfo/getRecord").then((res) => {
 					if (res.result == 0) {
@@ -225,7 +282,7 @@
 				// 允许时间段：20:00–23:59 或 0:00–4:59
 				if (!(hours >= 20 || hours < 5)) {
 					uni.showToast({
-						title: '未到填报时间，请在晚上8点到次日凌晨5点之间填写',
+						title: this.$t('index.dailyReportTimeNotice'),
 						icon: 'none'
 					});
 					return;
@@ -298,6 +355,104 @@
 </script>
 
 <style lang="scss" scoped>
+	.index-page-wrapper {
+		position: relative;
+		width: 100%;
+	}
+
+	/* 顶部左侧高质感中英文切换胶囊按钮（与导航栏标题居中对齐） */
+	.lang-switch-capsule {
+		position: fixed;
+		top: calc(var(--status-bar-height, 0px) + 7px);
+		left: 12px;
+		z-index: 9999;
+		display: flex;
+		align-items: center;
+		padding: 2px 6px;
+		background: rgba(255, 255, 255, 0.88);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		border: 1px solid rgba(255, 255, 255, 0.75);
+		border-radius: 18px;
+		box-shadow: 0 3px 12px rgba(94, 135, 197, 0.18), 0 1px 3px rgba(0, 0, 0, 0.05);
+		cursor: pointer;
+		user-select: none;
+		transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+		&:active {
+			transform: scale(0.93);
+			box-shadow: 0 2px 8px rgba(94, 135, 197, 0.14);
+		}
+
+		.lang-globe-wrap {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 4px;
+			padding-left: 2px;
+
+			.lang-globe-icon {
+				font-size: 13px;
+				line-height: 1;
+				opacity: 0.88;
+			}
+		}
+
+		.lang-slider-bg {
+			position: relative;
+			display: flex;
+			align-items: center;
+			width: 60px;
+			height: 22px;
+			background: rgba(226, 235, 248, 0.65);
+			border-radius: 11px;
+			padding: 2px;
+			box-sizing: border-box;
+
+			.lang-option {
+				position: relative;
+				z-index: 2;
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+				text-align: center;
+				transition: color 0.25s ease;
+
+				.lang-text {
+					font-size: 11px;
+					font-weight: 500;
+					color: #6a7d94;
+					line-height: 1;
+				}
+
+				&.active .lang-text {
+					color: #ffffff;
+					font-weight: 600;
+					text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+				}
+			}
+
+			.lang-active-pill {
+				position: absolute;
+				top: 2px;
+				left: 2px;
+				width: calc(50% - 2px);
+				height: 18px;
+				background: linear-gradient(135deg, #5E87C5 0%, #84DFF7 100%);
+				border-radius: 9px;
+				box-shadow: 0 2px 6px rgba(94, 135, 197, 0.38);
+				transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+				z-index: 1;
+
+				&.is-en {
+					transform: translateX(100%);
+				}
+			}
+		}
+	}
+
 	.content-all {
 		// background-color: #fff2dc;
 		// background: linear-gradient(#fda085, #f6d365);

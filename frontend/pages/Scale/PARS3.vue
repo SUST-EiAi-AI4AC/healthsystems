@@ -1,8 +1,8 @@
 <template>
 	<view class="page">
 		<view class="intro-card">
-			<text class="intro-title">PARS-3 体育活动等级量表</text>
-			<text class="intro-text">请根据您<text style="color:#e74c3c;">上个月</text>的体育锻炼情况，回答以下5个问题。</text>
+			<text class="intro-title">{{ $t('scales.pars3.title') }}</text>
+			<text class="intro-text">{{ $t('scales.pars3.instruction') }}</text>
 		</view>
 
 		<view class="progress-wrap">
@@ -15,9 +15,9 @@
 		<view class="form-box">
 			<!-- Q1 运动强度 -->
 			<view v-if="currentPage === 1">
-				<view class="question-label">1. 在上个月，您锻炼时的<text class="highlight">运动强度</text>通常是？</view>
+				<view class="question-label">{{ currentQ1Label }}</view>
 				<view class="radio-list">
-					<view v-for="item in intensityOptions" :key="item.value"
+					<view v-for="item in currentIntensityOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q1 === item.value }" @click="form.q1 = item.value">
 						<view class="radio-dot" :class="{ active: form.q1 === item.value }"></view>
 						<view class="radio-content">
@@ -30,9 +30,9 @@
 
 			<!-- Q2 运动频率 -->
 			<view v-if="currentPage === 2">
-				<view class="question-label">2. 在上个月，您平均每周锻炼的<text class="highlight">频率</text>是？</view>
+				<view class="question-label">{{ currentQ2Label }}</view>
 				<view class="radio-list">
-					<view v-for="item in frequencyOptions" :key="item.value"
+					<view v-for="item in currentFrequencyOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q2 === item.value }" @click="form.q2 = item.value">
 						<view class="radio-dot" :class="{ active: form.q2 === item.value }"></view>
 						<text>{{ item.label }}</text>
@@ -42,9 +42,9 @@
 
 			<!-- Q3 每次持续时间 -->
 			<view v-if="currentPage === 3">
-				<view class="question-label">3. 在上个月，您每次锻炼的<text class="highlight">持续时间</text>通常是？</view>
+				<view class="question-label">{{ currentQ3Label }}</view>
 				<view class="radio-list">
-					<view v-for="item in durationOptions" :key="item.value"
+					<view v-for="item in currentDurationOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q3 === item.value }" @click="form.q3 = item.value">
 						<view class="radio-dot" :class="{ active: form.q3 === item.value }"></view>
 						<text>{{ item.label }}</text>
@@ -54,9 +54,9 @@
 
 			<!-- Q4 主要运动类型 -->
 			<view v-if="currentPage === 4">
-				<view class="question-label">4. 您上个月主要进行的<text class="highlight">运动类型</text>是？（可多选）</view>
+				<view class="question-label">{{ currentQ4Label }}</view>
 				<view class="checkbox-list">
-					<view v-for="item in sportTypes" :key="item.value"
+					<view v-for="item in currentSportTypes" :key="item.value"
 						class="checkbox-item" :class="{ selected: form.q4.includes(item.value) }" @click="toggleSport(item.value)">
 						<view class="checkbox-box" :class="{ checked: form.q4.includes(item.value) }">
 							<text v-if="form.q4.includes(item.value)" class="check-mark">✓</text>
@@ -68,9 +68,9 @@
 
 			<!-- Q5 主观感受 -->
 			<view v-if="currentPage === 5">
-				<view class="question-label">5. 总体来看，您对上个月自己的<text class="highlight">体育锻炼情况</text>的自我评价是？</view>
+				<view class="question-label">{{ currentQ5Label }}</view>
 				<view class="radio-list">
-					<view v-for="item in selfRatingOptions" :key="item.value"
+					<view v-for="item in currentSelfRatingOptions" :key="item.value"
 						class="radio-item" :class="{ selected: form.q5 === item.value }" @click="form.q5 = item.value">
 						<view class="radio-dot" :class="{ active: form.q5 === item.value }"></view>
 						<view class="radio-content">
@@ -83,9 +83,9 @@
 		</view>
 
 		<view class="nav-btns">
-			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">上一题</button>
-			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">下一题</button>
-			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">提交</button>
+			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">{{ $t('scales.common.prev') }}</button>
+			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">{{ $t('scales.common.next') }}</button>
+			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">{{ $t('scales.common.submit') }}</button>
 		</view>
 	</view>
 </template>
@@ -98,9 +98,11 @@
 				totalPages: 5,
 				form: { q1: null, q2: null, q3: null, q4: [], q5: null },
 				intensityOptions: [
-					{ value: 1, label: '低强度', desc: '散步、轻松骑车，几乎不出汗' },
-					{ value: 2, label: '中等强度', desc: '快步走、慢跑，轻微出汗，可以说话' },
-					{ value: 3, label: '高强度', desc: '跑步、球类运动，大量出汗，难以说话' }
+					{ value: 1, label: '轻微运动', desc: '散步、慢走、轻度拉伸等，不出汗' },
+					{ value: 2, label: '小强度运动', desc: '快走、太极拳、轻度骑行等，微出汗' },
+					{ value: 3, label: '中等强度运动', desc: '慢跑、羽毛球、游泳、健身操等，出汗但能交谈' },
+					{ value: 4, label: '较大强度运动', desc: '跑步、篮球、足球、快速骑行等，大量出汗，交谈吃力' },
+					{ value: 5, label: '大强度运动', desc: '竞速跑、剧烈球赛、高强度间歇训练等，呼吸急促' }
 				],
 				frequencyOptions: [
 					{ value: 1, label: '1次或更少' },
@@ -134,6 +136,53 @@
 					{ value: 5, label: '非常好', desc: '锻炼充足，非常满意' }
 				]
 			};
+		},
+		computed: {
+			currentQ1Label() { return this.$t('scales.pars3.q1Label') || '1. 在上个月，您锻炼时的运动强度通常是？'; },
+			currentQ2Label() { return this.$t('scales.pars3.q2Label') || '2. 在上个月，您平均每周锻炼的频率是？'; },
+			currentQ3Label() { return this.$t('scales.pars3.q3Label') || '3. 在上个月，您每次锻炼的持续时间通常是？'; },
+			currentQ4Label() { return this.$t('scales.pars3.q4Label') || '4. 您上个月主要进行的运动类型是？（可多选）'; },
+			currentQ5Label() { return this.$t('scales.pars3.q5Label') || '5. 总体来看，您对上个月自己的体育锻炼情况的自我评价是？'; },
+			currentIntensityOptions() {
+				const opts = this.$t('scales.pars3.intensity');
+				if (Array.isArray(opts) && opts.length >= 3) {
+					return opts.map((item, i) => ({ value: i + 1, label: item.label, desc: item.desc }));
+				}
+				return this.intensityOptions;
+			},
+			currentFrequencyOptions() {
+				const opts = this.$t('scales.pars3.frequency');
+				if (Array.isArray(opts) && opts.length === 5) {
+					return opts.map((item, i) => ({ value: i + 1, label: item.label }));
+				}
+				return this.frequencyOptions;
+			},
+			currentDurationOptions() {
+				const opts = this.$t('scales.pars3.duration');
+				if (Array.isArray(opts) && opts.length === 5) {
+					return opts.map((item, i) => ({ value: i + 1, label: item.label }));
+				}
+				return this.durationOptions;
+			},
+			currentSportTypes() {
+				const sports = this.$t('scales.pars3.sports');
+				if (Array.isArray(sports) && sports.length === 8) {
+					return sports.map((s, i) => ({ value: i + 1, label: s }));
+				}
+				return this.sportTypes;
+			},
+			currentSelfRatingOptions() {
+				const opts = this.$t('scales.pars3.selfRating');
+				if (Array.isArray(opts) && opts.length === 5) {
+					return opts.map((item, i) => ({ value: i + 1, label: item.label, desc: item.desc }));
+				}
+				return this.selfRatingOptions;
+			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('scales.pars3.title') || 'PARS-3 体育活动等级量表'
+			});
 		},
 		methods: {
 			prevPage() { if (this.currentPage > 1) this.currentPage--; },
@@ -188,9 +237,11 @@
 					uni.setStorageSync('scale_history', sh);
 				} catch(e) {}
 
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				const displayLevel = isEn ? (score >= 30 ? 'Highly Active' : score >= 10 ? 'Moderately Active' : 'Low Active') : level;
 				uni.showModal({
-					title: '提交成功',
-					content: `PARS-3综合得分：${score}\n活动等级：${level}`,
+					title: this.$t('scales.common.submitSuccess') || '提交成功',
+					content: isEn ? `PARS-3 Total Score: ${score}\nActivity Level: ${displayLevel}` : `PARS-3综合得分：${score}\n活动等级：${level}`,
 					showCancel: false,
 					success: () => { uni.navigateBack(); }
 				});

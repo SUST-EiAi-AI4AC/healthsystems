@@ -11,6 +11,7 @@
 	import {
 		init
 	} from "@/nxTemp";
+	import { updateTabBarLanguage } from "@/locale/tabbar";
 	export default {
 		methods: {
 			// #ifdef APP-PLUS
@@ -93,7 +94,8 @@
 			// #endif
 		},
 		onLaunch(options) {
-			console.log('App onLaunch')
+			console.log('App onLaunch');
+			updateTabBarLanguage();
 
 			init(options);
 			// #ifdef APP-PLUS
@@ -198,6 +200,7 @@
 		},
 		onShow: function() {
 			console.log('App Show');
+			updateTabBarLanguage();
 		},
 		onHide: function() {
 			console.log('App Hide')

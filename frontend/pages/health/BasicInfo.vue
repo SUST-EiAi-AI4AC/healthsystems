@@ -1,16 +1,16 @@
 <template>
 	<view class="container">
-		<p v-if="currentPage < 13" class="title">一般情况调查表</p>
-		<p v-if="currentPage < 22 && 12 < currentPage" class="title">社会支持评定量表</p>
-		<p v-if="currentPage > 21" class="title">生活事件量表（LES）</p>
+		<p v-if="currentPage < 13" class="title">{{ isEn ? 'General Information Questionnaire' : '一般情况调查表' }}</p>
+		<p v-if="currentPage < 22 && 12 < currentPage" class="title">{{ isEn ? 'Social Support Rating Scale (SSRS)' : '社会支持评定量表' }}</p>
+		<p v-if="currentPage > 21" class="title">{{ isEn ? 'Life Events Scale (LES)' : '生活事件量表（LES）' }}</p>
 		<div class="form-box">
 			<div v-if="currentPage === 1">
 				
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="1、性别" prop="sex" class="sex" required>
+					<u-form-item :label="isEn ? '1. Gender' : '1、性别'" prop="sex" class="sex" required>
 						<u-radio-group placement="column" v-model="BasicInfo.sex">
-							<u-radio v-for="item in sexList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in sexList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -21,7 +21,7 @@
 			<div v-if="currentPage === 2">
 				
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
-					<u-form-item label="2、电话" prop="phone" class="phone" required>
+					<u-form-item :label="isEn ? '2. Phone' : '2、电话'" prop="phone" class="phone" required>
 						<u--input v-model="BasicInfo.phone" style="padding-left: 25px; background-color: white; margin-top: 10px; border-radius: 10px; height: 60px; box-shadow: 1px 2px 5px #e2e2e2;" ></u--input>
 					</u-form-item>
 				</u-form>
@@ -29,7 +29,7 @@
 
 			<div v-if="currentPage === 3">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
-					<u-form-item label="3、出生年月" prop="birthDate"  required>
+					<u-form-item :label="isEn ? '3. Date of Birth' : '3、出生年月'" prop="birthDate"  required>
 						<xp-picker mode="ym" :yearRange=[1900,null] v-model="BasicInfo.birthDate" class="birthDate"/>
 					</u-form-item>
 				</u-form>
@@ -38,9 +38,9 @@
 			<div v-if="currentPage === 4">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="4、受教育程度" prop="culture" class="culture" required>
+					<u-form-item :label="isEn ? '4. Education Level' : '4、受教育程度'" prop="culture" class="culture" required>
 						<u-radio-group placement="column" v-model="BasicInfo.culture">
-							<u-radio v-for="item in cultureList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in cultureList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -52,9 +52,9 @@
 			<div v-if="currentPage === 5">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="5、单亲家庭" prop="isSingleParent" class="isSingleParent" required>
+					<u-form-item :label="isEn ? '5. Single-Parent Family' : '5、单亲家庭'" prop="isSingleParent" class="isSingleParent" required>
 						<u-radio-group placement="column" v-model="BasicInfo.isSingleParent">
-							<u-radio v-for="item in isSingleParentList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in isSingleParentList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -66,9 +66,9 @@
 			<div v-if="currentPage === 6">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="6、孤儿或被遗弃" prop="isAbandon" class="isAbandon" required>
+					<u-form-item :label="isEn ? '6. Orphan or Abandoned' : '6、孤儿或被遗弃'" prop="isAbandon" class="isAbandon" required>
 						<u-radio-group placement="column" v-model="BasicInfo.isAbandon">
-							<u-radio v-for="item in isAbandonList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in isAbandonList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -80,9 +80,9 @@
 			<div v-if="currentPage === 7">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="7、居住情况" prop="residential" class="residential" required>
+					<u-form-item :label="isEn ? '7. Living Situation' : '7、居住情况'" prop="residential" class="residential" required>
 						<u-radio-group placement="column" v-model="BasicInfo.residential">
-							<u-radio v-for="item in residentialList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in residentialList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -94,9 +94,9 @@
 			<div v-if="currentPage === 8">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="8、婚姻状况" prop="marital" class="marital" required>
+					<u-form-item :label="isEn ? '8. Marital Status' : '8、婚姻状况'" prop="marital" class="marital" required>
 						<u-radio-group placement="column" v-model="BasicInfo.marital">
-							<u-radio v-for="item in maritalList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in maritalList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -108,16 +108,16 @@
 			<div v-if="currentPage === 9">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="9、有无以下创伤经历" prop="trauma" class="trauma" required>
+					<u-form-item :label="isEn ? '9. Traumatic Experience(s)' : '9、有无以下创伤经历'" prop="trauma" class="trauma" required>
 						<u-radio-group placement="column" v-model="BasicInfo.trauma">
-							<u-radio v-for="item in traumaList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in traumaList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<u-form-item style="margin-bottom: 100px;" label="10、如果有，是在什么时候？" v-show="BasicInfo.trauma!='无'" prop="traumaTime"
+					<u-form-item style="margin-bottom: 100px;" :label="isEn ? '10. If so, when did it happen?' : '10、如果有，是在什么时候？'" v-show="BasicInfo.trauma!='无'" prop="traumaTime"
 						class="traumaTime" required>
 						<u-radio-group placement="column" v-model="BasicInfo.traumaTime">
-							<u-radio v-for="item in traumaTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in traumaTimeList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -129,9 +129,9 @@
 			<div v-if="currentPage === 10">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="11、亲属有无自杀" prop="relativeSuicide" class="relativeSuicide" required>
+					<u-form-item :label="isEn ? '11. Relative Suicide History' : '11、亲属有无自杀'" prop="relativeSuicide" class="relativeSuicide" required>
 						<u-radio-group placement="column" v-model="BasicInfo.relativeSuicide">
-							<u-radio v-for="item in relativeSuicideList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in relativeSuicideList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -143,9 +143,9 @@
 			<div v-if="currentPage === 11">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="12、精神疾病史" prop="mentalIllness" class="mentalIllness" required>
+					<u-form-item :label="isEn ? '12. History of Mental Illness' : '12、精神疾病史'" prop="mentalIllness" class="mentalIllness" required>
 						<u-radio-group placement="column" v-model="BasicInfo.mentalIllness">
-							<u-radio v-for="item in mentalIllnessList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in mentalIllnessList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -157,9 +157,9 @@
 			<div v-if="currentPage === 12">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
-					<u-form-item label="13、精神障碍家族史" prop="familyMentalHistory" class="familyMentalHistory" required>
+					<u-form-item :label="isEn ? '13. Family History of Mental Disorders' : '13、精神障碍家族史'" prop="familyMentalHistory" class="familyMentalHistory" required>
 						<u-radio-group placement="column" v-model="BasicInfo.familyMentalHistory">
-							<u-radio v-for="item in familyMentalHistoryList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in familyMentalHistoryList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -172,13 +172,13 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="1、您有多少关系密切，可以得到支持和帮助的朋友？" prop="closeRel" class="closeRel" required>
+					<u-form-item :label="isEn ? '1. How many close friends can you count on for support and help?' : '1、您有多少关系密切，可以得到支持和帮助的朋友？'" prop="closeRel" class="closeRel" required>
 						<u-radio-group placement="column" v-model="BasicInfo.closeRel">
-							<u-radio v-for="item in closeRelList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in closeRelList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -191,13 +191,13 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="2、近一年来，您：" prop="resident" class="resident" required>
+					<u-form-item :label="isEn ? '2. In the past year, you:' : '2、近一年来，您：'" prop="resident" class="resident" required>
 						<u-radio-group placement="column" v-model="BasicInfo.resident">
-							<u-radio v-for="item in residentList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in residentList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -210,13 +210,13 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="3、您与邻居：" prop="neighborRel" class="neighborRel" required>
+					<u-form-item :label="isEn ? '3. Relationship with neighbors:' : '3、您与邻居：'" prop="neighborRel" class="neighborRel" required>
 						<u-radio-group placement="column" v-model="BasicInfo.neighborRel">
-							<u-radio v-for="item in neighborRelList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in neighborRelList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -229,13 +229,13 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="4、您与同事：" prop="colleagueRel" class="colleagueRel" required>
+					<u-form-item :label="isEn ? '4. Relationship with colleagues:' : '4、您与同事：'" prop="colleagueRel" class="colleagueRel" required>
 						<u-radio-group placement="column" v-model="BasicInfo.colleagueRel">
-							<u-radio v-for="item in colleagueRelList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in colleagueRelList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -249,13 +249,13 @@
 					:rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="5、过去，在您遇到急难情况时，曾经得到的经济支持和解决实际问题的帮助来源有：" prop="favour" class="favour" required ref="favour">
+					<u-form-item :label="isEn ? '5. In emergencies, sources of financial and practical help:' : '5、过去，在您遇到急难情况时，曾经得到的经济支持和解决实际问题的帮助来源有：'" prop="favour" class="favour" required ref="favour">
 						<u-checkbox-group placement="column" v-model="BasicInfo.favour">
-							<u-checkbox v-for="item in favourList" :name="item" :label="item" :key="item"
+							<u-checkbox v-for="item in favourList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;" shape="circle"></u-checkbox>
 						</u-checkbox-group>
 					</u-form-item>
@@ -271,13 +271,13 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="6、过去，在您遇到急难情况时，曾得到的安慰和关心来源有：" prop="comfort" class="comfort" required ref="comfort">
+					<u-form-item :label="isEn ? '6. In emergencies, sources of comfort and emotional care:' : '6、过去，在您遇到急难情况时，曾得到的安慰和关心来源有：'" prop="comfort" class="comfort" required ref="comfort">
 						<u-checkbox-group placement="column" v-model="BasicInfo.comfort">
-							<u-checkbox v-for="item in comfortList" :name="item" :label="item" :key="item"
+							<u-checkbox v-for="item in comfortList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;" shape="circle"></u-checkbox>
 						</u-checkbox-group>
 					</u-form-item>
@@ -293,13 +293,13 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="7、您遇到烦恼事的倾诉方式：" prop="share" class="share" required>
+					<u-form-item :label="isEn ? '7. How do you confide when troubled?' : '7、您遇到烦恼事的倾诉方式：'" prop="share" class="share" required>
 						<u-radio-group placement="column" v-model="BasicInfo.share">
-							<u-radio v-for="item in shareList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in shareList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -312,13 +312,13 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="8、您遇到烦恼事的求助方式：" prop="seekHelp" class="seekHelp" required>
+					<u-form-item :label="isEn ? '8. How do you seek help when troubled?' : '8、您遇到烦恼事的求助方式：'" prop="seekHelp" class="seekHelp" required>
 						<u-radio-group placement="column" v-model="BasicInfo.seekHelp">
-							<u-radio v-for="item in seekHelpList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in seekHelpList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -331,14 +331,14 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。
+						<p>{{ isEn ? 'The following questions reflect the support you receive in society. Please answer truthfully based on your actual situation.' : '下面的问题用于反映您在社会中所获得的支持，请按各个问题的具体要求，根据您的实际情况填写。' }}
 						</p>
 					</div>
 
-					<u-form-item label="9、对于团体（如党团组织、宗教组织、公会、学生会等）组织活动，您：" prop="groupActivity" class="groupActivity"
+					<u-form-item :label="isEn ? '9. As for activities organized by groups (e.g., Party/League organizations, religious groups, unions, or student unions), you:' : '9、对于团体（如党团组织、宗教组织、公会、学生会等）组织活动，您：'" prop="groupActivity" class="groupActivity"
 						required>
 						<u-radio-group placement="column" v-model="BasicInfo.groupActivity">
-							<u-radio v-for="item in groupActivityList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in groupActivityList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -351,39 +351,39 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="1、恋爱或订婚" prop="datingEngaged_happen" class="datingEngaged_happen" required>
+					<u-form-item :label="isEn ? '1. Romance or Engagement' : '1、恋爱或订婚'" prop="datingEngaged_happen" class="datingEngaged_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.datingEngaged_happen">
-							<u-radio v-for="item in lesTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in lesTimeList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item v-show="BasicInfo.datingEngaged_happen!=null && BasicInfo.datingEngaged_happen!='未发生'"
-						required label="性质" prop="datingEngaged_type" class="datingEngaged_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="datingEngaged_type" class="datingEngaged_type">
 						<u-radio-group placement="column" v-model="BasicInfo.datingEngaged_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.datingEngaged_happen!=null && BasicInfo.datingEngaged_happen!='未发生'"
-						required label="精神影响程度" prop="datingEngaged_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="datingEngaged_mentalInfluence"
 						class="datingEngaged_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.datingEngaged_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.datingEngaged_happen!=null && BasicInfo.datingEngaged_happen!='未发生'"
-						required label="影响持续时间" prop="datingEngaged_duration" class="datingEngaged_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="datingEngaged_duration" class="datingEngaged_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.datingEngaged_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -399,36 +399,36 @@
 					:rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="2、恋爱失败、破裂" prop="datingLose_happen" class="datingLose_happen" required>
+					<u-form-item :label="isEn ? '2. Failed or broken love affair' : '2、恋爱失败、破裂'" prop="datingLose_happen" class="datingLose_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.datingLose_happen">
-							<u-radio v-for="item in lesTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in lesTimeList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item v-show="BasicInfo.datingLose_happen!=null && BasicInfo.datingLose_happen!='未发生'"
-						required label="性质" prop="datingLose_type" class="datingLose_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="datingLose_type" class="datingLose_type">
 						<u-radio-group placement="column" v-model="BasicInfo.datingLose_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item v-show="BasicInfo.datingLose_happen!=null && BasicInfo.datingLose_happen!='未发生'"
-						required label="精神影响程度" prop="datingLose_mentalInfluence" class="datingLose_mentalInfluence">
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="datingLose_mentalInfluence" class="datingLose_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.datingLose_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.datingLose_happen!=null && BasicInfo.datingLose_happen!='未发生'"
-						required label="影响持续时间" prop="datingLose_duration" class="datingLose_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="datingLose_duration" class="datingLose_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.datingLose_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -442,21 +442,21 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="3、父母不和" prop="parentsConflict_happen" class="parentsConflict_happen" required>
+					<u-form-item :label="isEn ? '3. Discord between parents' : '3、父母不和'" prop="parentsConflict_happen" class="parentsConflict_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.parentsConflict_happen">
-							<u-radio v-for="item in lesTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in lesTimeList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item
 						v-show="BasicInfo.parentsConflict_happen!=null && BasicInfo.parentsConflict_happen!='未发生'"
-						required label="性质" prop="parentsConflict_type" class="parentsConflict_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="parentsConflict_type" class="parentsConflict_type">
 						<u-radio-group placement="column" v-model="BasicInfo.parentsConflict_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -464,10 +464,10 @@
 
 					<u-form-item
 						v-show="BasicInfo.parentsConflict_happen!=null && BasicInfo.parentsConflict_happen!='未发生'"
-						required label="精神影响程度" prop="parentsConflict_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="parentsConflict_mentalInfluence"
 						class="parentsConflict_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.parentsConflict_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -475,9 +475,9 @@
 
 					<u-form-item style="margin-bottom: 100px;"
 						v-show="BasicInfo.parentsConflict_happen!=null && BasicInfo.parentsConflict_happen!='未发生'"
-						required label="影响持续时间" prop="parentsConflict_duration" class="parentsConflict_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="parentsConflict_duration" class="parentsConflict_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.parentsConflict_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -491,22 +491,22 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="4、家庭经济困难" prop="familyFinanceDif_happen" class="familyFinanceDif_happen"
+					<u-form-item :label="isEn ? '4. Family Financial Difficulties' : '4、家庭经济困难'" prop="familyFinanceDif_happen" class="familyFinanceDif_happen"
 						required>
 						<u-radio-group placement="column" v-model="BasicInfo.familyFinanceDif_happen">
-							<u-radio v-for="item in lesTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in lesTimeList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item
 						v-show="BasicInfo.familyFinanceDif_happen!=null && BasicInfo.familyFinanceDif_happen!='未发生'"
-						required label="性质" prop="familyFinanceDif_type" class="familyFinanceDif_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="familyFinanceDif_type" class="familyFinanceDif_type">
 						<u-radio-group placement="column" v-model="BasicInfo.familyFinanceDif_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -514,10 +514,10 @@
 
 					<u-form-item
 						v-show="BasicInfo.familyFinanceDif_happen!=null && BasicInfo.familyFinanceDif_happen!='未发生'"
-						required label="精神影响程度" prop="familyFinanceDif_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="familyFinanceDif_mentalInfluence"
 						class="familyFinanceDif_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.familyFinanceDif_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -525,9 +525,9 @@
 
 					<u-form-item style="margin-bottom: 100px;"
 						v-show="BasicInfo.familyFinanceDif_happen!=null && BasicInfo.familyFinanceDif_happen!='未发生'"
-						required label="影响持续时间" prop="familyFinanceDif_duration" class="familyFinanceDif_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="familyFinanceDif_duration" class="familyFinanceDif_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.familyFinanceDif_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -541,38 +541,38 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="5、欠债" prop="debt_happen" class="debt_happen" required>
+					<u-form-item :label="isEn ? '5. Debt' : '5、欠债'" prop="debt_happen" class="debt_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.debt_happen">
-							<u-radio v-for="item in lesTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in lesTimeList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item v-show="BasicInfo.debt_happen!=null && BasicInfo.debt_happen!='未发生'" required
-						label="性质" prop="debt_type" class="debt_type">
+						:label="isEn ? 'Nature' : '性质'" prop="debt_type" class="debt_type">
 						<u-radio-group placement="column" v-model="BasicInfo.debt_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.debt_happen!=null && BasicInfo.debt_happen!='未发生'" required
-						label="精神影响程度" prop="debt_mentalInfluence" class="debt_mentalInfluence">
+						:label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="debt_mentalInfluence" class="debt_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.debt_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.debt_happen!=null && BasicInfo.debt_happen!='未发生'" required
-						label="影响持续时间" prop="debt_duration" class="debt_duration">
+						:label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="debt_duration" class="debt_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.debt_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -586,39 +586,39 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="6、家庭成员重病、重伤" prop="familySerInj_happen" class="familySerInj_happen" required>
+					<u-form-item :label="isEn ? '6. Serious illness or injury of a family member' : '6、家庭成员重病、重伤'" prop="familySerInj_happen" class="familySerInj_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.familySerInj_happen">
-							<u-radio v-for="item in lesTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in lesTimeList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item v-show="BasicInfo.familySerInj_happen!=null && BasicInfo.familySerInj_happen!='未发生'"
-						required label="性质" prop="familySerInj_type" class="familySerInj_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="familySerInj_type" class="familySerInj_type">
 						<u-radio-group placement="column" v-model="BasicInfo.familySerInj_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.familySerInj_happen!=null && BasicInfo.familySerInj_happen!='未发生'"
-						required label="精神影响程度" prop="familySerInj_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="familySerInj_mentalInfluence"
 						class="familySerInj_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.familySerInj_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.familySerInj_happen!=null && BasicInfo.familySerInj_happen!='未发生'"
-						required label="影响持续时间" prop="familySerInj_duration" class="familySerInj_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="familySerInj_duration" class="familySerInj_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.familySerInj_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -632,38 +632,38 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="7、家庭成员死亡" prop="familyDie_happen" class="familyDie_happen" required>
+					<u-form-item :label="isEn ? '7. Death of a family member' : '7、家庭成员死亡'" prop="familyDie_happen" class="familyDie_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.familyDie_happen">
-							<u-radio v-for="item in lesTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="item in lesTimeList" :name="item" :label="getOptLabel(item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
 					<u-form-item v-show="BasicInfo.familyDie_happen!=null && BasicInfo.familyDie_happen!='未发生'" required
-						label="性质" prop="familyDie_type" class="familyDie_type">
+						:label="isEn ? 'Nature' : '性质'" prop="familyDie_type" class="familyDie_type">
 						<u-radio-group placement="column" v-model="BasicInfo.familyDie_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.familyDie_happen!=null && BasicInfo.familyDie_happen!='未发生'" required
-						label="精神影响程度" prop="familyDie_mentalInfluence" class="familyDie_mentalInfluence">
+						:label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="familyDie_mentalInfluence" class="familyDie_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.familyDie_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.familyDie_happen!=null && BasicInfo.familyDie_happen!='未发生'" required
-						label="影响持续时间" prop="familyDie_duration" class="familyDie_duration">
+						:label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="familyDie_duration" class="familyDie_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.familyDie_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -677,40 +677,40 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="8、本人重病或重伤" prop="serInj_happen" class="serInj_happen" required>
+					<u-form-item :label="isEn ? '8. Serious illness or injury of yourself' : '8、本人重病或重伤'" prop="serInj_happen" class="serInj_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.serInj_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.serInj_happen!=null && BasicInfo.serInj_happen!='未发生'" required
-						label="性质" prop="serInj_type" class="serInj_type">
+						:label="isEn ? 'Nature' : '性质'" prop="serInj_type" class="serInj_type">
 						<u-radio-group placement="column" v-model="BasicInfo.serInj_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.serInj_happen!=null && BasicInfo.serInj_happen!='未发生'" required
-						label="精神影响程度" prop="serInj_mentalInfluence" class="serInj_mentalInfluence">
+						:label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="serInj_mentalInfluence" class="serInj_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.serInj_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.serInj_happen!=null && BasicInfo.serInj_happen!='未发生'" required
-						label="影响持续时间" prop="serInj_duration" class="serInj_duration">
+						:label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="serInj_duration" class="serInj_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.serInj_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -724,40 +724,40 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="9、待业、无业" prop="unemployed_happen" class="unemployed_happen" required>
+					<u-form-item :label="isEn ? '9. Unemployment' : '9、待业、无业'" prop="unemployed_happen" class="unemployed_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.unemployed_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.unemployed_happen!=null && BasicInfo.unemployed_happen!='未发生'"
-						required label="性质" prop="unemployed_type" class="unemployed_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="unemployed_type" class="unemployed_type">
 						<u-radio-group placement="column" v-model="BasicInfo.unemployed_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.unemployed_happen!=null && BasicInfo.unemployed_happen!='未发生'"
-						required label="精神影响程度" prop="unemployed_mentalInfluence" class="unemployed_mentalInfluence">
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="unemployed_mentalInfluence" class="unemployed_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.unemployed_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.unemployed_happen!=null && BasicInfo.unemployed_happen!='未发生'"
-						required label="影响持续时间" prop="unemployed_duration" class="unemployed_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="unemployed_duration" class="unemployed_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.unemployed_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -771,41 +771,41 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="10、工作压力大" prop="workPressure_happen" class="workPressure_happen" required>
+					<u-form-item :label="isEn ? '10. Heavy work pressure' : '10、工作压力大'" prop="workPressure_happen" class="workPressure_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.workPressure_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.workPressure_happen!=null && BasicInfo.workPressure_happen!='未发生'"
-						required label="性质" prop="workPressure_type" class="workPressure_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="workPressure_type" class="workPressure_type">
 						<u-radio-group placement="column" v-model="BasicInfo.workPressure_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.workPressure_happen!=null && BasicInfo.workPressure_happen!='未发生'"
-						required label="精神影响程度" prop="workPressure_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="workPressure_mentalInfluence"
 						class="workPressure_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.workPressure_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.workPressure_happen!=null && BasicInfo.workPressure_happen!='未发生'"
-						required label="影响持续时间" prop="workPressure_duration" class="workPressure_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="workPressure_duration" class="workPressure_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.workPressure_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -819,40 +819,40 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="11、学习成绩差" prop="poorMark_happen" class="poorMark_happen" required>
+					<u-form-item :label="isEn ? '11. Poor academic performance' : '11、学习成绩差'" prop="poorMark_happen" class="poorMark_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.poorMark_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.poorMark_happen!=null && BasicInfo.poorMark_happen!='未发生'" required
-						label="性质" prop="poorMark_type" class="poorMark_type">
+						:label="isEn ? 'Nature' : '性质'" prop="poorMark_type" class="poorMark_type">
 						<u-radio-group placement="column" v-model="BasicInfo.poorMark_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.poorMark_happen!=null && BasicInfo.poorMark_happen!='未发生'" required
-						label="精神影响程度" prop="poorMark_mentalInfluence" class="poorMark_mentalInfluence">
+						:label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="poorMark_mentalInfluence" class="poorMark_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.poorMark_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.poorMark_happen!=null && BasicInfo.poorMark_happen!='未发生'" required
-						label="影响持续时间" prop="poorMark_duration" class="poorMark_duration">
+						:label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="poorMark_duration" class="poorMark_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.poorMark_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -866,41 +866,41 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="12、与舍友不和" prop="roommatesDis_happen" class="roommatesDis_happen" required>
+					<u-form-item :label="isEn ? '12. Discord with roommates' : '12、与舍友不和'" prop="roommatesDis_happen" class="roommatesDis_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.roommatesDis_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.roommatesDis_happen!=null && BasicInfo.roommatesDis_happen!='未发生'"
-						required label="性质" prop="roommatesDis_type" class="roommatesDis_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="roommatesDis_type" class="roommatesDis_type">
 						<u-radio-group placement="column" v-model="BasicInfo.roommatesDis_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.roommatesDis_happen!=null && BasicInfo.roommatesDis_happen!='未发生'"
-						required label="精神影响程度" prop="roommatesDis_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="roommatesDis_mentalInfluence"
 						class="roommatesDis_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.roommatesDis_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.roommatesDis_happen!=null && BasicInfo.roommatesDis_happen!='未发生'"
-						required label="影响持续时间" prop="roommatesDis_duration" class="roommatesDis_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="roommatesDis_duration" class="roommatesDis_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.roommatesDis_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -914,41 +914,41 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="13、生活规律重大变动" prop="lifeLawChange_happen" class="lifeLawChange_happen" required>
+					<u-form-item :label="isEn ? '13. Major changes in daily routine' : '13、生活规律重大变动'" prop="lifeLawChange_happen" class="lifeLawChange_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.lifeLawChange_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.lifeLawChange_happen!=null && BasicInfo.lifeLawChange_happen!='未发生'"
-						required label="性质" prop="lifeLawChange_type" class="lifeLawChange_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="lifeLawChange_type" class="lifeLawChange_type">
 						<u-radio-group placement="column" v-model="BasicInfo.lifeLawChange_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.lifeLawChange_happen!=null && BasicInfo.lifeLawChange_happen!='未发生'"
-						required label="精神影响程度" prop="lifeLawChange_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="lifeLawChange_mentalInfluence"
 						class="lifeLawChange_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.lifeLawChange_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.lifeLawChange_happen!=null && BasicInfo.lifeLawChange_happen!='未发生'"
-						required label="影响持续时间" prop="lifeLawChange_duration" class="lifeLawChange_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="lifeLawChange_duration" class="lifeLawChange_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.lifeLawChange_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -962,41 +962,41 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="14、好友重病或重伤" prop="friendSerInj_happen" class="friendSerInj_happen" required>
+					<u-form-item :label="isEn ? '14. Serious illness or injury of a close friend' : '14、好友重病或重伤'" prop="friendSerInj_happen" class="friendSerInj_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.friendSerInj_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.friendSerInj_happen!=null && BasicInfo.friendSerInj_happen!='未发生'"
-						required label="性质" prop="friendSerInj_type" class="friendSerInj_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="friendSerInj_type" class="friendSerInj_type">
 						<u-radio-group placement="column" v-model="BasicInfo.friendSerInj_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.friendSerInj_happen!=null && BasicInfo.friendSerInj_happen!='未发生'"
-						required label="精神影响程度" prop="friendSerInj_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="friendSerInj_mentalInfluence"
 						class="friendSerInj_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.friendSerInj_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.friendSerInj_happen!=null && BasicInfo.friendSerInj_happen!='未发生'"
-						required label="影响持续时间" prop="friendSerInj_duration" class="friendSerInj_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="friendSerInj_duration" class="friendSerInj_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.friendSerInj_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -1010,40 +1010,40 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="15、好友死亡" prop="friendDie_happen" class="friendDie_happen" required>
+					<u-form-item :label="isEn ? '15. Death of a close friend' : '15、好友死亡'" prop="friendDie_happen" class="friendDie_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.friendDie_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.friendDie_happen!=null && BasicInfo.friendDie_happen!='未发生'" required
-						label="性质" prop="friendDie_type" class="friendDie_type">
+						:label="isEn ? 'Nature' : '性质'" prop="friendDie_type" class="friendDie_type">
 						<u-radio-group placement="column" v-model="BasicInfo.friendDie_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.friendDie_happen!=null && BasicInfo.friendDie_happen!='未发生'" required
-						label="精神影响程度" prop="friendDie_mentalInfluence" class="friendDie_mentalInfluence">
+						:label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="friendDie_mentalInfluence" class="friendDie_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.friendDie_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.friendDie_happen!=null && BasicInfo.friendDie_happen!='未发生'" required
-						label="影响持续时间" prop="friendDie_duration" class="friendDie_duration">
+						:label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="friendDie_duration" class="friendDie_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.friendDie_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -1057,42 +1057,42 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="16、被人误会错怪、诬告、议论" prop="misunderstood_happen" class="misunderstood_happen"
+					<u-form-item :label="isEn ? '16. Being misunderstood, wrongly blamed, falsely accused, or gossiped about' : '16、被人误会错怪、诬告、议论'" prop="misunderstood_happen" class="misunderstood_happen"
 						required>
 						<u-radio-group placement="column" v-model="BasicInfo.misunderstood_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.misunderstood_happen!=null && BasicInfo.misunderstood_happen!='未发生'"
-						required label="性质" prop="misunderstood_type" class="misunderstood_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="misunderstood_type" class="misunderstood_type">
 						<u-radio-group placement="column" v-model="BasicInfo.misunderstood_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.misunderstood_happen!=null && BasicInfo.misunderstood_happen!='未发生'"
-						required label="精神影响程度" prop="misunderstood_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="misunderstood_mentalInfluence"
 						class="misunderstood_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.misunderstood_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item style="margin-bottom: 100px;" v-show="BasicInfo.misunderstood_happen!=null && BasicInfo.misunderstood_happen!='未发生'"
-						required label="影响持续时间" prop="misunderstood_duration" class="misunderstood_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="misunderstood_duration" class="misunderstood_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.misunderstood_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -1106,40 +1106,40 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="17、失窃、财产损失" prop="stolen_happen" class="stolen_happen" required>
+					<u-form-item :label="isEn ? '17. Theft or property loss' : '17、失窃、财产损失'" prop="stolen_happen" class="stolen_happen" required>
 						<u-radio-group placement="column" v-model="BasicInfo.stolen_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.stolen_happen!=null && BasicInfo.stolen_happen!='未发生'" required
-						label="性质" prop="stolen_type" class="stolen_type">
+						:label="isEn ? 'Nature' : '性质'" prop="stolen_type" class="stolen_type">
 						<u-radio-group placement="column" v-model="BasicInfo.stolen_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item v-show="BasicInfo.stolen_happen!=null && BasicInfo.stolen_happen!='未发生'" required
-						label="精神影响程度" prop="stolen_mentalInfluence" class="stolen_mentalInfluence">
+						:label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="stolen_mentalInfluence" class="stolen_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.stolen_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
 					</u-form-item>
 
 					<u-form-item  style="margin-bottom: 100px;" v-show="BasicInfo.stolen_happen!=null && BasicInfo.stolen_happen!='未发生'" required
-						label="影响持续时间" prop="stolen_duration" class="stolen_duration">
+						:label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="stolen_duration" class="stolen_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.stolen_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -1153,14 +1153,14 @@
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="BasicInfo" :rules="rules">
 					
 					<div class="box-card">
-						<p>下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。
+						<p>{{ isEn ? 'Below are daily life events that anyone might encounter. Whether positive or negative can be determined based on your own situation. Please answer truthfully based on your actual experience.' : '下面是每个人都有可能遇到的一些日常生活事件，究竟是好事还是坏事，可根据个人情况自行判断。这些事情可能对个人有精神上的影响（体验为紧张、压力、兴奋或苦恼等），影响的轻重程度是各不相同的，影响持续的时间也不一样。请您根据自己的情况，实事求是地回答问题，请在最适合的答案上打钩。' }}
 						</p>
 					</div>
 
-					<u-form-item label="18、意外惊吓、事故、自然灾害" prop="accidentalShock_happen" class="accidentalShock_happen"
+					<u-form-item :label="isEn ? '18. Accidental Shock, Disaster, or Accident' : '18、意外惊吓、事故、自然灾害'" prop="accidentalShock_happen" class="accidentalShock_happen"
 						required>
 						<u-radio-group placement="column" v-model="BasicInfo.accidentalShock_happen">
-							<u-radio v-for="item in lesTimeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTimeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -1168,9 +1168,9 @@
 
 					<u-form-item
 						v-show="BasicInfo.accidentalShock_happen!=null && BasicInfo.accidentalShock_happen!='未发生'"
-						required label="性质" prop="accidentalShock_type" class="accidentalShock_type">
+						required :label="isEn ? 'Nature' : '性质'" prop="accidentalShock_type" class="accidentalShock_type">
 						<u-radio-group placement="column" v-model="BasicInfo.accidentalShock_type">
-							<u-radio v-for="item in lesTypeList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesTypeList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -1178,10 +1178,10 @@
 
 					<u-form-item
 						v-show="BasicInfo.accidentalShock_happen!=null && BasicInfo.accidentalShock_happen!='未发生'"
-						required label="精神影响程度" prop="accidentalShock_mentalInfluence"
+						required :label="isEn ? 'Mental Impact Degree' : '精神影响程度'" prop="accidentalShock_mentalInfluence"
 						class="accidentalShock_mentalInfluence">
 						<u-radio-group placement="column" v-model="BasicInfo.accidentalShock_mentalInfluence">
-							<u-radio v-for="item in lesMentalInfluenceList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesMentalInfluenceList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx;">
 							</u-radio>
 						</u-radio-group>
@@ -1189,9 +1189,9 @@
 
 					<u-form-item style="margin-bottom: 100px;"
 						v-show="BasicInfo.accidentalShock_happen!=null && BasicInfo.accidentalShock_happen!='未发生'"
-						required label="影响持续时间" prop="accidentalShock_duration" class="accidentalShock_duration">
+						required :label="isEn ? 'Duration of Impact' : '影响持续时间'" prop="accidentalShock_duration" class="accidentalShock_duration">
 						<u-radio-group placement="column" v-model="BasicInfo.accidentalShock_duration">
-							<u-radio v-for="item in lesDurationList" :label="item" :key="item" :name="item"
+							<u-radio v-for="item in lesDurationList" :label="getOptLabel(item)" :key="item" :name="item"
 								style="margin: 5rpx; ">
 							</u-radio>
 						</u-radio-group>
@@ -1202,9 +1202,9 @@
 			</div>
 		</div>
 		<div class="all-button">
-			<div v-if="currentPage !== 1"><button class="button" @click="prevPage">上一题</button></div>
-			<div v-if="currentPage !== 39"><button class="button" @click="nextPage">下一题</button></div>
-			<div v-if="currentPage === 39"><button class="button" @click="submit('form')">提交</button></div>
+			<div v-if="currentPage !== 1"><button class="button" @click="prevPage">{{ isEn ? 'Previous' : '上一题' }}</button></div>
+			<div v-if="currentPage !== 39"><button class="button" @click="nextPage">{{ isEn ? 'Next' : '下一题' }}</button></div>
+			<div v-if="currentPage === 39"><button class="button" @click="submit('form')">{{ isEn ? 'Submit' : '提交' }}</button></div>
 		</div>
 	</view>
 </template>
@@ -1339,17 +1339,17 @@
 				rules: {
 					favour_other: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					sex: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					phone: [{
 							required: true,
-							message: "此项为必填项",
+							message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 							trigger: ['change', 'blur']
 						},
 						{
@@ -1364,37 +1364,37 @@
 					],
 					birthDate: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					culture: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					isSingleParent: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					isAbandon: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					residential: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					marital: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					trauma: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					traumaTime: [{
@@ -1404,48 +1404,48 @@
 							}
 							return true;
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					relativeSuicide: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					mentalIllness: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familyMentalHistory: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					closeRel: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					resident: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					neighborRel: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					colleagueRel: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					favour: [{
 						type: 'array',
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					favour_other: [{
@@ -1455,13 +1455,13 @@
 							}
 							return true;
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					comfort: [{
 						type: 'array',
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					comfort_other: [{
@@ -1472,506 +1472,506 @@
 							}
 							return true;
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					share: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					seekHelp: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					groupActivity: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					datingEngaged_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					datingEngaged_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.datingEngaged_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					datingEngaged_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.datingEngaged_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					datingEngaged_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.datingEngaged_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					datingLose_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					datingLose_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.datingLose_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					datingLose_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.datingLose_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					datingLose_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.datingLose_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					parentsConflict_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					parentsConflict_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.parentsConflict_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					parentsConflict_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.parentsConflict_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					parentsConflict_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.parentsConflict_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					familyFinanceDif_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familyFinanceDif_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familyFinanceDif_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familyFinanceDif_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familyFinanceDif_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familyFinanceDif_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familyFinanceDif_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					debt_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					debt_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.debt_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					debt_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.debt_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					debt_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.debt_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					familySerInj_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familySerInj_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familySerInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familySerInj_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familySerInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familySerInj_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familySerInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					familyDie_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familyDie_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familyDie_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familyDie_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familyDie_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					familyDie_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.familyDie_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					serInj_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					serInj_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.serInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					serInj_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.serInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					serInj_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.serInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					unemployed_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					unemployed_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.unemployed_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					unemployed_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.unemployed_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					unemployed_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.unemployed_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					workPressure_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					workPressure_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.workPressure_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					workPressure_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.workPressure_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					workPressure_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.workPressure_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					poorMark_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					poorMark_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.poorMark_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					poorMark_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.poorMark_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					poorMark_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.poorMark_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					roommatesDis_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					roommatesDis_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.roommatesDis_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					roommatesDis_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.roommatesDis_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					roommatesDis_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.roommatesDis_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					lifeLawChange_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					lifeLawChange_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.lifeLawChange_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					lifeLawChange_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.lifeLawChange_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					lifeLawChange_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.lifeLawChange_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					friendSerInj_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					friendSerInj_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.friendSerInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					friendSerInj_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.friendSerInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					friendSerInj_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.friendSerInj_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					friendDie_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					friendDie_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.friendDie_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					friendDie_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.friendDie_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					friendDie_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.friendDie_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					misunderstood_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					misunderstood_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.misunderstood_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					misunderstood_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.misunderstood_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					misunderstood_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.misunderstood_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					stolen_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					stolen_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.stolen_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					stolen_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.stolen_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					stolen_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.stolen_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 
 					accidentalShock_happen: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					accidentalShock_type: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.accidentalShock_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					accidentalShock_mentalInfluence: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.accidentalShock_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					accidentalShock_duration: [{
 						validator: (rule, value, callback) => {
 							return this.validate(value, this.BasicInfo.accidentalShock_happen);
 						},
-						message: "此项为必填项",
+						message: this.$t('mineSub.basicInfo.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}]
 
@@ -2005,6 +2005,55 @@
 			}
 		},
 		methods: {
+			getOptLabel(val) {
+				if (!this.isEn || !val) return val;
+				const map = {
+					"男": "Male", "女": "Female",
+					"本科以下": "Undergraduate and Below", "本科": "Bachelor's Degree", "硕士研究生": "Master's Degree", "博士研究生": "Doctoral Degree",
+					"是": "Yes", "否": "No", "无": "None", "有": "Yes",
+					"在家": "At Home", "独居": "Living Alone", "集体宿舍": "Dormitory / Shared Housing",
+					"未婚": "Unmarried", "已婚": "Married", "离异": "Divorced", "再婚": "Remarried", "丧偶": "Widowed",
+					"性虐待": "Sexual Abuse", "躯体虐待": "Physical Abuse", "亲友亡故": "Bereavement", "被严重忽视": "Severe Neglect", "事故": "Accident", "灾难": "Disaster",
+					"童年期": "Childhood", "青少年": "Adolescence", "成年后": "Adulthood",
+					"一个也没有": "None", "1-2个": "1-2", "3-5个": "3-5", "6个或6个以上": "6 or more",
+					"远离家人，且独居一室": "Living alone, far from family",
+					"住处经常变动，多数时间和陌生人住在一起": "Frequent moves, living mostly with strangers",
+					"和同学、同事或朋友住在一起": "Living with classmates, colleagues, or friends",
+					"和家人住在一起": "Living with family",
+					"相互之间从不关心，只是点头之交": "Never care about each other, mere nodding acquaintances",
+					"遇到困难可能稍微关心": "May show slight care when facing difficulties",
+					"有些邻居很关心您": "Some neighbors care a lot",
+					"大多数邻居都很关心您": "Most neighbors care very much",
+					"有些同事很关心您": "Some colleagues care a lot",
+					"无任何来源": "No source",
+					"配偶": "Spouse",
+					"其他家人": "Other family members",
+					"朋友": "Friends",
+					"亲戚": "Relatives",
+					"同事": "Colleagues",
+					"工作单位": "Work organization / employer",
+					"党团公会等官方或半官方组织": "Official or semi-official organizations",
+					"宗教、社会团体等非官方组织": "Religious or NGO social organizations",
+					"从不向任何人倾诉": "Never confide in anyone",
+					"只向关系即为密切的1-2人倾诉": "Only confide in 1-2 very close people",
+					"如果朋友主动询问您会说出来": "Confide if friends ask actively",
+					"主动倾诉自己的烦恼，以获得支持和理解": "Actively confide to seek support and understanding",
+					"只靠自己，不接受别人帮助": "Rely only on self, reject others' help",
+					"很少请求别人帮助": "Rarely ask for help",
+					"有时请求别人帮助": "Sometimes ask for help",
+					"有困难时经常向家人、亲友、组织求援": "Frequently ask family, friends, or organizations for help",
+					"从不参加": "Never attend",
+					"偶尔参加": "Occasionally attend",
+					"经常参加": "Frequently attend",
+					"主动参加并积极活动": "Actively participate and organize",
+					"未发生": "Did not occur", "一年前": "Over 1 year ago", "一年内": "Within 1 year", "长期性": "Chronic / Ongoing",
+					"好事": "Positive", "坏事": "Negative", "无所谓": "Neutral / Indifferent",
+					"无影响": "No impact", "轻度": "Mild", "中度": "Moderate", "重度": "Severe",
+					"三月内": "Within 3 months", "半年内": "Within 6 months", "一年内": "Within 1 year", "一年以上": "Over 1 year"
+				};
+				return map[val] || val;
+			},
+
 
 			nextPage() {
 				if (this.currentPage < 39) {
@@ -2085,7 +2134,7 @@
 						console.log(res.data)
 						if (res.code === 200) { //返回成功码200，弹窗提示，延迟转到用户主页
 							uni.showToast({
-								title: "提交成功"
+								title: this.isEn ? "Submitted successfully" : "提交成功"
 							});
 							setTimeout(() => {
 								uni.reLaunch({
@@ -2094,13 +2143,13 @@
 							}, 700);
 						} else { //返回非200，弹窗提示失败，停留在此页
 							uni.showToast({
-								title: "提交失败",
+								title: this.isEn ? "Submission failed" : "提交失败",
 								icon: 'error'
 							});
 						}
 					})
 				}).catch(err => {
-					uni.$u.toast('表单填写有误，请修改后重新提交')
+					uni.$u.toast(this.isEn ? 'Form has errors, please check and resubmit' : '表单填写有误，请修改后重新提交')
 
 					if (err && err.length > 0) {
 						const query = uni.createSelectorQuery().in(this);
@@ -2166,6 +2215,16 @@
 					}
 				})
 			}
+		},
+				computed: {
+			isEn() {
+				return this.$i18n && this.$i18n.currentLang === 'en';
+			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.isEn ? 'Personal Information' : '个人基本信息'
+			});
 		},
 		onLoad(parms) {
 			this.getDetail();

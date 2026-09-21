@@ -1,10 +1,10 @@
 <template>
 	<view class="page">
 		<view class="intro-card">
-			<text class="intro-title">SCL-90 症状自评量表</text>
-			<text class="intro-text">请根据您<text style="color:#e74c3c;">最近一周</text>的实际感受，选择符合程度（1=无，2=轻度，3=中度，4=相当重，5=严重）。</text>
+			<text class="intro-title">{{ $t('scales.scl90.title') }}</text>
+			<text class="intro-text">{{ $t('scales.scl90.instruction') }}</text>
 			<view class="dimension-list">
-				<text class="dim-tag" v-for="d in dimensionNames" :key="d">{{ d }}</text>
+				<text class="dim-tag" v-for="d in currentDimensionNames" :key="d">{{ d }}</text>
 			</view>
 		</view>
 
@@ -18,13 +18,13 @@
 		<view class="score-hint">
 			<view v-for="s in 5" :key="s" class="hint-item">
 				<text class="hint-score">{{ s }}</text>
-				<text class="hint-label">{{ sclLabels[s-1] }}</text>
+				<text class="hint-label">{{ currentSclLabels[s-1] }}</text>
 			</view>
 		</view>
 
 		<view class="form-box">
 			<view class="dim-badge">{{ getDimName(currentPage) }}</view>
-			<view class="question-label">{{ currentPage }}. {{ questions[currentPage - 1] }}</view>
+			<view class="question-label">{{ currentPage }}. {{ currentQuestions[currentPage - 1] }}</view>
 			<view class="score-row">
 				<view v-for="s in 5" :key="s" class="score-btn"
 					:class="{ selected: form['q' + currentPage] === s }"
@@ -35,9 +35,9 @@
 		</view>
 
 		<view class="nav-btns">
-			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">上一题</button>
-			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">下一题</button>
-			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">提交</button>
+			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">{{ $t('scales.common.prev') }}</button>
+			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">{{ $t('scales.common.next') }}</button>
+			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">{{ $t('scales.common.submit') }}</button>
 		</view>
 	</view>
 </template>
@@ -101,6 +101,25 @@
 				]
 			};
 		},
+		computed: {
+			currentSclLabels() {
+				const labels = this.$t('scales.scl90.labels');
+				return (Array.isArray(labels) && labels.length === 5) ? labels : this.sclLabels;
+			},
+			currentDimensionNames() {
+				const dims = this.$t('scales.scl90.dimensions');
+				return (Array.isArray(dims) && dims.length >= 9) ? dims : this.dimensionNames;
+			},
+			currentQuestions() {
+				const q = this.$t('scales.scl90.questions');
+				return (Array.isArray(q) && q.length === 90) ? q : this.questions;
+			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('scales.scl90.title') || 'SCL-90 症状自评量表'
+			});
+		},
 		created() {
 			for (let i = 1; i <= 90; i++) {
 				this.$set(this.form, 'q' + i, null);
@@ -108,7 +127,12 @@
 		},
 		methods: {
 			getDimName(page) {
-				return this.dimMapping[page] || '附加项目';
+				const defaultDim = this.dimMapping[page] || '其他';
+				const dimIdx = this.dimensionNames.indexOf(defaultDim);
+				if (dimIdx !== -1 && this.currentDimensionNames && this.currentDimensionNames[dimIdx]) {
+					return this.currentDimensionNames[dimIdx];
+				}
+				return defaultDim;
 			},
 			prevPage() { if (this.currentPage > 1) this.currentPage--; },
 			nextPage() { if (this.currentPage < this.totalPages) this.currentPage++; },
@@ -133,13 +157,16 @@
 				const http = (await import('@/nxTemp/config/requestConfig')).default
 				const config = (await import('@/nxTemp/config/index.config')).default
 				const scores = this.calcScores();
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
 				const total = scores['总分'];
 				const avg = scores['阳性均分'];
-				let content = `SCL-90总分：${total}，阳性均分：${avg}\n\n各维度均分：\n`;
+				let content = isEn ? `SCL-90 Total Score: ${total}, Positive Symptom Average: ${avg}\n\nDimension Averages:\n` : `SCL-90总分：${total}，阳性均分：${avg}\n\n各维度均分：\n`;
 				const dimOrder = ['躯体化','强迫','人际敏感','抑郁','焦虑','敌对','恐怖','偏执','精神病性'];
-				for (const d of dimOrder) {
+				const dimEn = ['Somatization','Obsessive-Compulsive','Interpersonal Sensitivity','Depression','Anxiety','Hostility','Phobic Anxiety','Paranoid Ideation','Psychoticism'];
+				for (let i = 0; i < dimOrder.length; i++) {
+					const d = dimOrder[i];
 					const flag = parseFloat(scores[d]) >= 2 ? '⚠️' : '';
-					content += `${d}：${scores[d]}${flag}\n`;
+					content += isEn ? `${dimEn[i]}: ${scores[d]}${flag}\n` : `${d}：${scores[d]}${flag}\n`;
 				}
 				const payload = { status: 2 }
 				for (let i = 1; i <= 90; i++) payload['q' + i] = this.form['q' + i] || 0
@@ -167,7 +194,7 @@
 					uni.setStorageSync('scale_history', sh);
 				} catch(e) {}
 				uni.showModal({
-					title: '提交成功',
+					title: this.$t('scales.common.submitSuccess') || '提交成功',
 					content,
 					showCancel: false,
 					success: () => { uni.navigateBack(); }

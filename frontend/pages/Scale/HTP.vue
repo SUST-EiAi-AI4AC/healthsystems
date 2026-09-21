@@ -2,7 +2,7 @@
 	<view class="page">
 		<!-- 提示条 -->
 		<view class="hint-bar">
-			<text class="hint-text">🏠 请在画布上自由绘制：房屋、树木、人物</text>
+			<text class="hint-text">{{ $t('scales.htp.hint') }}</text>
 		</view>
 
 		<!-- 工具栏（提示条下方） -->
@@ -11,15 +11,15 @@
 			<view class="tool-group">
 				<view class="tool-btn" :class="{ active: currentTool === 'pencil' }" @click="selectTool('pencil')">
 					<text class="tool-icon">✏️</text>
-					<text class="tool-label">铅笔</text>
+					<text class="tool-label">{{ $t('scales.htp.pencil') }}</text>
 				</view>
 				<view class="tool-btn" :class="{ active: currentTool === 'eraser' }" @click="selectTool('eraser')">
 					<text class="tool-icon">🧹</text>
-					<text class="tool-label">橡皮</text>
+					<text class="tool-label">{{ $t('scales.htp.eraser') }}</text>
 				</view>
 				<view class="tool-btn" @click="clearCanvas">
 					<text class="tool-icon">📄</text>
-					<text class="tool-label">白纸</text>
+					<text class="tool-label">{{ $t('scales.htp.clear') }}</text>
 				</view>
 			</view>
 
@@ -56,20 +56,20 @@
 
 		<!-- 底部按鈕（画布下方） -->
 		<view class="bottom-bar">
-			<button class="btn-undo" @click="undo">↩ 撤销</button>
-			<button class="btn-analyze" @click="analyzeDrawing">🔍 分析报告</button>
+			<button class="btn-undo" @click="undo">{{ $t('scales.htp.undo') }}</button>
+			<button class="btn-analyze" @click="analyzeDrawing">{{ $t('scales.htp.analyze') }}</button>
 		</view>
 		
 		<!-- 历史记录按鈕（撤销按鈕下方） -->
 		<view class="history-bar">
-			<button class="btn-history" @click="openHistory">📜 历史记录</button>
+			<button class="btn-history" @click="openHistory">{{ $t('scales.htp.history') }}</button>
 		</view>
 
 		<!-- 报告弹窗 -->
 		<view v-if="showReport" class="report-mask" @click.self="showReport = false">
 			<view class="report-modal">
 				<view class="report-header">
-					<text class="report-title">🧠 HTP 心理分析报告</text>
+					<text class="report-title">{{ $t('scales.htp.reportTitle') }}</text>
 					<text class="report-date">{{ reportDate }}</text>
 				</view>
 				<scroll-view scroll-y class="report-body">
@@ -77,7 +77,7 @@
 					<view class="score-section">
 						<view class="score-circle" :style="{ background: scoreGradient }">
 							<text class="score-num">{{ overallScore }}</text>
-							<text class="score-unit">分</text>
+							<text class="score-unit">{{ $t('scales.htp.scoreUnit') }}</text>
 						</view>
 						<view class="score-info">
 							<text class="score-level">{{ scoreLevel }}</text>
@@ -87,7 +87,7 @@
 
 					<!-- 维度分析 -->
 					<view class="dim-section">
-						<view class="dim-title">多维度分析</view>
+						<view class="dim-title">{{ $t('scales.htp.multiDimAnalysis') }}</view>
 						<view v-for="dim in reportDims" :key="dim.name" class="dim-item">
 							<view class="dim-row">
 								<text class="dim-name">{{ dim.name }}</text>
@@ -102,7 +102,7 @@
 
 					<!-- 心理解读 -->
 					<view class="interpret-section">
-						<view class="interpret-title">心理解读</view>
+						<view class="interpret-title">{{ $t('scales.htp.aiInterpretation') }}</view>
 						<view v-for="item in reportInterpret" :key="item.tag" class="interpret-item">
 							<view class="interpret-tag" :style="{ background: item.tagColor }">{{ item.tag }}</view>
 							<text class="interpret-text">{{ item.text }}</text>
@@ -111,7 +111,7 @@
 
 					<!-- 建议 -->
 					<view class="advice-section">
-						<view class="advice-title">💡 个性化建议</view>
+						<view class="advice-title">{{ $t('scales.htp.psychAdvice') }}</view>
 						<view v-for="(adv, i) in reportAdvice" :key="i" class="advice-item">
 							<text class="advice-num">{{ i + 1 }}</text>
 							<text class="advice-text">{{ adv }}</text>
@@ -120,8 +120,8 @@
 				</scroll-view>
 
 				<view class="report-footer">
-					<button class="btn-save" @click="saveReport">💾 保存报告</button>
-					<button class="btn-close" @click="showReport = false">关闭</button>
+					<button class="btn-save" @click="saveReport">💾 {{ $t('common.save') }}</button>
+					<button class="btn-close" @click="showReport = false">{{ $t('common.cancel') }}</button>
 				</view>
 			</view>
 		</view>
@@ -130,13 +130,13 @@
 	<view v-if="showHistory" class="report-mask" @click.self="showHistory = false">
 		<view class="report-modal">
 			<view class="report-header">
-				<text class="report-title">📜 历史分析记录</text>
+				<text class="report-title">{{ $t('scales.htp.history') }}</text>
 				<text class="hist-header-close" @click="showHistory = false">✕</text>
 			</view>
 			<scroll-view scroll-y class="report-body">
 				<view v-if="historyList.length === 0" class="hist-empty">
 					<text class="hist-empty-icon">🎨</text>
-					<text class="hist-empty-text">暂无历史记录，完成分析后自动保存</text>
+					<text class="hist-empty-text">{{ $t('scales.htp.noHistoryTip') }}</text>
 				</view>
 				<view
 					v-for="(item, idx) in historyList"
@@ -147,7 +147,7 @@
 						<!-- 左侧得分圆 -->
 						<view class="hist-score-circle" :style="{ background: item.scoreGradient || 'linear-gradient(135deg,#f7971e,#ffd200)' }">
 							<text class="hist-score-num">{{ item.score }}</text>
-							<text class="hist-score-unit">分</text>
+							<text class="hist-score-unit">{{ $t('scales.htp.scoreUnit') }}</text>
 						</view>
 						<!-- 中间信息 -->
 						<view class="hist-info">
@@ -173,8 +173,8 @@
 					</view>
 					<!-- 操作按鈕行 -->
 					<view class="hist-actions">
-						<view class="hist-action-btn hist-view-btn" @click="viewHistoryDetail(idx)">查看详情</view>
-						<view class="hist-action-btn hist-del-btn" @click="deleteHistoryItem(idx)">删除</view>
+						<view class="hist-action-btn hist-view-btn" @click="viewHistoryDetail(idx)">{{ $t('common.viewDetail') }}</view>
+						<view class="hist-action-btn hist-del-btn" @click="deleteHistoryItem(idx)">{{ $t('common.delete') }}</view>
 					</view>
 				</view>
 			</scroll-view>
@@ -185,7 +185,7 @@
 	<view v-if="showHistoryDetail && detailReport" class="report-mask" @click.self="showHistoryDetail = false">
 		<view class="report-modal">
 			<view class="report-header">
-				<text class="report-title">🧠 HTP 分析报告</text>
+				<text class="report-title">{{ $t('scales.htp.reportTitle') }}</text>
 				<text class="report-date">{{ detailReport.date }}</text>
 			</view>
 			<scroll-view scroll-y class="report-body">
@@ -197,7 +197,7 @@
 				<view class="score-section">
 					<view class="score-circle" :style="{ background: detailReport.scoreGradient || 'linear-gradient(135deg,#f7971e,#ffd200)' }">
 						<text class="score-num">{{ detailReport.score }}</text>
-						<text class="score-unit">分</text>
+						<text class="score-unit">{{ $t('scales.htp.scoreUnit') }}</text>
 					</view>
 					<view class="score-info">
 						<text class="score-level">{{ detailReport.level }}</text>
@@ -206,7 +206,7 @@
 				</view>
 				<!-- 维度分析 -->
 				<view class="dim-section">
-					<view class="dim-title">多维度分析</view>
+					<view class="dim-title">{{ $t('scales.htp.multiDimAnalysis') }}</view>
 					<view v-for="dim in detailReport.dims" :key="dim.name" class="dim-item">
 						<view class="dim-row">
 							<text class="dim-name">{{ dim.name }}</text>
@@ -220,7 +220,7 @@
 				</view>
 				<!-- 心理解读 -->
 				<view class="interpret-section">
-					<view class="interpret-title">心理解读</view>
+					<view class="interpret-title">{{ $t('scales.htp.aiInterpretation') }}</view>
 					<view v-for="it in detailReport.interpret" :key="it.tag" class="interpret-item">
 						<view class="interpret-tag" :style="{ background: it.tagColor }">{{ it.tag }}</view>
 						<text class="interpret-text">{{ it.text }}</text>
@@ -228,7 +228,7 @@
 				</view>
 				<!-- 建议 -->
 				<view class="advice-section">
-					<view class="advice-title">💡 个性化建议</view>
+					<view class="advice-title">{{ $t('scales.htp.psychAdvice') }}</view>
 					<view v-for="(adv, i) in detailReport.advice" :key="i" class="advice-item">
 						<text class="advice-num">{{ i + 1 }}</text>
 						<text class="advice-text">{{ adv }}</text>
@@ -236,7 +236,7 @@
 				</view>
 			</scroll-view>
 			<view class="report-footer">
-				<button class="btn-close" style="flex:1" @click="showHistoryDetail = false">关闭</button>
+				<button class="btn-close" style="flex:1" @click="showHistoryDetail = false">{{ $t('common.close') }}</button>
 			</view>
 		</view>
 	</view>
@@ -316,8 +316,8 @@
 
 			clearCanvas() {
 				uni.showModal({
-					title: '清空画布',
-					content: '确定清空所有内容并重新开始？',
+					title: this.$t('scales.htp.clearedTitle') || '清空画布',
+					content: this.$t('scales.htp.clearedConfirm') || '确定清空所有内容并重新开始？',
 					success: (res) => {
 						if (res.confirm) {
 							this.strokeData = [];
@@ -405,10 +405,10 @@
 			// ============ 分析引擎 ============
 			analyzeDrawing() {
 				if (this.strokeData.length === 0) {
-					uni.showToast({ title: '请先在画布上绘画', icon: 'none' });
+					uni.showToast({ title: this.$t('scales.htp.drawFirst') || '请先在画布上绘画', icon: 'none' });
 					return;
 				}
-				uni.showLoading({ title: '正在分析...', mask: true });
+				uni.showLoading({ title: this.$t('scales.htp.analyzing') || '正在分析...', mask: true });
 				setTimeout(() => {
 					const analysis = this.runAnalysis();
 					this.buildReport(analysis);
@@ -473,6 +473,7 @@
 			},
 
 			buildReport(a) {
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
 				// 综合评分 - 优化算法，提高基础分
 				const score = Math.round(
 					a.colorDiversity * 0.15 + a.warmth * 0.2 + a.strokeForce * 0.2 +
@@ -483,80 +484,86 @@
 
 				// 根据分数段显示不同的等级和建议 - 更委婉的表达
 				if (this.overallScore >= 90) {
-					this.scoreLevel = '心理状态优秀';
-					this.scoreDesc = '您的绘画呈现出非常积极、健康的心理特征，内心充满能量与和谐';
+					this.scoreLevel = isEn ? 'Excellent Mental State' : '心理状态优秀';
+					this.scoreDesc = isEn ? 'Your drawing shows very positive, healthy psychological features, full of energy and harmony.' : '您的绘画呈现出非常积极、健康的心理特征，内心充满能量与和谐';
 					this.scoreGradient = 'linear-gradient(135deg, #43e97b, #38f9d7)';
 				} else if (this.overallScore >= 70) {
-					this.scoreLevel = '心理状态良好';
-					this.scoreDesc = '整体心理状态平衡稳定，展现出积极的应对能力和情绪调节能力';
+					this.scoreLevel = isEn ? 'Good Mental State' : '心理状态良好';
+					this.scoreDesc = isEn ? 'Your overall mental state is balanced and stable, showing positive coping and emotional regulation.' : '整体心理状态平衡稳定，展现出积极的应对能力和情绪调节能力';
 					this.scoreGradient = 'linear-gradient(135deg, #4facfe, #00f2fe)';
 				} else if (this.overallScore >= 50) {
-					this.scoreLevel = '心理状态平稳';
-					this.scoreDesc = '当前心理状态基本平稳，部分维度可能存在提升空间，值得关注';
+					this.scoreLevel = isEn ? 'Stable Mental State' : '心理状态平稳';
+					this.scoreDesc = isEn ? 'Your current mental state is generally stable; some dimensions may have room for improvement.' : '当前心理状态基本平稳，部分维度可能存在提升空间，值得关注';
 					this.scoreGradient = 'linear-gradient(135deg, #f7971e, #ffd200)';
 				} else {
-					this.scoreLevel = '建议关注调整';
-					this.scoreDesc = '部分指标显示可能存在心理压力或情绪波动，建议适当调整生活方式';
+					this.scoreLevel = isEn ? 'Attention Advised' : '建议关注调整';
+					this.scoreDesc = isEn ? 'Some indicators suggest possible stress or mood fluctuation. Consider adjusting your lifestyle.' : '部分指标显示可能存在心理压力或情绪波动，建议适当调整生活方式';
 					this.scoreGradient = 'linear-gradient(135deg, #f093fb, #f5576c)';
 				}
 
 				// 维度
 				this.reportDims = [
 					{
-						name: '色彩运用', value: a.colorCount <= 1 ? '单调' : a.colorCount <= 3 ? '简洁' : a.colorCount <= 6 ? '丰富' : '多样',
+						name: isEn ? 'Color Usage' : '色彩运用',
+						value: a.colorCount <= 1 ? (isEn ? 'Monotone' : '单调') : a.colorCount <= 3 ? (isEn ? 'Simple' : '简洁') : a.colorCount <= 6 ? (isEn ? 'Rich' : '丰富') : (isEn ? 'Diverse' : '多样'),
 						score: a.colorDiversity, color: '#f093fb',
-						detail: `使用了 ${a.colorCount} 种颜色。${a.colorCount >= 5 ? '色彩丰富，体现较强情感表达欲望。' : a.colorCount >= 3 ? '色彩适中，情感较为平衡。' : '色彩偏少，可能存在情绪压抑或内敛倾向。'}`
+						detail: isEn ? `Used ${a.colorCount} color(s). ${a.colorCount >= 5 ? 'Rich colors reflect a strong desire for emotional expression.' : a.colorCount >= 3 ? 'Moderate color use suggests balanced emotions.' : 'Few colors may suggest emotional restraint or introversion.'}` : `使用了 ${a.colorCount} 种颜色。${a.colorCount >= 5 ? '色彩丰富，体现较强情感表达欲望。' : a.colorCount >= 3 ? '色彩适中，情感较为平衡。' : '色彩偏少，可能存在情绪压抑或内敛倾向。'}`
 					},
 					{
-						name: '感官温度', value: a.warmCount > a.coolCount ? '温暖' : a.coolCount > a.warmCount ? '冷静' : '中性',
+						name: isEn ? 'Sensory Warmth' : '感官温度',
+						value: a.warmCount > a.coolCount ? (isEn ? 'Warm' : '温暖') : a.coolCount > a.warmCount ? (isEn ? 'Cool' : '冷静') : (isEn ? 'Neutral' : '中性'),
 						score: a.warmth, color: '#fda085',
-						detail: a.warmCount > a.coolCount ? '暖色调为主，暗示对外界持开放、友善态度，情绪较积极。' : a.coolCount > 0 ? '冷色调偏多，体现理性、内敛特质，或存在一定情绪距离感。' : '色调中性，情感表达较为克制。'
+						detail: isEn ? (a.warmCount > a.coolCount ? 'Warm tones dominate, suggesting openness and friendliness with positive emotions.' : a.coolCount > 0 ? 'Cool tones suggest rationality and introversion, or some emotional distance.' : 'Neutral tones suggest restrained emotional expression.') : (a.warmCount > a.coolCount ? '暖色调为主，暗示对外界持开放、友善态度，情绪较积极。' : a.coolCount > 0 ? '冷色调偏多，体现理性、内敛特质，或存在一定情绪距离感。' : '色调中性，情感表达较为克制。')
 					},
 					{
-						name: '笔触力度', value: a.avgSize >= 8 ? '有力' : a.avgSize >= 4 ? '适中' : '轻柔',
+						name: isEn ? 'Stroke Force' : '笔触力度',
+						value: a.avgSize >= 8 ? (isEn ? 'Strong' : '有力') : a.avgSize >= 4 ? (isEn ? 'Moderate' : '适中') : (isEn ? 'Gentle' : '轻柔'),
 						score: a.strokeForce, color: '#a18cd1',
-						detail: a.avgSize >= 8 ? '线条粗壮有力，体现较强自信心和行动力。' : a.avgSize >= 4 ? '笔触均衡，心理状态较为稳定。' : '线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。'
+						detail: isEn ? (a.avgSize >= 8 ? 'Bold, forceful lines reflect strong confidence and drive.' : a.avgSize >= 4 ? 'Balanced strokes suggest a stable mental state.' : 'Fine, gentle lines may suggest sensitivity or hesitation.') : (a.avgSize >= 8 ? '线条粗壮有力，体现较强自信心和行动力。' : a.avgSize >= 4 ? '笔触均衡，心理状态较为稳定。' : '线条纤细轻柔，可能体现敏感、细腻或犹豫的心理特征。')
 					},
 					{
-						name: '构图合理性', value: a.compositionScore >= 75 ? '居中均衡' : a.compositionScore >= 50 ? '略有偏移' : '偏侧明显',
+						name: isEn ? 'Composition' : '构图合理性',
+						value: a.compositionScore >= 75 ? (isEn ? 'Centered' : '居中均衡') : a.compositionScore >= 50 ? (isEn ? 'Slightly Off' : '略有偏移') : (isEn ? 'Off-Center' : '偏侧明显'),
 						score: parseFloat(a.compositionScore.toFixed(1)), color: '#4facfe',
-						detail: a.compositionScore >= 75 ? '画面布局居中，构图感强，体现较好的秩序感与控制力。' : a.compositionScore >= 50 ? '构图略有偏移，可能存在轻微的焦虑或不安全感。' : '画面明显偏侧，可能暗示内心失衡或逃避倾向。'
+						detail: isEn ? (a.compositionScore >= 75 ? 'Centered layout shows good order and self-control.' : a.compositionScore >= 50 ? 'Slightly off-center composition may suggest mild anxiety or insecurity.' : 'A clearly off-center layout may hint at inner imbalance or avoidance.') : (a.compositionScore >= 75 ? '画面布局居中，构图感强，体现较好的秩序感与控制力。' : a.compositionScore >= 50 ? '构图略有偏移，可能存在轻微的焦虑或不安全感。' : '画面明显偏侧，可能暗示内心失衡或逃避倾向。')
 					},
 					{
-						name: '画面饱满度', value: a.fullness >= 70 ? '充实饱满' : a.fullness >= 40 ? '适度留白' : '大量留白',
+						name: isEn ? 'Fullness' : '画面饱满度',
+						value: a.fullness >= 70 ? (isEn ? 'Full' : '充实饱满') : a.fullness >= 40 ? (isEn ? 'Balanced' : '适度留白') : (isEn ? 'Sparse' : '大量留白'),
 						score: a.fullness, color: '#43e97b',
-						detail: a.fullness >= 70 ? '画面填充丰富，体现较强的表达欲望和活跃度。' : a.fullness >= 40 ? '留白适度，构图感和空间意识良好。' : '留白较多，可能体现退缩、空虚感或低活跃状态。'
+						detail: isEn ? (a.fullness >= 70 ? 'Richly filled canvas reflects strong expression and activity.' : a.fullness >= 40 ? 'Moderate white space shows good composition and spatial awareness.' : 'Excessive white space may suggest withdrawal, emptiness, or low energy.') : (a.fullness >= 70 ? '画面填充丰富，体现较强的表达欲望和活跃度。' : a.fullness >= 40 ? '留白适度，构图感和空间意识良好。' : '留白较多，可能体现退缩、空虚感或低活跃状态。')
 					},
 					{
-						name: '画面积极性', value: a.positivity >= 70 ? '积极向上' : a.positivity >= 45 ? '平和中性' : '偏向消极',
+						name: isEn ? 'Positivity' : '画面积极性',
+						value: a.positivity >= 70 ? (isEn ? 'Positive' : '积极向上') : a.positivity >= 45 ? (isEn ? 'Neutral' : '平和中性') : (isEn ? 'Negative' : '偏向消极'),
 						score: a.positivity, color: '#f7971e',
-						detail: a.positivity >= 70 ? '绘画整体呈现积极、和谐的叙事倾向，生活满意度较高。' : a.positivity >= 45 ? '画面情绪平稳，未见明显消极信号。' : '部分指标偏低，可能存在情绪低落或心理压力。'
+						detail: isEn ? (a.positivity >= 70 ? 'The drawing shows a positive, harmonious tone with high life satisfaction.' : a.positivity >= 45 ? 'The emotional tone is stable with no obvious negative signals.' : 'Some indicators are low, suggesting low mood or psychological stress.') : (a.positivity >= 70 ? '绘画整体呈现积极、和谐的叙事倾向，生活满意度较高。' : a.positivity >= 45 ? '画面情绪平稳，未见明显消极信号。' : '部分指标偏低，可能存在情绪低落或心理压力。')
 					}
 				];
 
 				// 心理解读
 				this.reportInterpret = [];
 				if (a.colorCount >= 5) {
-					this.reportInterpret.push({ tag: '情感丰富', tagColor: '#f093fb', text: '多色彩运用反映您具有丰富的情感世界，对生活保持好奇与热情。' });
+					this.reportInterpret.push({ tag: isEn ? 'Emotionally Rich' : '情感丰富', tagColor: '#f093fb', text: isEn ? 'Using many colors reflects a rich emotional world, curiosity, and passion for life.' : '多色彩运用反映您具有丰富的情感世界，对生活保持好奇与热情。' });
 				} else if (a.colorCount <= 1) {
-					this.reportInterpret.push({ tag: '情感内敛', tagColor: '#a18cd1', text: '单一色调提示情感表达较为节制，可能存在压抑或回避的心理倾向。' });
+					this.reportInterpret.push({ tag: isEn ? 'Emotionally Reserved' : '情感内敛', tagColor: '#a18cd1', text: isEn ? 'A single tone suggests restrained emotional expression, possibly repression or avoidance.' : '单一色调提示情感表达较为节制，可能存在压抑或回避的心理倾向。' });
 				}
 				if (a.warmCount > a.coolCount) {
-					this.reportInterpret.push({ tag: '温暖开放', tagColor: '#fda085', text: '暖色偏好显示您倾向于积极的人际关系，具有较好的共情能力和社交意愿。' });
+					this.reportInterpret.push({ tag: isEn ? 'Warm & Open' : '温暖开放', tagColor: '#fda085', text: isEn ? 'A preference for warm colors shows positive interpersonal tendencies, empathy, and social willingness.' : '暖色偏好显示您倾向于积极的人际关系，具有较好的共情能力和社交意愿。' });
 				}
 				if (a.avgSize >= 7) {
-					this.reportInterpret.push({ tag: '自信坚定', tagColor: '#4facfe', text: '粗壮有力的线条体现较强的自信心和执行力，面对挑战有行动意愿。' });
+					this.reportInterpret.push({ tag: isEn ? 'Confident' : '自信坚定', tagColor: '#4facfe', text: isEn ? 'Bold, forceful lines reflect strong confidence and execution, with willingness to face challenges.' : '粗壮有力的线条体现较强的自信心和执行力，面对挑战有行动意愿。' });
 				} else if (a.avgSize <= 2.5) {
-					this.reportInterpret.push({ tag: '细腻敏感', tagColor: '#84fab0', text: '轻柔纤细的笔触暗示您性格敏感细腻，对外界刺激感知较强，需注意情绪调节。' });
+					this.reportInterpret.push({ tag: isEn ? 'Sensitive' : '细腻敏感', tagColor: '#84fab0', text: isEn ? 'Light, delicate strokes suggest a sensitive personality; pay attention to emotional regulation.' : '轻柔纤细的笔触暗示您性格敏感细腻，对外界刺激感知较强，需注意情绪调节。' });
 				}
 				if (a.compositionScore < 45) {
-					this.reportInterpret.push({ tag: '内心失衡', tagColor: '#f5576c', text: '构图明显偏移提示当前内心可能存在一定程度的不平衡或焦虑，建议关注自我状态。' });
+					this.reportInterpret.push({ tag: isEn ? 'Inner Imbalance' : '内心失衡', tagColor: '#f5576c', text: isEn ? 'A clearly off-center composition may suggest some imbalance or anxiety; take care of yourself.' : '构图明显偏移提示当前内心可能存在一定程度的不平衡或焦虑，建议关注自我状态。' });
 				}
 				if (a.fullness < 30) {
-					this.reportInterpret.push({ tag: '空旷感', tagColor: '#a7b2c1', text: '大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。' });
+					this.reportInterpret.push({ tag: isEn ? 'Sense of Emptiness' : '空旷感', tagColor: '#a7b2c1', text: isEn ? 'Large empty areas may reflect emptiness or low energy; more social and outdoor activity is recommended.' : '大量留白可能体现空虚感或低能量状态，建议增加社交与户外活动。' });
 				}
 				if (this.reportInterpret.length === 0) {
-					this.reportInterpret.push({ tag: '整体平衡', tagColor: '#43e97b', text: '各项指标较为均衡，未见明显心理警示信号，继续保持良好生活状态。' });
+					this.reportInterpret.push({ tag: isEn ? 'Balanced' : '整体平衡', tagColor: '#43e97b', text: isEn ? 'All indicators are balanced with no obvious warning signs. Keep up your good lifestyle.' : '各项指标较为均衡，未见明显心理警示信号，继续保持良好生活状态。' });
 				}
 
 				// 建议 - 根据分数段提供个性化建议
@@ -564,48 +571,48 @@
 				
 				// 90-100 分：积极正面的建议
 				if (this.overallScore >= 90) {
-					this.reportAdvice.push('继续保持当前的积极心态和健康的生活方式，您的心理状态非常棒！');
-					this.reportAdvice.push('可以尝试挑战新的创意活动，进一步丰富情感表达和自我成长。');
-					this.reportAdvice.push('分享您的正能量给身边的人，成为他人的支持者。');
+					this.reportAdvice.push(isEn ? 'Keep up your positive mindset and healthy lifestyle — your mental state is excellent!' : '继续保持当前的积极心态和健康的生活方式，您的心理状态非常棒！');
+					this.reportAdvice.push(isEn ? 'Try new creative activities to further enrich emotional expression and personal growth.' : '可以尝试挑战新的创意活动，进一步丰富情感表达和自我成长。');
+					this.reportAdvice.push(isEn ? 'Share your positive energy with others and be a source of support.' : '分享您的正能量给身边的人，成为他人的支持者。');
 				}
 				// 70-89 分：中等程度的建议
 				else if (this.overallScore >= 70) {
-					this.reportAdvice.push('您的心理状态总体良好，可以通过适度增加创意活动来进一步提升情绪活力。');
+					this.reportAdvice.push(isEn ? 'Your mental state is good overall; moderately adding creative activities can boost emotional vitality.' : '您的心理状态总体良好，可以通过适度增加创意活动来进一步提升情绪活力。');
 					if (a.warmth < 50) {
-						this.reportAdvice.push('尝试增加一些温暖的社交互动，与亲友分享日常感受，增进情感联结。');
+						this.reportAdvice.push(isEn ? 'Try more warm social interactions and share daily feelings with family and friends.' : '尝试增加一些温暖的社交互动，与亲友分享日常感受，增进情感联结。');
 					}
 					if (a.fullness < 50) {
-						this.reportAdvice.push('为生活增添一些新鲜体验，如户外活动、艺术创作等，充实内心世界。');
+						this.reportAdvice.push(isEn ? 'Add fresh experiences to life, such as outdoor activities or artistic creation.' : '为生活增添一些新鲜体验，如户外活动、艺术创作等，充实内心世界。');
 					}
 					if (this.reportAdvice.length < 3) {
-						this.reportAdvice.push('保持规律的作息和适量运动，这将有助于维持良好的心理状态。');
+						this.reportAdvice.push(isEn ? 'Keep a regular routine and moderate exercise to maintain good mental health.' : '保持规律的作息和适量运动，这将有助于维持良好的心理状态。');
 					}
 				}
 				// 50-69 分：需要关注的建议
 				else if (this.overallScore >= 50) {
-					this.reportAdvice.push('您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。');
+					this.reportAdvice.push(isEn ? 'You may be experiencing mood fluctuations or a stressful period — a normal reaction. Be patient with yourself.' : '您可能正经历一些情绪波动或压力期，这是正常的心理反应，请给自己一些时间和耐心。');
 					if (a.colorCount <= 2) {
-						this.reportAdvice.push('尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。');
+						this.reportAdvice.push(isEn ? 'Try expressing emotions through color, such as a drawing diary or journaling.' : '尝试用色彩表达情绪，如绘画日记、手账等创意活动，帮助释放内心感受。');
 					}
 					if (a.strokeForce < 50) {
-						this.reportAdvice.push('适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。');
+						this.reportAdvice.push(isEn ? 'Moderate physical exercise can boost energy, confidence, and mood.' : '适度的体育锻炼可以增强身体能量感，提升自信心和情绪状态。');
 					}
 					if (a.compositionScore < 50) {
-						this.reportAdvice.push('练习冥想或深呼吸，每天花 5-10 分钟静心，帮助内心找到平静与平衡。');
+						this.reportAdvice.push(isEn ? 'Practice meditation or deep breathing for 5-10 minutes daily to find inner calm.' : '练习冥想或深呼吸，每天花 5-10 分钟静心，帮助内心找到平静与平衡。');
 					}
 					if (this.reportAdvice.length < 3) {
-						this.reportAdvice.push('建立规律的生活节奏，保证充足睡眠，这对情绪稳定很重要。');
+						this.reportAdvice.push(isEn ? 'Build a regular life rhythm with enough sleep — important for emotional stability.' : '建立规律的生活节奏，保证充足睡眠，这对情绪稳定很重要。');
 					}
 				}
 				// 50 分以下：需要寻求专业帮助的建议
 				else {
-					this.reportAdvice.push('近期可能面临较大的心理压力或情绪困扰，建议您多关注自己的内心需求。');
-					this.reportAdvice.push('与信任的家人朋友倾诉感受，寻求社会支持是缓解压力的有效方式。');
-					this.reportAdvice.push('如果这种状态持续较长时间，可以考虑咨询专业心理咨询师，获得更有针对性的支持和指导。');
-					this.reportAdvice.push('从小事开始照顾自己：规律作息、健康饮食、适度运动，这些都是改善心情的基础。');
+					this.reportAdvice.push(isEn ? 'You may be under significant stress or emotional strain recently. Pay attention to your inner needs.' : '近期可能面临较大的心理压力或情绪困扰，建议您多关注自己的内心需求。');
+					this.reportAdvice.push(isEn ? 'Sharing feelings with trusted family or friends is an effective way to relieve stress.' : '与信任的家人朋友倾诉感受，寻求社会支持是缓解压力的有效方式。');
+					this.reportAdvice.push(isEn ? 'If this state persists, consider consulting a professional counselor for targeted support.' : '如果这种状态持续较长时间，可以考虑咨询专业心理咨询师，获得更有针对性的支持和指导。');
+					this.reportAdvice.push(isEn ? 'Start small: regular routine, healthy diet, and moderate exercise are the basics of feeling better.' : '从小事开始照顾自己：规律作息、健康饮食、适度运动，这些都是改善心情的基础。');
 				}
 
-				this.reportDate = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+				this.reportDate = new Date().toLocaleDateString(isEn ? 'en-US' : 'zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 				this.currentReport = {
 					date: this.reportDate,
 					score: this.overallScore,
@@ -622,7 +629,7 @@
 			saveReport() {
 				if (!this.currentReport) return;
 				// 先显示加载提示
-				uni.showLoading({ title: '正在保存...', mask: true });
+				uni.showLoading({ title: this.$t('scales.htp.saving') || '正在保存...', mask: true });
 				
 				// 立即捕获画布截图
 				uni.canvasToTempFilePath({
@@ -708,7 +715,7 @@
 					
 					uni.hideLoading();
 					uni.showToast({ 
-						title: '报告已保存', 
+						title: this.$t('scales.htp.drawnSavedToast') || '报告已保存', 
 						icon: 'success',
 						duration: 2000
 					});
@@ -732,8 +739,8 @@
 					
 					uni.hideLoading();
 					uni.showModal({
-						title: '提示',
-						content: '报告已保存到本地',
+						title: this.$t('common.notice') || '提示',
+						content: this.$t('scales.htp.drawnSavedLocal') || '报告已保存到本地',
 						showCancel: false
 					});
 					this.showReport = false;
@@ -809,8 +816,8 @@
 			},
 			deleteHistoryItem(idx) {
 				uni.showModal({
-					title: '确认删除',
-					content: '删除该历史记录，是否继续？',
+					title: this.$t('common.notice') || '提示',
+					content: this.$t('scales.htp.deleteConfirm') || '删除该历史记录，是否继续？',
 					confirmColor: '#e05252',
 					success: (res) => {
 						if (res.confirm) {
@@ -823,7 +830,7 @@
 							imgHistory.splice(idx, 1);
 							try { uni.setStorageSync('htp_images', imgHistory); } catch (e) {}
 							try { uni.setStorageSync('htp_history', this.historyList); } catch (e) {}
-							uni.showToast({ title: '已删除', icon: 'none', duration: 1000 });
+							uni.showToast({ title: this.$t('scales.htp.deletedToast') || '已删除', icon: 'none', duration: 1000 });
 						}
 					}
 				});

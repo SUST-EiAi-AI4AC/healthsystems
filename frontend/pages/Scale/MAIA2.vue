@@ -1,8 +1,8 @@
 <template>
 	<view class="page">
 		<view class="intro-card">
-			<text class="intro-title">MAIA-2 多维度内感受意识量表</text>
-			<text class="intro-text">请根据您<text style="color:#e74c3c;">平时的真实感受</text>，对以下描述进行评分（0=从不，5=始终）。</text>
+			<text class="intro-title">{{ $t('scales.maia2.title') }}</text>
+			<view class="intro-text" v-html="$t('scales.maia2.intro')"></view>
 			<view class="dimension-list">
 				<text class="dim-tag" v-for="d in dimensions" :key="d">{{ d }}</text>
 			</view>
@@ -35,9 +35,9 @@
 		</view>
 
 		<view class="nav-btns">
-			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">上一题</button>
-			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">下一题</button>
-			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">提交</button>
+			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">{{ $t('scales.common.prev') }}</button>
+			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">{{ $t('scales.common.next') }}</button>
+			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">{{ $t('scales.common.submit') }}</button>
 		</view>
 	</view>
 </template>
@@ -49,8 +49,6 @@
 				currentPage: 1,
 				totalPages: 37,
 				form: {},
-				maiaLabels: ['从不', '偶尔', '有时', '较多', '经常', '始终'],
-				dimensions: ['注意感知', '不干扰', '不担忧', '注意调节', '情绪察觉', '自我调节', '身体倾听', '信任'],
 				// 维度分配：注意感知1-4，不干扰5-7，不担忧8-10，注意调节11-15，情绪察觉16-19，自我调节20-22，身体倾听23-25，信任26-37（修正后）
 				dimensionMap: {
 					1: '注意感知', 2: '注意感知', 3: '注意感知', 4: '注意感知',
@@ -64,55 +62,47 @@
 					30: '信任', 31: '信任', 32: '信任', 33: '信任',
 					34: '信任', 35: '信任', 36: '信任', 37: '信任'
 				},
-				questions: [
-					'我注意到身体不适的感觉，如肌肉酸痛、疼痛或不舒适',
-					'当我感到压力时，我会注意到身体的反应',
-					'我注意到身体舒适的感觉，比如放松或感到轻盈',
-					'当与某人交谈时，我注意到身体的细微感受',
-					'我不理会身体疼痛和不适的感觉',
-					'我能把注意力转移到其他事情上而不受疼痛干扰',
-					'当我身体不舒服时，我试图放松并度过它',
-					'我不担心当我感到疼痛或不适的感受',
-					'我不为身体的不舒服而感到焦虑',
-					'我的身体感受不会让我感到害怕',
-					'我可以保持对身体感觉的注意，即使有其他干扰',
-					'我可以把注意力集中在我的呼吸上',
-					'我可以将注意力转移到身体的不同部位',
-					'我在做一件事情的同时，能保持对身体感受的觉察',
-					'我能专注于身体感觉，同时也能与他人交流',
-					'当我焦虑时，我能注意到身体内部的感受',
-					'我注意到当我的情绪随着身体感受变化',
-					'我注意到情绪状态的改变对我身体的影响',
-					'我能觉察情绪时的躯体感受',
-					'当我遇到困难时，我可以从身体感受中找到平静',
-					'我能用身体感受来调节自己的情绪状态',
-					'当我需要平静下来时，我会关注身体的感受',
-					'我在做决策时，我会倾听身体的感受',
-					'当做出重要决定时，我注意身体的感受',
-					'我信任身体的感受来引导我的行为',
-					'我觉得与身体的联系是积极的',
-					'我信任身体的感受',
-					'我感受到身体给我的信号',
-					'我的身体是我的盟友',
-					'我欣赏我的身体',
-					'我感到自己身处于自己的身体中',
-					'我感到与自己的身体和谐相处',
-					'与身体的关系让我感到安全',
-					'我感到我的身体是我的一部分',
-					'我接受身体给我的反馈',
-					'我与我的身体之间有良好的关系',
-					'我的身体感受对我很有意义'
-				]
+				dimEnMap: {
+					'注意感知': 'Noticing',
+					'不干扰': 'Not-Distracting',
+					'不担忧': 'Not-Worrying',
+					'注意调节': 'Attention Regulation',
+					'情绪察觉': 'Emotional Awareness',
+					'自我调节': 'Self-Regulation',
+					'身体倾听': 'Body Listening',
+					'信任': 'Trusting'
+				}
 			};
+		},
+		computed: {
+			dimensions() {
+				const dims = this.$t('scales.maia2.dimensions');
+				return Array.isArray(dims) ? dims : ['注意感知', '不干扰', '不担忧', '注意调节', '情绪察觉', '自我调节', '身体倾听', '信任'];
+			},
+			maiaLabels() {
+				const labels = this.$t('scales.maia2.labels');
+				return Array.isArray(labels) ? labels : ['从不', '偶尔', '有时', '较多', '经常', '始终'];
+			},
+			questions() {
+				const qList = this.$t('scales.maia2.questions');
+				return Array.isArray(qList) ? qList : [];
+			}
 		},
 		created() {
 			for (let i = 1; i <= 37; i++) {
 				this.$set(this.form, 'q' + i, null);
 			}
 		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('scales.maia2.navTitle')
+			});
+		},
 		methods: {
 			getDimension(page) {
-				return this.dimensionMap[page] || '';
+				const rawDim = this.dimensionMap[page] || '';
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				return isEn ? (this.dimEnMap[rawDim] || rawDim) : rawDim;
 			},
 			prevPage() { if (this.currentPage > 1) this.currentPage--; },
 			nextPage() { if (this.currentPage < this.totalPages) this.currentPage++; },
@@ -137,9 +127,12 @@
 				const http = (await import('@/nxTemp/config/requestConfig')).default
 				const config = (await import('@/nxTemp/config/index.config')).default
 				const dimScores = this.calcDimScores();
-				let content = 'MAIA-2 各维度均分：\n';
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+
+				let content = isEn ? 'MAIA-2 Dimension Averages:\n' : 'MAIA-2 各维度均分：\n';
 				for (const [dim, score] of Object.entries(dimScores)) {
-					content += `${dim}：${score}\n`;
+					const dimName = isEn ? (this.dimEnMap[dim] || dim) : dim;
+					content += `${dimName}: ${score}\n`;
 				}
 				const payload = { status: 2 }
 				for (let i = 1; i <= 37; i++) payload['q' + i] = this.form['q' + i] || 0
@@ -152,15 +145,22 @@
 				uni.setStorageSync('maia2_history', history);
 				// 写入统一历史记录
 				try {
-					const dimArr = Object.entries(dimScores).map(([name, value]) => ({ name, value, pct: Math.min(parseFloat(value) / 5 * 100, 100) }));
+					const dimArr = Object.entries(dimScores).map(([name, value]) => ({
+						name: isEn ? (this.dimEnMap[name] || name) : name,
+						value,
+						pct: Math.min(parseFloat(value) / 5 * 100, 100)
+					}));
 					const avgScore = (Object.values(dimScores).reduce((a, b) => a + parseFloat(b), 0) / Object.keys(dimScores).length).toFixed(2);
+					const level = parseFloat(avgScore) >= 3
+						? (isEn ? 'Good Interoceptive Awareness' : '内感受意识良好')
+						: (isEn ? 'Interoceptive Awareness Needs Strengthening' : '内感受意识待加强');
 					const entry = {
-						scale: 'MAIA-2', scaleName: '多维度内感受意识量表',
+						scale: 'MAIA-2', scaleName: isEn ? 'Interoceptive Awareness (MAIA-2)' : '多维度内感受意识量表',
 						date: new Date().toLocaleString(),
 						totalScore: avgScore,
-						level: parseFloat(avgScore) >= 3 ? '内感受意识良好' : '内感受意识待加强',
+						level,
 						levelColor: parseFloat(avgScore) >= 3 ? '#43e97b' : '#fa709a',
-						scoreText: `平均分 ${avgScore}`,
+						scoreText: isEn ? `Avg Score ${avgScore}` : `平均分 ${avgScore}`,
 						dims: dimArr, comment: content, rawScores: dimScores
 					};
 					const sh = uni.getStorageSync('scale_history') || [];
@@ -168,7 +168,7 @@
 					uni.setStorageSync('scale_history', sh);
 				} catch(e) {}
 				uni.showModal({
-					title: '提交成功',
+					title: this.$t('scales.common.submitSuccess') || '提交成功',
 					content,
 					showCancel: false,
 					success: () => { uni.navigateBack(); }

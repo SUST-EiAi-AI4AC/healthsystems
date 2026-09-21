@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<h2 class="title">您的状态指数</h2>
+		<h2 class="title">{{ $t('mineSub.response.reDailyTitle') }}</h2>
 
 		<div class="main">
 			<div class="rating center">
@@ -13,8 +13,8 @@
 				</p>
 			</div>
 
-			<button type="primary" plain @click="jump()" style="width: 90%;">返回首页</button>
-			<button type="warning" plain @click="history()" style="margin-top: 15rpx; width: 90%;">历史记录</button>
+			<button type="primary" plain @click="jump()" style="width: 90%;">{{ $t('mineSub.response.backHome') }}</button>
+			<button type="warning" plain @click="history()" style="margin-top: 15rpx; width: 90%;">{{ $t('mineSub.response.viewHistory') }}</button>
 
 		</div>
 	</view>
@@ -57,17 +57,17 @@
 				sas: [{
 						l: 0,
 						h: 28,
-						desc: '低能量'
+						descKey: 'dailyLevelLow'
 					},
 					{
 						l: 29,
 						h: 44,
-						desc: '中能量'
+						descKey: 'dailyLevelModerate'
 					},
 					{
 						l: 45,
 						h: 60,
-						desc: '高能量'
+						descKey: 'dailyLevelHigh'
 					}
 				],
 			}
@@ -444,17 +444,16 @@
 
 			getResult() {
 				const context =
-					"此结果仅反映您近两日状态，可能是当前工作生活状态变化的正常反应。建议您积极调节情绪打满能量，"
+					this.$t('mineSub.response.dailyContext')
 				const adviceArray = [
-
-					"从今天开始，选择一点小小的改变，比如多喝水、多走路或是早点放下手机休息，这些都能让你离更健康的自己更近一步。",
-					"改变从不嫌晚，每一小步都是向着更健康生活的迈进。你的力量比你想象的要强大得多，每一次呼吸都是重新开始的勇气。",
-					"坚持健康的生活方式，就是对自己最好的投资。",
+					this.$t('mineSub.response.dailyAdvice1'),
+					this.$t('mineSub.response.dailyAdvice2'),
+					this.$t('mineSub.response.dailyAdvice3'),
 				];
 				let al = -1;
 				this.sas.find((v, i) => {
 					if (this.anxietyScore <= v.h) {
-						this.anxietyDescription = v.desc;
+						this.anxietyDescription = this.$t('mineSub.response.' + v.descKey);
 						al = i - 1
 						return true
 					}
@@ -462,11 +461,10 @@
 				})
 
 				if (al === -1) {
-					this.review = "您现在各项指标都很正常，";
-					this.advice = "祝您生活愉快！";
+					this.review = this.$t('mineSub.response.reviewNormal');
+					this.advice = this.$t('mineSub.response.wishNormal');
 				} else if (al >= 0) {
-					//焦虑
-					this.review = "您的状态指数是" + this.anxietyDescription + "状态，";
+					this.review = this.$t('mineSub.response.dailyReviewPrefix') + this.anxietyDescription + this.$t('mineSub.response.dailyReviewSuffix');
 					this.advice = context + adviceArray[al];
 				}
 			},
@@ -488,6 +486,11 @@
 		},
 		onLoad(parms) {
 			this.getData();
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('mineSub.response.reDailyTitle') || '您的状态报告'
+			});
 		},
 	}
 </script>

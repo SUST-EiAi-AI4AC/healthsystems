@@ -1,21 +1,21 @@
 <template>
 	<view>
 		<u--form class="form" labelPosition="top" ref="form" :labelWidth='labelWidth' :model="psInfo" :rules="rules">
-			<u-form-item label="原密码" prop="oldPs" required>
+			<u-form-item :label="$t('mineSub.changePass.oldPassword')" prop="oldPs" required>
 				<u--input type="password" v-model="psInfo.oldPs" style="background-color: white;"></u--input>
 			</u-form-item>
 
-			<u-form-item label="新密码" prop="newPs" required>
+			<u-form-item :label="$t('mineSub.changePass.newPassword')" prop="newPs" required>
 				<u--input type="password" v-model="psInfo.newPs" style="background-color: white;"></u--input>
 			</u-form-item>
 
-			<u-form-item label="重复新密码" prop="repeatNewPs" required>
+			<u-form-item :label="$t('mineSub.changePass.confirmPassword')" prop="repeatNewPs" required>
 				<u--input type="password" v-model="psInfo.repeatNewPs" style="background-color: white;"></u--input>
 			</u-form-item>
 
 		</u--form>
 
-		<button type="primary" @click="submit('form')" style="margin-top: 35px; width: 90%; background-color: #4554F5">提交</button>
+		<button type="primary" @click="submit('form')" style="margin-top: 35px; width: 90%; background-color: #4554F5">{{ $t('mineSub.changePass.submitBtn') }}</button>
 		<!--            <el-button @click="resetuni-forms('DailyReport')">重置</el-button>-->
 	</view>
 </template>
@@ -35,36 +35,41 @@
 					newPs: null,
 					repeatNewPs: null
 				},
-				rules: {
+				labelWidth: '80%',
+			}
+		},
+		computed: {
+			rules() {
+				return {
 					oldPs: [{
 						required: true,
-						message: "此项为必填项",
+						message: this.$t('mineSub.changePass.requiredNotice') || "此项为必填项",
 						trigger: 'blur'
 					}],
 					newPs: [{
 							required: true,
-							message: "此项为必填项",
+							message: this.$t('mineSub.changePass.requiredNotice') || "此项为必填项",
 							trigger: 'blur'
 						},
 						{
 							validator: (rule, value, callback) => {
-								return value.length > 5;
+								return value && value.length > 5;
 							},
-							message: '密码太短',
+							message: this.$t('mineSub.changePass.tooShortNotice') || '密码太短',
 							// 触发器可以同时用blur和change
 							trigger: ['change', 'blur'],
 						}
 					],
 					repeatNewPs: [{
 							required: true,
-							message: "此项为必填项",
+							message: this.$t('mineSub.changePass.requiredNotice') || "此项为必填项",
 							trigger: 'blur'
 						},
 						{
 							validator: (rule, value, callback) => {
-								return value.length > 5;
+								return value && value.length > 5;
 							},
-							message: '密码太短',
+							message: this.$t('mineSub.changePass.tooShortNotice') || '密码太短',
 							// 触发器可以同时用blur和change
 							trigger: ['change', 'blur'],
 						},
@@ -72,14 +77,18 @@
 							validator: (rule, value, callback) => {
 								return value == this.psInfo.newPs;
 							},
-							message: '两次输入密码不一致',
+							message: this.$t('mineSub.changePass.mismatchNotice') || '两次输入密码不一致',
 							// 触发器可以同时用blur和change
 							trigger: ['change', 'blur'],
 						}
 					]
-				},
-				labelWidth: '80%',
+				};
 			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('mineSub.changePass.navTitle') || '修改密码'
+			});
 		},
 		methods: {
 			submit(formName) {
@@ -93,7 +102,7 @@
 
 					http.post(`${config.baseUrl}/user/updatePassword`, dataToAdd).then((res) => {
 						if (res.code === 200) { //返回成功码200，弹窗提示，延迟转到用户主页
-							uni.$u.toast("修改成功，请重新登录");
+							uni.$u.toast(_this.$t('mineSub.changePass.successToast') || "修改成功，请重新登录");
 
 							_this.$store.dispatch('setUserData', null);
 							uni.setStorageSync('token', null);
@@ -104,13 +113,13 @@
 							}, 500)
 						} else { //返回非200，弹窗提示失败，停留在此页
 							uni.showToast({
-								title: "提交失败",
+								title: _this.$i18n && _this.$i18n.currentLang === 'en' ? 'Failed to update password' : '提交失败',
 								icon: 'error'
 							});
 						}
 					})
 				}).catch(err => {
-					uni.$u.toast("表单填写有误，请修改后重新提交");
+					uni.$u.toast(_this.$i18n && _this.$i18n.currentLang === 'en' ? 'Form contains errors, please check' : '表单填写有误，请修改后重新提交');
 				})
 			},
 

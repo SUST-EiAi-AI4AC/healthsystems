@@ -2,9 +2,9 @@
 	<view class="page-container">
 		<!-- 顶部切换按钮 -->
 		<view class="tab-header">
-			<view class="tab-btn" :class="{ active: currentTab === 0 }" @click="switchTab(0)">🎨 画画</view>
-			<view class="tab-btn" :class="{ active: currentTab === 1 }" @click="switchTab(1)">📋 测评</view>
-			<view class="tab-btn" :class="{ active: currentTab === 2 }" @click="switchTab(2)">🧠 评估</view>
+			<view class="tab-btn" :class="{ active: currentTab === 0 }" @click="switchTab(0)">{{ $t('aiassess.tabDrawing') }}</view>
+			<view class="tab-btn" :class="{ active: currentTab === 1 }" @click="switchTab(1)">{{ $t('aiassess.tabTesting') }}</view>
+			<view class="tab-btn" :class="{ active: currentTab === 2 }" @click="switchTab(2)">{{ $t('aiassess.tabEvaluation') }}</view>
 		</view>
 
 		<!-- swiper 内容区域 -->
@@ -16,20 +16,20 @@
 						<view class="htp-banner-left">
 							<text class="htp-banner-emoji">🎨</text>
 							<view class="htp-banner-text">
-								<text class="htp-banner-title">房树人心理测验</text>
-								<text class="htp-banner-sub">HTP Test · House · Tree · Person</text>
+								<text class="htp-banner-title">{{ $t('aiassess.htpBannerTitle') }}</text>
+								<text class="htp-banner-sub">{{ $t('aiassess.htpBannerSub') }}</text>
 							</view>
 						</view>
 						<text class="htp-banner-arrow">»</text>
 					</view>
 
 					<view class="htp-intro-card">
-						<view class="htp-intro-title">✨ 关于 HTP 测验</view>
-						<view class="htp-intro-text">房树人测验（House-Tree-Person Test）是一种投射性心理测验。通过分析您自由绘制的房屋、树木和人物，从色彩运用、笔触特征、画面构图和叙事逻辑等多个维度，综合评估您的心理健康状态、情商水平及生活满意度。</view>
+						<view class="htp-intro-title">{{ $t('aiassess.htpIntroTitle') }}</view>
+						<view class="htp-intro-text">{{ $t('aiassess.htpIntroDesc') }}</view>
 					</view>
 
 					<view class="htp-dim-grid">
-						<view v-for="dim in htpDims" :key="dim.name" class="htp-dim-item">
+						<view v-for="dim in localizedHtPDims" :key="dim.name" class="htp-dim-item">
 							<text class="htp-dim-icon">{{ dim.icon }}</text>
 							<text class="htp-dim-name">{{ dim.name }}</text>
 							<text class="htp-dim-desc">{{ dim.desc }}</text>
@@ -41,7 +41,7 @@
 						<view class="brush-cap"></view>
 						<!-- 笔杆 + 文字 -->
 						<view class="brush-handle">
-							<text class="brush-text">开始绘画测验</text>
+							<text class="brush-text">{{ $t('aiassess.htpStartBtn') }}</text>
 						</view>
 						<!-- 金属笔箋 -->
 						<view class="brush-ferrule"></view>
@@ -49,24 +49,24 @@
 						<view class="brush-tip"></view>
 					</view>
 
-					<view class="footer-tip">拿起画笔，让内心说话。</view>
+					<view class="footer-tip">{{ $t('aiassess.htpFooterTip') }}</view>
 				</scroll-view>
 			</swiper-item>
 
 			<!-- 测评 -->
 			<swiper-item>
 				<scroll-view scroll-y class="scroll-content">
-					<view class="section-title">心理测评量表</view>
-					<view class="section-desc">以下量表用于全面评估心理健康状态，请根据实际情况填写</view>
+					<view class="section-title">{{ $t('aiassess.scaleSectionTitle') }}</view>
+					<view class="section-desc">{{ $t('aiassess.scaleSectionDesc') }}</view>
 
 					<view class="scale-grid">
 						<view class="scale-card" id="pars3" @click="goTo('/pages/Scale/PARS3')">
 							<view class="card-left">
 								<view class="card-title">PARS-3</view>
-								<view class="card-subtitle">体育活动等级量表</view>
+								<view class="card-subtitle">{{ $t('aiassess.scalePars3Sub') }}</view>
 								<view class="card-divider"></view>
-								<view class="card-info">5个条目 · 评估上月体育锻炼</view>
-								<view class="card-info">3维度综合评分</view>
+								<view class="card-info">{{ $t('aiassess.scalePars3Info1') }}</view>
+								<view class="card-info">{{ $t('aiassess.scalePars3Info2') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
@@ -74,10 +74,10 @@
 						<view class="scale-card" id="ipaq" @click="goTo('/pages/Scale/IPAQ')">
 							<view class="card-left">
 								<view class="card-title">IPAQ</view>
-								<view class="card-subtitle">国际体力活动量表</view>
+								<view class="card-subtitle">{{ $t('aiassess.scaleIpaqSub') }}</view>
 								<view class="card-divider"></view>
-								<view class="card-info">7个条目 · 评估过去7天体力活动</view>
-								<view class="card-info">含久坐时间评估</view>
+								<view class="card-info">{{ $t('aiassess.scaleIpaqInfo1') }}</view>
+								<view class="card-info">{{ $t('aiassess.scaleIpaqInfo2') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
@@ -85,10 +85,10 @@
 						<view class="scale-card" id="maia2" @click="goTo('/pages/Scale/MAIA2')">
 							<view class="card-left">
 								<view class="card-title">MAIA-2</view>
-								<view class="card-subtitle">多维度内感受意识量表</view>
+								<view class="card-subtitle">{{ $t('aiassess.scaleMaia2Sub') }}</view>
 								<view class="card-divider"></view>
-								<view class="card-info">37个条目 · 8个维度</view>
-								<view class="card-info">评估身体感知与情绪调节能力</view>
+								<view class="card-info">{{ $t('aiassess.scaleMaia2Info1') }}</view>
+								<view class="card-info">{{ $t('aiassess.scaleMaia2Info2') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
@@ -96,10 +96,10 @@
 						<view class="scale-card" id="cdrisc" @click="goTo('/pages/Scale/CDRISC')">
 							<view class="card-left">
 								<view class="card-title">CD-RISC</view>
-								<view class="card-subtitle">心理弹性量表</view>
+								<view class="card-subtitle">{{ $t('aiassess.scaleCdriscSub') }}</view>
 								<view class="card-divider"></view>
-								<view class="card-info">25个条目 · 评估心理韧性</view>
-								<view class="card-info">5级评分（0=完全不对，4=几乎总是对）</view>
+								<view class="card-info">{{ $t('aiassess.scaleCdriscInfo1') }}</view>
+								<view class="card-info">{{ $t('aiassess.scaleCdriscInfo2') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
@@ -107,10 +107,10 @@
 						<view class="scale-card" id="ocean" @click="goTo('/pages/Scale/OCEAN')">
 							<view class="card-left">
 								<view class="card-title">OCEAN</view>
-								<view class="card-subtitle">大五人格量表</view>
+								<view class="card-subtitle">{{ $t('aiassess.scaleOceanSub') }}</view>
 								<view class="card-divider"></view>
-								<view class="card-info">60个条目 · 5个维度咆12题</view>
-								<view class="card-info">全面评估人格特质</view>
+								<view class="card-info">{{ $t('aiassess.scaleOceanInfo1') }}</view>
+								<view class="card-info">{{ $t('aiassess.scaleOceanInfo2') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
@@ -118,10 +118,10 @@
 						<view class="scale-card" id="psqi" @click="goTo('/pages/Scale/PSQI')">
 							<view class="card-left">
 								<view class="card-title">PSQI</view>
-								<view class="card-subtitle">匹兹堡睡眠质量指数</view>
+								<view class="card-subtitle">{{ $t('aiassess.scalePsqiSub') }}</view>
 								<view class="card-divider"></view>
-								<view class="card-info">18个条目 · 评估近1个月睡眠</view>
-								<view class="card-info">7个成分综合评分</view>
+								<view class="card-info">{{ $t('aiassess.scalePsqiInfo1') }}</view>
+								<view class="card-info">{{ $t('aiassess.scalePsqiInfo2') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
@@ -129,55 +129,55 @@
 						<view class="scale-card scale-card-full" id="scl90" @click="goTo('/pages/Scale/SCL90')">
 							<view class="card-left">
 								<view class="card-title">SCL-90</view>
-								<view class="card-subtitle">症状自评量表</view>
+								<view class="card-subtitle">{{ $t('aiassess.scaleScl90Sub') }}</view>
 								<view class="card-divider"></view>
-								<view class="card-info">90个条目 · 评估近一周心理症状</view>
-								<view class="card-info">5级评分（1=无，5=严重）</view>
+								<view class="card-info">{{ $t('aiassess.scaleScl90Info1') }}</view>
+								<view class="card-info">{{ $t('aiassess.scaleScl90Info2') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
 					</view>
 
-					<view class="footer-tip">保持健康，从了解自己开始。</view>
+					<view class="footer-tip">{{ $t('aiassess.scaleFooterTip') }}</view>
 				</scroll-view>
 			</swiper-item>
 
 			<!-- 评估 Tab -->
 			<swiper-item>
 				<scroll-view scroll-y class="scroll-content">
-					<view class="section-title">心理健康评估</view>
-					<view class="section-desc">以下量表与医生线下访谈时填写，建议每两周填写一次</view>
+					<view class="section-title">{{ $t('aiassess.evalTitle') }}</view>
+					<view class="section-desc">{{ $t('aiassess.evalDesc') }}</view>
 
 					<view class="scale-list">
 						<view class="scale-card-wide" id="sds" @click="goTo('/pages/Scale/SDS')">
 							<view class="card-left">
-								<view class="card-title">SDS</view>
-								<view class="card-subtitle">心理自测量表</view>
+								<view class="card-title">{{ $t('aiassess.scaleSdsTitle') }}</view>
+								<view class="card-subtitle">{{ $t('aiassess.scaleSdsSub') }}</view>
 								<view class="card-subtitle-en">Self-rating Depression Scale</view>
 								<view class="card-divider"></view>
-								<view class="card-info">20个问题 · 每两周填写一次</view>
+								<view class="card-info">{{ $t('aiassess.scaleSdsInfo1') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
 
 						<view class="scale-card-wide" id="pss" @click="goTo('/pages/Scale/PSS')">
 							<view class="card-left">
-								<view class="card-title">PSS</view>
-								<view class="card-subtitle">压力自测量表</view>
+								<view class="card-title">{{ $t('aiassess.scalePssTitle') }}</view>
+								<view class="card-subtitle">{{ $t('aiassess.scalePssSub') }}</view>
 								<view class="card-subtitle-en">Perceived Stress Scale</view>
 								<view class="card-divider"></view>
-								<view class="card-info">14个问题 · 每两周填写一次</view>
+								<view class="card-info">{{ $t('aiassess.scalePssInfo1') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
 
 						<view class="scale-card-wide" id="sas" @click="goTo('/pages/Scale/SAS')">
 							<view class="card-left">
-								<view class="card-title">SAS</view>
-								<view class="card-subtitle">焦虑自测量表</view>
+								<view class="card-title">{{ $t('aiassess.scaleSasTitle') }}</view>
+								<view class="card-subtitle">{{ $t('aiassess.scaleSasSub') }}</view>
 								<view class="card-subtitle-en">Self-rating Anxiety Scale</view>
 								<view class="card-divider"></view>
-								<view class="card-info">20个问题 · 每两周填写一次</view>
+								<view class="card-info">{{ $t('aiassess.scaleSasInfo1') }}</view>
 							</view>
 							<view class="card-arrow">»</view>
 						</view>
@@ -186,7 +186,7 @@
 					<!-- 历史记录入口按鈕 -->
 					<view class="scale-history-btn" @click="openScaleHistory">
 						<text class="scale-history-btn-icon">📜</text>
-						<text class="scale-history-btn-text">历史记录</text>
+						<text class="scale-history-btn-text">{{ $t('common.history') }}</text>
 						<text class="scale-history-btn-arrow">›</text>
 					</view>
 
@@ -199,7 +199,7 @@
 	<view v-if="showScaleHistory" class="sh-mask" @click.self="showScaleHistory = false">
 		<view class="sh-modal">
 			<view class="sh-header">
-				<text class="sh-title">📜 量表历史记录</text>
+				<text class="sh-title">{{ $t('aiassess.scaleHistoryTitle') }}</text>
 				<text class="sh-close" @click="showScaleHistory = false">✕</text>
 			</view>
 			<view class="sh-search-row">
@@ -208,7 +208,7 @@
 					<input
 						class="sh-search-input"
 						v-model="scaleSearchText"
-						placeholder="搜索量表名称或评估等级..."
+						:placeholder="$t('aiassess.scaleSearchPlaceholder')"
 						placeholder-style="color:#bbb;font-size:0.82em"
 					/>
 					<text v-if="scaleSearchText" class="sh-search-clear" @click="scaleSearchText = ''">✕</text>
@@ -221,12 +221,12 @@
 					class="sh-filter-tag"
 					:class="{ 'sh-filter-active': scaleFilterKey === f.key }"
 					@click="scaleFilterKey = f.key"
-				>{{ f.label }}</view>
+				>{{ f.key === 'all' ? ($t('mineSub.chart.all') || '全部') : f.label }}</view>
 			</scroll-view>
 			<scroll-view scroll-y class="sh-body">
 				<view v-if="filteredHistory.length === 0" class="sh-empty">
 					<text class="sh-empty-icon">📊</text>
-					<text class="sh-empty-text">暂无历史记录，完成量表后自动保存</text>
+					<text class="sh-empty-text">{{ $t('aiassess.scaleEmptyHistory') }}</text>
 				</view>
 				<view v-for="(item, idx) in filteredHistory" :key="idx" class="sh-card">
 					<view class="sh-card-badge" :style="{ background: scaleColorMap[item.scale] || 'linear-gradient(135deg,#a18cd1,#fbc2eb)' }">
@@ -241,13 +241,13 @@
 						<text v-if="item.scoreText" class="sh-card-score-text">{{ item.scoreText }}</text>
 					</view>
 					<view class="sh-card-actions">
-						<view class="sh-action-btn sh-view-btn" @click="viewScaleDetail(idx)">详情</view>
-						<view class="sh-action-btn sh-del-btn" @click="deleteScaleRecord(idx)">删除</view>
+						<view class="sh-action-btn sh-view-btn" @click="viewScaleDetail(idx)">{{ $t('aiassess.scaleDetail') }}</view>
+						<view class="sh-action-btn sh-del-btn" @click="deleteScaleRecord(idx)">{{ $t('aiassess.scaleDelete') }}</view>
 					</view>
 				</view>
 			</scroll-view>
 			<view class="sh-footer">
-				<text class="sh-footer-text">共 {{ filteredHistory.length }} 条记录</text>
+				<text class="sh-footer-text">{{ ($i18n && $i18n.currentLang === 'en') ? (filteredHistory.length + ' records in total') : ('共 ' + filteredHistory.length + ' 条记录') }}</text>
 			</view>
 		</view>
 	</view>
@@ -265,7 +265,7 @@
 			<scroll-view scroll-y class="sh-body">
 				<view class="sh-detail-banner" :style="{ background: scaleColorMap[scaleDetailItem.scale] || 'linear-gradient(135deg,#a18cd1,#fbc2eb)' }">
 					<view class="sh-detail-banner-left">
-						<text class="sh-detail-score-label">最终得分</text>
+						<text class="sh-detail-score-label">{{ $t('aiassess.scaleFinalScore') }}</text>
 						<text class="sh-detail-score">{{ scaleDetailItem.totalScore }}</text>
 					</view>
 					<view class="sh-detail-banner-right">
@@ -274,7 +274,7 @@
 					</view>
 				</view>
 				<view v-if="scaleDetailItem.dims && scaleDetailItem.dims.length" class="sh-detail-dims">
-					<text class="sh-detail-section-title">各维度得分</text>
+					<text class="sh-detail-section-title">{{ $t('aiassess.scaleDimScores') }}</text>
 					<view v-for="dim in scaleDetailItem.dims" :key="dim.name" class="sh-detail-dim-item">
 						<view class="sh-detail-dim-row">
 							<text class="sh-detail-dim-name">{{ dim.name }}</text>
@@ -286,11 +286,11 @@
 					</view>
 				</view>
 				<view v-if="scaleDetailItem.comment" class="sh-detail-comment">
-					<text class="sh-detail-section-title">评估说明</text>
+					<text class="sh-detail-section-title">{{ ($i18n && $i18n.currentLang === 'en') ? 'Assessment Notes' : '评估说明' }}</text>
 					<text class="sh-detail-comment-text">{{ scaleDetailItem.comment }}</text>
 				</view>
 				<view v-if="scaleDetailItem.rawScores" class="sh-detail-raw">
-					<text class="sh-detail-section-title">得分明细</text>
+					<text class="sh-detail-section-title">{{ ($i18n && $i18n.currentLang === 'en') ? 'Score Breakdown' : '得分明细' }}</text>
 					<view v-for="(val, key) in scaleDetailItem.rawScores" :key="key" class="sh-detail-raw-row">
 						<text class="sh-detail-raw-key">{{ key }}</text>
 						<text class="sh-detail-raw-val">{{ val }}</text>
@@ -298,7 +298,7 @@
 				</view>
 			</scroll-view>
 			<view class="sh-footer">
-				<view class="sh-footer-close-btn" @click="showScaleDetail = false">关闭</view>
+				<view class="sh-footer-close-btn" @click="showScaleDetail = false">{{ ($i18n && $i18n.currentLang === 'en') ? 'Close' : '关闭' }}</view>
 			</view>
 		</view>
 	</view>
@@ -306,11 +306,11 @@
 	<!-- 删除确认弹窗 -->
 	<view v-if="showDeleteConfirm" class="sh-confirm-mask">
 		<view class="sh-confirm-box">
-			<text class="sh-confirm-title">确认删除</text>
-			<text class="sh-confirm-content">确定删除「{{ deleteConfirmItem ? deleteConfirmItem.scaleName : '' }}」的这条记录？</text>
+			<text class="sh-confirm-title">{{ ($i18n && $i18n.currentLang === 'en') ? 'Confirm Delete' : '确认删除' }}</text>
+			<text class="sh-confirm-content">{{ ($i18n && $i18n.currentLang === 'en') ? ('Are you sure you want to delete this record for "' + (deleteConfirmItem ? deleteConfirmItem.scaleName : '') + '"?') : ('确定删除「' + (deleteConfirmItem ? deleteConfirmItem.scaleName : '') + '」的这条记录？') }}</text>
 			<view class="sh-confirm-btns">
-				<view class="sh-confirm-btn sh-confirm-cancel" @click="showDeleteConfirm = false">取消</view>
-				<view class="sh-confirm-btn sh-confirm-ok" @click="doDeleteRecord">删除</view>
+				<view class="sh-confirm-btn sh-confirm-cancel" @click="showDeleteConfirm = false">{{ $t('common.cancel') }}</view>
+				<view class="sh-confirm-btn sh-confirm-ok" @click="doDeleteRecord">{{ $t('common.delete') }}</view>
 			</view>
 		</view>
 	</view>
@@ -319,6 +319,8 @@
 </template>
 
 <script>
+	import { updateTabBarLanguage } from "@/locale/tabbar";
+
 	const WARM_TEXTS = [
 		"保持好心情，让生活处处充满色彩。",
 		"无论晴雨，愿你今天也是充满阳光的一天。",
@@ -354,8 +356,23 @@
 			// 随机亲切文字
 			const randomIndex = Math.floor(Math.random() * WARM_TEXTS.length);
 			this.warmText = WARM_TEXTS[randomIndex];
+			// 刷新导航栏标题与 TabBar
+			uni.setNavigationBarTitle({
+				title: this.$t('aiassess.navTitle')
+			});
+			updateTabBarLanguage(this.$i18n ? this.$i18n.currentLang : 'zh');
 		},
 		computed: {
+			localizedHtPDims() {
+				return [
+					{ icon: '🏠', name: this.$t('aiassess.dim1Name'), desc: this.$t('aiassess.dim1Desc') },
+					{ icon: '🌲', name: this.$t('aiassess.dim2Name'), desc: this.$t('aiassess.dim2Desc') },
+					{ icon: '👤', name: this.$t('aiassess.dim3Name'), desc: this.$t('aiassess.dim3Desc') },
+					{ icon: '🎨', name: this.$t('aiassess.dim4Name'), desc: this.$t('aiassess.dim4Desc') },
+					{ icon: '✏️', name: this.$t('aiassess.dim5Name'), desc: this.$t('aiassess.dim5Desc') },
+					{ icon: '📊', name: this.$t('aiassess.dim6Name'), desc: this.$t('aiassess.dim6Desc') }
+				];
+			},
 			filteredHistory() {
 				let list = this.scaleHistoryList || [];
 				// 将旧版 IPAQ scoreText （总 MET分 XXXX）展示为 100 分制

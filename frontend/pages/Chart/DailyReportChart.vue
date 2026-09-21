@@ -2,7 +2,7 @@
 	<view class="total">
 
 		<div class="title">
-			最近{{this.period}}天的社交情况
+			{{ ($i18n && $i18n.currentLang === 'en') ? ('Social Interaction (Past ' + period + ' Days)') : ('最近' + period + '天的社交情况') }}
 		</div>
 		<div class="sportshour-wrapper">
 			<!-- 社交时间-->
@@ -10,16 +10,15 @@
 		</div>
 
 		<div class="title">
-			最近{{this.period}}天的工作或学习情况
+			{{ ($i18n && $i18n.currentLang === 'en') ? ('Work / Study Duration (Past ' + period + ' Days)') : ('最近' + period + '天的工作或学习情况') }}
 		</div>
 		<div class="sportshour-wrapper">
 			<!-- 工作学习时间-->
 			<l-echart class="sportshour" ref="studyorworkHour" @finished="initDrawStudyorworkHour"></l-echart>
 		</div>
 
-
 		<div class="title">
-			最近{{this.period}}天的使用手机情况
+			{{ ($i18n && $i18n.currentLang === 'en') ? ('Screen Time (Past ' + period + ' Days)') : ('最近' + period + '天的使用手机情况') }}
 		</div>
 		<div class="sportshour-wrapper">
 			<!-- 手机时间-->
@@ -707,6 +706,11 @@
 			},
 		onLoad(parms) {
 			this.getData();
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: (this.$i18n && this.$i18n.currentLang === 'en') ? 'Daily Log Charts' : '日常状态记录'
+			});
 		}
 	}
 </script>

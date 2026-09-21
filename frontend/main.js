@@ -7,6 +7,12 @@ import {
 import store from "@/nxTemp/store";
 import nxTemp from "@/nxTemp";
 import uView from '@/uni_modules/uview-ui'
+import i18n from '@/locale'
+
+Vue.prototype.$t = function(key) {
+	return i18n.t(key);
+};
+Vue.prototype.$i18n = i18n;
 
 async function bootstrap() {
 	App.mpType = "app";

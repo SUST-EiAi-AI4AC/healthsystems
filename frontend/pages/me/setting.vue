@@ -4,33 +4,33 @@
 		<div class="settings-section">
 			<div class="setting-item" @click="Logoff">
 				<div class="arrow"></div>
-				<h3>注销账户</h3>
-				<p style="font-size: 0.8em; margin-top: 5px;">永久注销您的账号</p>
+				<h3>{{ $t('mineSub.setting.logoffTitle') }}</h3>
+				<p style="font-size: 0.8em; margin-top: 5px;">{{ $t('mineSub.setting.logoffDesc') }}</p>
 			</div>
 			<div class="setting-item" @click="goToPrivacyPolicy">
 				<div class="arrow"></div>
-				<h3>隐私政策</h3>
-				<p style="font-size: 0.8em; margin-top: 5px;">查看我们的隐私政策以保护您的个人信息</p>
+				<h3>{{ $t('mineSub.setting.privacyTitle') }}</h3>
+				<p style="font-size: 0.8em; margin-top: 5px;">{{ $t('mineSub.setting.privacyDesc') }}</p>
 			</div>
 			<div class="setting-item" @click="goToDataCollection">
 				<div class="arrow"></div>
-				<h3>信息收集说明</h3>
-				<p style="font-size: 0.8em; margin-top: 5px;">了解我们如何收集您的个人信息</p>
+				<h3>{{ $t('mineSub.setting.collectionTitle') }}</h3>
+				<p style="font-size: 0.8em; margin-top: 5px;">{{ $t('mineSub.setting.collectionDesc') }}</p>
 			</div>
 			<div class="setting-item" @click="goToThirdPartySDKs">
 				<div class="arrow"></div>
-				<h3>第三方SDK信息</h3>
-				<p style="font-size: 0.8em; margin-top: 5px;">查看我们使用的第三方SDK及其隐私政策</p>
+				<h3>{{ $t('mineSub.setting.sdkTitle') }}</h3>
+				<p style="font-size: 0.8em; margin-top: 5px;">{{ $t('mineSub.setting.sdkDesc') }}</p>
 			</div>
 
 			<div class="setting-item" @click="Chart">
 				<div class="arrow"></div>
-				<h3>历史记录</h3>
-				<p style="font-size: 0.8em; margin-top: 5px;">查询过去提交的记录</p>
+				<h3>{{ $t('mineSub.setting.historyTitle') }}</h3>
+				<p style="font-size: 0.8em; margin-top: 5px;">{{ $t('mineSub.setting.historyDesc') }}</p>
 			</div>
 
 			<div class="setting-item" style="display: flex; align-items: center; justify-content: space-between;">
-				<h3>版本</h3>
+				<h3>{{ $t('mineSub.setting.versionTitle') }}</h3>
 				<p style="font-size: 0.9em; margin-right: 5px;">v 1.0.3</p>
 			</div>
 		</div>
@@ -43,6 +43,11 @@
 			return {
 
 			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('mineSub.setting.navTitle') || '系统设置'
+			});
 		},
 		methods: {
 			goToPrivacyPolicy() {
@@ -79,8 +84,10 @@
 			Logoff() {
 				let _this = this;
 				uni.showModal({
-					title: '提示',
-					content: '您确定要注销账户吗？',
+					title: _this.$t('mineSub.setting.logoffConfirmTitle') || '提示',
+					content: _this.$t('mineSub.setting.logoffConfirmContent') || '您确定要注销账户吗？',
+					confirmText: _this.$t('common.confirm') || '确定',
+					cancelText: _this.$t('common.cancel') || '取消',
 					success: function(res) {
 						let userInfo = uni.getStorageSync('userInfo');
 						let userId = {};
@@ -90,10 +97,10 @@
 							const http = require('@/nxTemp/config/requestConfig').default;
 							http.get(`${config.baseUrl}/user/deleteUserById`, userId).then((res) => {
 								if (res.code === 200) {
-									uni.showToast({ title: '注销成功' });
+									uni.showToast({ title: _this.$t('mineSub.setting.logoffSuccess') || '注销成功' });
 									setTimeout(() => { uni.reLaunch({ url: '/pages/login/login' }); }, 700);
 								} else {
-									uni.showToast({ title: '注销失败', icon: 'error' });
+									uni.showToast({ title: _this.$t('mineSub.setting.logoffFailed') || '注销失败', icon: 'error' });
 								}
 							});
 						}

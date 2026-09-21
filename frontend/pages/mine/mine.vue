@@ -7,55 +7,55 @@
 				<view class="avatar-edit-badge"><text class="avatar-edit-icon">📷</text></view>
 			</view>
 			<div class="user-info-container">
-				<div class="greet">用户：{{ userInfo.userName || "未登录" }}</div>
+				<div class="greet">{{ $t('mine.userLabel') }}{{ userInfo.userName || $t('mine.notLoggedIn') }}</div>
 				<div class="button-container">
 					<el-button class="logoutClass" type="text" icon="el-icon-switch-button" @click="showBasicInfo"
-						v-if="hasBasicInfo">个人信息</el-button>
+						v-if="hasBasicInfo">{{ $t('mine.basicInfo') }}</el-button>
 					<el-button class="logoutClass" type="text" icon="el-icon-switch-button" @click="showBasicInfo"
-						v-else>个人信息待完善<span class="red-dot" /></el-button>
+						v-else>{{ $t('mine.infoIncomplete') }}<span class="red-dot" /></el-button>
 				</div>
 			</div>
 		</div>
 
 		<u-divider class="custom-divider" text-align="center" />
 
-		<div class="title">服务</div>
+		<div class="title">{{ $t('mine.serviceTitle') }}</div>
 		<div class="content">
 			<div @click="HealthReport" class="box hover" id="healthReport">
 				<div class="box-content">
-					<div class="box-title">健康报告</div>
+					<div class="box-title">{{ $t('mine.healthReportTitle') }}</div>
 					<div class="box-data">
-						<span>查看综合健康评估报告</span>
+						<span>{{ $t('mine.healthReportDesc') }}</span>
 					</div>
 				</div>
 			</div>
 			<div @click="Chart" class="box hover" id="chart">
 				<div class="box-content">
-					<div class="box-title">历史记录</div>
+					<div class="box-title">{{ $t('mine.historyChartTitle') }}</div>
 					<div class="box-data">
-						<span>查询过去提交的记录</span>
+						<span>{{ $t('mine.historyChartDesc') }}</span>
 					</div>
 				</div>
 			</div>
 			<div @click="Settings" class="box hover" id="setting">
 				<div class="box-content">
-					<div class="box-title">系统设置</div>
+					<div class="box-title">{{ $t('mine.settingsTitle') }}</div>
 					<div class="box-data">
-						<span>管理通知与隐私偏好</span>
+						<span>{{ $t('mine.settingsDesc') }}</span>
 					</div>
 				</div>
 			</div>
 			<div @click="Modify" class="box hover" id="modify">
 				<div class="box-content">
-					<div class="box-title">修改密码</div>
+					<div class="box-title">{{ $t('mine.modifyPwdTitle') }}</div>
 					<div class="box-data">
-						<span>修改您的登录密码</span>
+						<span>{{ $t('mine.modifyPwdDesc') }}</span>
 					</div>
 				</div>
 			</div>
 			<div @click="Logout" class="box hover" id="logout">
 				<div class="box-content">
-					<div class="box-title">退出登录</div>
+					<div class="box-title">{{ $t('mine.logout') }}</div>
 				</div>
 			</div>
 		</div>
@@ -64,18 +64,18 @@
 		<view class="avatar-modal-mask" v-if="showAvatarPicker" @click.self="showAvatarPicker = false">
 			<view class="avatar-modal">
 				<view class="avatar-modal-header">
-					<text class="avatar-modal-title">更换头像</text>
+					<text class="avatar-modal-title">{{ $t('mine.changeAvatar') }}</text>
 					<text class="avatar-modal-close" @click="showAvatarPicker = false">✕</text>
 				</view>
 
 				<!-- 上传自定义头像 -->
 				<view class="avatar-upload-btn" @click="uploadCustomAvatar">
 					<text class="avatar-upload-icon">📸</text>
-					<text class="avatar-upload-text">上传自定义头像</text>
+					<text class="avatar-upload-text">{{ $t('mine.uploadCustomAvatar') }}</text>
 				</view>
 
 				<!-- 预设头像：男性 -->
-				<text class="avatar-section-label">男性风格</text>
+				<text class="avatar-section-label">{{ $t('mine.maleStyle') }}</text>
 				<view class="avatar-preset-grid">
 					<view
 						v-for="(av, i) in maleAvatars"
@@ -90,7 +90,7 @@
 				</view>
 
 				<!-- 预设头像：女性 -->
-				<text class="avatar-section-label">女性风格</text>
+				<text class="avatar-section-label">{{ $t('mine.femaleStyle') }}</text>
 				<view class="avatar-preset-grid">
 					<view
 						v-for="(av, i) in femaleAvatars"
@@ -119,6 +119,7 @@
 	import {
 		testApi
 	} from "@/nxTemp/apis/index.js";
+	import { updateTabBarLanguage } from "@/locale/tabbar";
 
 	export default {
 		data() {
@@ -185,6 +186,10 @@
 			// 每次进入页面同步最新头像
 			const saved = uni.getStorageSync('userAvatar');
 			if (saved) this.currentAvatar = saved;
+			uni.setNavigationBarTitle({
+				title: this.$t('mine.navTitle')
+			});
+			updateTabBarLanguage(this.$i18n ? this.$i18n.currentLang : 'zh');
 		},
 
 		methods: {
@@ -201,7 +206,7 @@
 				this.currentAvatar = url;
 				this.saveAvatar(url);
 				this.showAvatarPicker = false;
-				uni.showToast({ title: '头像已更换 ✨', icon: 'none' });
+				uni.showToast({ title: this.$t('mineSub.profile.avatarChanged') || '头像已更换 ✨', icon: 'none' });
 			},
 		
 			// 保存头像到本地存储
@@ -223,7 +228,7 @@
 						this.currentAvatar = filePath;
 						this.saveAvatar(filePath);
 						this.showAvatarPicker = false;
-						uni.showToast({ title: '头像已更换 ✨', icon: 'none' });
+						uni.showToast({ title: this.$t('mineSub.profile.avatarChanged') || '头像已更换 ✨', icon: 'none' });
 					}
 				});
 			},
@@ -289,8 +294,10 @@
 			Logout() {
 				let _this = this;
 				uni.showModal({
-					title: '提示',
-					content: '您确定要退出登录吗？',
+					title: _this.$t('common.notice'),
+					content: _this.$t('mine.logoutConfirm'),
+					confirmText: _this.$t('common.confirm'),
+					cancelText: _this.$t('common.cancel'),
 					success: function(res) {
 						if (res.confirm) {
 							
@@ -308,8 +315,10 @@
 			Logoff() {
 				let _this = this;
 				uni.showModal({
-					title: '提示',
-					content: '您确定要注销账户吗？',
+					title: _this.$t('common.notice'),
+					content: _this.$t('mine.logoffConfirm'),
+					confirmText: _this.$t('common.confirm'),
+					cancelText: _this.$t('common.cancel'),
 					success: function(res) {
 						let userInfo = uni.getStorageSync('userInfo');
 						this.userInfo = userInfo;
@@ -324,7 +333,7 @@
 								console.log(this.userId)
 								if (res.code === 200) { //返回成功码200，弹窗提示，延迟转到用户主页
 									uni.showToast({
-										title: "注销成功"
+										title: _this.$t('mineSub.setting.logoffSuccess') || "注销成功"
 									});
 									setTimeout(() => {
 										uni.navigateTo({
@@ -333,7 +342,7 @@
 									}, 700);
 								} else { //返回非200，弹窗提示失败，停留在此页
 									uni.showToast({
-										title: "注销失败",
+										title: _this.$t('mineSub.setting.logoffFailed') || "注销失败",
 										icon: 'error'
 									});
 								}

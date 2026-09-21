@@ -1,10 +1,10 @@
 <template>
 	<view class="page">
 		<view class="intro-card">
-			<text class="intro-title">OCEAN 大五人格量表</text>
-			<text class="intro-text">以下问题描述您的性格特征，请根据<text style="color:#e74c3c;">真实情况</text>选择符合程度（1=非常不符合，5=非常符合）。</text>
+			<text class="intro-title">{{ $t('scales.ocean.title') }}</text>
+			<text class="intro-text">{{ $t('scales.ocean.instruction') }}</text>
 			<view class="dimension-list">
-				<text class="dim-tag" v-for="d in dimensionNames" :key="d">{{ d }}</text>
+				<text class="dim-tag" v-for="d in currentDimensionNames" :key="d">{{ d }}</text>
 			</view>
 		</view>
 
@@ -18,13 +18,13 @@
 		<view class="score-hint">
 			<view v-for="s in 5" :key="s" class="hint-item">
 				<text class="hint-score">{{ s }}</text>
-				<text class="hint-label">{{ oceanLabels[s-1] }}</text>
+				<text class="hint-label">{{ currentOceanLabels[s-1] }}</text>
 			</view>
 		</view>
 
 		<view class="form-box">
 			<view class="dim-badge" :style="{ background: getDimColor(currentPage) }">{{ getDimName(currentPage) }}</view>
-			<view class="question-label">{{ currentPage }}. {{ questions[currentPage - 1] }}</view>
+			<view class="question-label">{{ currentPage }}. {{ currentQuestions[currentPage - 1] }}</view>
 			<view class="score-row">
 				<view v-for="s in 5" :key="s" class="score-btn"
 					:class="{ selected: form['q' + currentPage] === s }"
@@ -35,9 +35,9 @@
 		</view>
 
 		<view class="nav-btns">
-			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">上一题</button>
-			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">下一题</button>
-			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">提交</button>
+			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">{{ $t('scales.common.prev') }}</button>
+			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">{{ $t('scales.common.next') }}</button>
+			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">{{ $t('scales.common.submit') }}</button>
 		</view>
 	</view>
 </template>
@@ -88,6 +88,25 @@
 				]
 			};
 		},
+		computed: {
+			currentOceanLabels() {
+				const labels = this.$t('scales.ocean.labels');
+				return (Array.isArray(labels) && labels.length === 5) ? labels : this.oceanLabels;
+			},
+			currentDimensionNames() {
+				const dims = this.$t('scales.ocean.dimensions');
+				return (Array.isArray(dims) && dims.length === 5) ? dims : this.dimensionNames;
+			},
+			currentQuestions() {
+				const q = this.$t('scales.ocean.questions');
+				return (Array.isArray(q) && q.length === 60) ? q : this.questions;
+			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('scales.ocean.title') || 'OCEAN 大五人格量表'
+			});
+		},
 		created() {
 			for (let i = 1; i <= 60; i++) {
 				this.$set(this.form, 'q' + i, null);
@@ -95,11 +114,12 @@
 		},
 		methods: {
 			getDimName(page) {
-				if (page <= 12) return '开放性 O';
-				if (page <= 24) return '尽责性 C';
-				if (page <= 36) return '外向性 E';
-				if (page <= 48) return '宜人性 A';
-				return '神经质 N';
+				const dims = this.currentDimensionNames;
+				if (page <= 12) return dims[0] || '开放性 O';
+				if (page <= 24) return dims[1] || '尽责性 C';
+				if (page <= 36) return dims[2] || '外向性 E';
+				if (page <= 48) return dims[3] || '宜人性 A';
+				return dims[4] || '神经质 N';
 			},
 			getDimColor(page) {
 				if (page <= 12) return this.dimColors[0];
@@ -124,10 +144,13 @@
 				const http = (await import('@/nxTemp/config/requestConfig')).default
 				const config = (await import('@/nxTemp/config/index.config')).default
 				const scores = this.calcDimScores();
-				const dimNames = { O: '开放性', C: '尽责性', E: '外向性', A: '宜人性', N: '神经质' };
-				let content = 'OCEAN 各维度得分（满分60）：\n';
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				const dimNames = isEn
+					? { O: 'Openness', C: 'Conscientiousness', E: 'Extraversion', A: 'Agreeableness', N: 'Neuroticism' }
+					: { O: '开放性', C: '尽责性', E: '外向性', A: '宜人性', N: '神经质' };
+				let content = isEn ? 'OCEAN Dimension Scores (max 60 each):\n' : 'OCEAN 各维度得分（满分60）：\n';
 				for (const [k, v] of Object.entries(scores)) {
-					content += `${dimNames[k]}(${k})：${v}\n`;
+					content += isEn ? `${dimNames[k]}(${k}): ${v}\n` : `${dimNames[k]}(${k})：${v}\n`;
 				}
 				const payload = { status: 2 }
 				for (let i = 1; i <= 60; i++) payload['q' + i] = this.form['q' + i] || 0
@@ -156,7 +179,7 @@
 					uni.setStorageSync('scale_history', sh);
 				} catch(e) {}
 				uni.showModal({
-					title: '提交成功',
+					title: this.$t('scales.common.submitSuccess') || '提交成功',
 					content,
 					showCancel: false,
 					success: () => { uni.navigateBack(); }

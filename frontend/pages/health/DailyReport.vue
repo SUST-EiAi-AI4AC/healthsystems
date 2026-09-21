@@ -1,6 +1,6 @@
 <template>
 	<div class="all">
-		<p class="title">请结合自身情况回答下列问题</p>
+		<p class="title">{{ $t('dailyReport.prompt') }}</p>
 
 		<div id="myFormBox" v-bind:class="{'form-box': isActive}" style="margin-top: 5px;">
 			<!-- 第一部分 -->
@@ -8,9 +8,9 @@
 			<div v-if="currentPage === 1">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="1、今天早晨醒来后，你的状态是？" prop="weakupStatus" class="weakupStatus" required>
+					<u-form-item :label="$t('dailyReport.questions')[0]" prop="weakupStatus" class="weakupStatus" required>
 						<u-radio-group placement="column" v-model="DailyReport.weakupStatus">
-							<u-radio v-for="item in weakupStatusList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in weakupStatusList" :name="item" :label="getOptionLabel('weakupStatus', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
@@ -20,154 +20,132 @@
 			<div v-if="currentPage === 2">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="2、今天是否规划了时间？" prop="timeManagement" class="timeManagement" required>
+					<u-form-item :label="$t('dailyReport.questions')[1]" prop="timeManagement" class="timeManagement" required>
 						<u-radio-group placement="column" v-model="DailyReport.timeManagement">
-							<u-radio v-for="item in timeManagementList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in timeManagementList" :name="item" :label="getOptionLabel('timeManagement', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 3">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="3、你今天是否与他人有交流？" prop="socialExpression" class="socialExpression" required>
+					<u-form-item :label="$t('dailyReport.questions')[2]" prop="socialExpression" class="socialExpression" required>
 						<u-radio-group placement="column" v-model="DailyReport.socialExpression">
-							<u-radio v-for="item in socialExpressionList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in socialExpressionList" :name="item" :label="getOptionLabel('socialExpression', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 4">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="4、你今天与他人交流的时长共计？" prop="communicateTime" class="communicateTime" required>
+					<u-form-item :label="$t('dailyReport.questions')[3]" prop="communicateTime" class="communicateTime" required>
 						<u-radio-group placement="column" v-model="DailyReport.communicateTime">
-							<u-radio v-for="item in communicateTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in communicateTimeList" :name="item" :label="getOptionLabel('communicateTime', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 5">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="5、今天的工作或学习中，你的专注度如何？" prop="studyOrWorkState" class="studyOrWorkState" required>
+					<u-form-item :label="$t('dailyReport.questions')[4]" prop="studyOrWorkState" class="studyOrWorkState" required>
 						<u-radio-group placement="column" v-model="DailyReport.studyOrWorkState">
-							<u-radio v-for="item in studyOrWorkStateList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in studyOrWorkStateList" :name="item" :label="getOptionLabel('studyOrWorkState', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 6">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="6、你今天学习或工作的时长共计？" prop="studyOrWorkTime" class="studyOrWorkTime" required>
+					<u-form-item :label="$t('dailyReport.questions')[5]" prop="studyOrWorkTime" class="studyOrWorkTime" required>
 						<u-radio-group placement="column" v-model="DailyReport.studyOrWorkTime">
-							<u-radio v-for="item in studyOrWorkTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in studyOrWorkTimeList" :name="item" :label="getOptionLabel('studyOrWorkTime', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 7">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="7、今天的空闲时间，你主要做了什么？" prop="free" class="free" required>
+					<u-form-item :label="$t('dailyReport.questions')[6]" prop="free" class="free" required>
 						<u-radio-group placement="column" v-model="DailyReport.free">
-							<u-radio v-for="item in freeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in freeList" :name="item" :label="getOptionLabel('free', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 8">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="8、在空闲时，你是否出现过下列情况？" prop="freeSymptom" class="freeSymptom" required>
+					<u-form-item :label="$t('dailyReport.questions')[7]" prop="freeSymptom" class="freeSymptom" required>
 						<u-radio-group placement="column" v-model="DailyReport.freeSymptom">
-							<u-radio v-for="item in freeSymptomList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in freeSymptomList" :name="item" :label="getOptionLabel('freeSymptom', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 9">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="9、今天玩手机的时长共计？" prop="phonePlayTime" class="phonePlayTime" required>
+					<u-form-item :label="$t('dailyReport.questions')[8]" prop="phonePlayTime" class="phonePlayTime" required>
 						<u-radio-group placement="column" v-model="DailyReport.phonePlayTime">
-							<u-radio v-for="item in phonePlayTimeList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in phonePlayTimeList" :name="item" :label="getOptionLabel('phonePlayTime', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 10">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="10、整体来看，你今天的食欲如何？" prop="dietInfo" class="dietInfo" required>
+					<u-form-item :label="$t('dailyReport.questions')[9]" prop="dietInfo" class="dietInfo" required>
 						<u-radio-group placement="column" v-model="DailyReport.dietInfo">
-							<u-radio v-for="item in appetiteList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in appetiteList" :name="item" :label="getOptionLabel('dietInfo', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 11">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="11、睡觉前通常会做些什么来放松自己？" prop="yesterdayNight" class="yesterdayNight" required>
+					<u-form-item :label="$t('dailyReport.questions')[10]" prop="yesterdayNight" class="yesterdayNight" required>
 						<u-radio-group placement="column" v-model="DailyReport.yesterdayNight">
-							<u-radio v-for="item in yesterdayNightList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in yesterdayNightList" :name="item" :label="getOptionLabel('yesterdayNight', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
 			<div v-if="currentPage === 12">
 				<u-form class="form" labelPosition="top" labelWidth='100%' ref="form" :model="DailyReport"
 					:rules="rules">
-					<u-form-item label="12、整体来看，你对今天的感受是？" prop="yesterdayEndFeel" class="yesterdayEndFeel" required>
+					<u-form-item :label="$t('dailyReport.questions')[11]" prop="yesterdayEndFeel" class="yesterdayEndFeel" required>
 						<u-radio-group placement="column" v-model="DailyReport.yesterdayEndFeel">
-							<u-radio v-for="item in yesterdayEndFeelList" :name="item" :label="item" :key="item"
+							<u-radio v-for="(item, index) in yesterdayEndFeelList" :name="item" :label="getOptionLabel('yesterdayEndFeel', index, item)" :key="item"
 								style="margin: 5rpx;"></u-radio>
 						</u-radio-group>
 					</u-form-item>
-					<!-- <button class="button" @click="prevPage">上一题</button> -->
-					<!-- <button class="button" @click="nextPage">下一题</button> -->
 				</u-form>
 			</div>
 
@@ -175,9 +153,9 @@
 
 		<div class="on-form-box"></div>
 		<div class="all-button">
-			<div v-if="currentPage !== 1"><button class="button" @click="prevPage">上一题</button></div>
-			<div v-if="currentPage !== 12"><button class="button" @click="nextPage">下一题</button></div>
-			<div v-if="currentPage === 12"><button class="button" @click="submit('form')">提交</button></div>
+			<div v-if="currentPage !== 1"><button class="button" @click="prevPage">{{ $t('dailyReport.prev') }}</button></div>
+			<div v-if="currentPage !== 12"><button class="button" @click="nextPage">{{ $t('dailyReport.next') }}</button></div>
+			<div v-if="currentPage === 12"><button class="button" @click="submit('form')">{{ $t('dailyReport.submit') }}</button></div>
 		</div>
 	</div>
 </template>
@@ -424,12 +402,20 @@
 								this.currentPage++;
 							}
 						} else {
-							uni.$u.toast('请填写该问题');
+							uni.$u.toast(this.$t('dailyReport.requiredToast') || '请填写该问题');
 						}
 					}).catch(err => {
-						uni.$u.toast('请填写该问题');
+						uni.$u.toast(this.$t('dailyReport.requiredToast') || '请填写该问题');
 					});
 				}
+			},
+
+			getOptionLabel(prop, idx, defaultVal) {
+				const list = this.$t('dailyReport.options.' + prop);
+				if (list && Array.isArray(list) && list[idx]) {
+					return list[idx];
+				}
+				return defaultVal;
 			},
 
 			prevPage() {
@@ -446,17 +432,6 @@
 			submit(formName) {
 				let _this = this;
 
-				// // 增加时间判断 —— 限制 20:00 前不能提交
-				// const now = new Date();
-				// const hours = now.getHours();
-				// if (hours < 20) {
-				// 	uni.showToast({
-				// 		title: "未到填报时间，请在晚上8点后再填写",
-				// 		icon: 'none'
-				// 	});
-				// 	return; // 阻止继续提交
-				// }
-
 				// 处理问题9的自动填写
 				if (_this.DailyReport.studyOrWorkState === _this.studyOrWorkStateList[0]) {
 					_this.DailyReport.studyOrWorkTime = "0";
@@ -470,7 +445,7 @@
 					http.post(`${config.baseUrl}/answer/add`, dataToAdd).then((res) => {
 						if (res.code === 200) {
 							uni.showToast({
-								title: "提交成功"
+								title: _this.$t('dailyReport.submitSuccess') || "提交成功"
 							});
 							setTimeout(() => {
 								uni.navigateTo({
@@ -479,13 +454,13 @@
 							}, 700);
 						} else {
 							uni.showToast({
-								title: "提交失败",
+								title: _this.$t('dailyReport.submitFailed') || "提交失败",
 								icon: 'none'
 							});
 						}
 					})
 				}).catch(err => {
-					uni.$u.toast("请填写该问题");
+					uni.$u.toast(_this.$t('dailyReport.requiredToast') || "请填写该问题");
 					if (err && err.length > 0) {
 						const query = uni.createSelectorQuery().in(this);
 						var dataTitle;
@@ -556,12 +531,17 @@
 
 						this.DailyReport = dataToShow;
 						uni.showToast({
-							title: "今日已填报"
+							title: this.$i18n && this.$i18n.currentLang === 'en' ? "Today's report already submitted" : "今日已填报"
 						});
 						this.isActive = true
 					}
 				})
 			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('dailyReport.title')
+			});
 		},
 		onLoad(parms) {
 			// 时间限制 —— 20 点前禁止进入
@@ -570,7 +550,7 @@
 			// 允许时间段：20:00–23:59 或 0:00–4:59
 			if (!(hours >= 20 || hours < 5)) {
 				uni.showToast({
-					title: '未到填报时间，请在晚上8点到次日凌晨5点之间填写',
+					title: this.$t('dailyReport.timeWarning') || '未到填报时间，请在晚上8点到次日凌晨5点之间填写',
 					icon: 'none'
 				});
 				setTimeout(() => {

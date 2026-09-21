@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<h2 class="title">您的抑郁测评报告</h2>
+		<h2 class="title">{{ $t('mineSub.response.rePhqTitle') }}</h2>
 
 		<div class="main">
 			<div class="rating center">
@@ -13,8 +13,8 @@
 				</p>
 			</div>
 			
-			<button type="primary" plain @click="jump()" style="width: 90%;">返回首页</button>
-			<button type="warning" plain @click="history()" style="margin-top: 15rpx; width: 90%;">历史记录</button>
+			<button type="primary" plain @click="jump()" style="width: 90%;">{{ $t('mineSub.response.backHome') }}</button>
+			<button type="warning" plain @click="history()" style="margin-top: 15rpx; width: 90%;">{{ $t('mineSub.response.viewHistory') }}</button>
 			
 		</div>
 	</view>
@@ -40,27 +40,27 @@
 				sds: [{
 						l: 0,
 						h: 16,
-						desc: '正常'
+						descKey: 'levelNormal'
 					},
 					{
 						l: 17,
 						h: 32,
-						desc: '轻度抑郁'
+						descKey: 'phqLevelMild'
 					},
 					{
 						l: 33,
 						h: 48,
-						desc: '中度抑郁'
+						descKey: 'phqLevelModerate'
 					},
 					{
 						l: 49,
 						h: 64,
-						desc: '中重度抑郁'
+						descKey: 'phqLevelModerateSevere'
 					},
 					{
 						l: 65,
 						h: 80,
-						desc: '重度抑郁'
+						descKey: 'phqLevelSevere'
 					}
 				],
 
@@ -102,16 +102,16 @@
 
 			getAdvice() {
 				const adviceArray = [
-					"适度放松一下自己的心态，保持心情舒畅。", // 轻度抑郁
-					"你还是原来的那个你，只是需要一段时间重整旗鼓而已。", // 中度抑郁
-					"每个人都有悲伤打不起精神的时候，只是这次特别长而已。没什么的，天总会亮的，总有一天你又会精神奕奕的。不管是低谷还是高潮是的你，都是一样美好的。", // 中重度抑郁
-					"你不会一直这样下去的，一定要振作，一切都会好起来的！" // 重度抑郁
+					this.$t('mineSub.response.phqAdvice1'), // 轻度抑郁
+					this.$t('mineSub.response.phqAdvice2'), // 中度抑郁
+					this.$t('mineSub.response.phqAdvice3'), // 中重度抑郁
+					this.$t('mineSub.response.phqAdvice4') // 重度抑郁
 				];
 
 				let dl = -1;
 				this.sds.find((v, i) => {
 					if (this.depressScore <= v.h) {
-						this.depressDesc = v.desc;
+						this.depressDesc = this.$t('mineSub.response.' + v.descKey);
 						dl = i - 1;
 						return true
 					}
@@ -119,8 +119,8 @@
 				})
 
 				if (dl == -1) {
-					this.review = "您现在各项指标都很正常，";
-					this.advice = "祝您生活愉快！"
+					this.review = this.$t('mineSub.response.reviewNormal');
+					this.advice = this.$t('mineSub.response.wishNormal')
 				} else {
 					this.review = "";
 					this.advice = adviceArray[dl]
@@ -145,6 +145,11 @@
 		},
 		onLoad(parms) {
 			this.getScore();
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('mineSub.response.rePhqTitle') || '您的抑郁测评报告'
+			});
 		},
 	}
 </script>

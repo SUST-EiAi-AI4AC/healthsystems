@@ -1,8 +1,8 @@
 <template>
 	<view class="page">
 		<view class="intro-card">
-			<text class="intro-title">IPAQ 国际体力活动量表（短卷）</text>
-			<text class="intro-text">以下问题询问您<text style="color:#e74c3c;">过去7天</text>内的体力活动情况，请如实填写各类活动的天数和时间。</text>
+			<text class="intro-title">{{ $t('scales.ipaq.title') }}</text>
+			<view class="intro-text" v-html="$t('scales.ipaq.intro')"></view>
 		</view>
 
 		<!-- 进度条 -->
@@ -16,86 +16,86 @@
 		<view class="form-box">
 			<!-- Q1 -->
 			<view v-if="currentPage === 1">
-				<view class="question-label">1. 在过去7天内，您有几天进行了<text class="highlight">剧烈体力活动</text>？<br/>（如搬重物、挖掘、有氧运动或快速骑车，每次至少10分钟）</view>
+				<view class="question-label" v-html="$t('scales.ipaq.q1')"></view>
 				<view class="option-row">
 					<view v-for="d in 8" :key="d" class="day-btn" :class="{ selected: form.q1_days === (d-1) }" @click="form.q1_days = d-1">
-						{{ d-1 }}天
+						{{ d-1 }} {{ $t('scales.ipaq.dayUnit') }}
 					</view>
 				</view>
 				<view v-if="form.q1_days > 0" class="sub-question">
-					<view class="question-label">平均每天剧烈活动多长时间？</view>
+					<view class="question-label">{{ $t('scales.ipaq.q1Sub') }}</view>
 					<div class="input-row">
-						<input type="number" class="time-input" v-model="form.q1_hours" placeholder="小时" />
-						<text class="unit">小时</text>
-						<input type="number" class="time-input" v-model="form.q1_minutes" placeholder="分钟" />
-						<text class="unit">分钟</text>
+						<input type="number" class="time-input" v-model="form.q1_hours" :placeholder="$t('scales.ipaq.hours')" />
+						<text class="unit">{{ $t('scales.ipaq.hours') }}</text>
+						<input type="number" class="time-input" v-model="form.q1_minutes" :placeholder="$t('scales.ipaq.minutes')" />
+						<text class="unit">{{ $t('scales.ipaq.minutes') }}</text>
 					</div>
 				</view>
 			</view>
 
 			<!-- Q2 -->
 			<view v-if="currentPage === 2">
-				<view class="question-label">2. 在过去7天内，您有几天进行了<text class="highlight">中等强度体力活动</text>？<br/>（如搬运轻物、普通骑车或双打网球，每次至少10分钟，不含步行）</view>
+				<view class="question-label" v-html="$t('scales.ipaq.q2')"></view>
 				<view class="option-row">
 					<view v-for="d in 8" :key="d" class="day-btn" :class="{ selected: form.q2_days === (d-1) }" @click="form.q2_days = d-1">
-						{{ d-1 }}天
+						{{ d-1 }} {{ $t('scales.ipaq.dayUnit') }}
 					</view>
 				</view>
 				<view v-if="form.q2_days > 0" class="sub-question">
-					<view class="question-label">平均每天中等强度活动多长时间？</view>
+					<view class="question-label">{{ $t('scales.ipaq.q2Sub') }}</view>
 					<div class="input-row">
-						<input type="number" class="time-input" v-model="form.q2_hours" placeholder="小时" />
-						<text class="unit">小时</text>
-						<input type="number" class="time-input" v-model="form.q2_minutes" placeholder="分钟" />
-						<text class="unit">分钟</text>
+						<input type="number" class="time-input" v-model="form.q2_hours" :placeholder="$t('scales.ipaq.hours')" />
+						<text class="unit">{{ $t('scales.ipaq.hours') }}</text>
+						<input type="number" class="time-input" v-model="form.q2_minutes" :placeholder="$t('scales.ipaq.minutes')" />
+						<text class="unit">{{ $t('scales.ipaq.minutes') }}</text>
 					</div>
 				</view>
 			</view>
 
 			<!-- Q3 -->
 			<view v-if="currentPage === 3">
-				<view class="question-label">3. 在过去7天内，您有几天<text class="highlight">步行</text>至少10分钟（包括工作、出行、休闲等）？</view>
+				<view class="question-label" v-html="$t('scales.ipaq.q3')"></view>
 				<view class="option-row">
 					<view v-for="d in 8" :key="d" class="day-btn" :class="{ selected: form.q3_days === (d-1) }" @click="form.q3_days = d-1">
-						{{ d-1 }}天
+						{{ d-1 }} {{ $t('scales.ipaq.dayUnit') }}
 					</view>
 				</view>
 				<view v-if="form.q3_days > 0" class="sub-question">
-					<view class="question-label">平均每天步行多长时间？</view>
+					<view class="question-label">{{ $t('scales.ipaq.q3Sub') }}</view>
 					<div class="input-row">
-						<input type="number" class="time-input" v-model="form.q3_hours" placeholder="小时" />
-						<text class="unit">小时</text>
-						<input type="number" class="time-input" v-model="form.q3_minutes" placeholder="分钟" />
-						<text class="unit">分钟</text>
+						<input type="number" class="time-input" v-model="form.q3_hours" :placeholder="$t('scales.ipaq.hours')" />
+						<text class="unit">{{ $t('scales.ipaq.hours') }}</text>
+						<input type="number" class="time-input" v-model="form.q3_minutes" :placeholder="$t('scales.ipaq.minutes')" />
+						<text class="unit">{{ $t('scales.ipaq.minutes') }}</text>
 					</div>
 				</view>
 			</view>
 
 			<!-- Q4 -->
 			<view v-if="currentPage === 4">
-				<view class="question-label">4. 在过去7天内，您在工作日（周一至周五）平均每天<text class="highlight">坐着</text>的时间是多少（包括在桌前、乘车、看电视等）？</view>
+				<view class="question-label" v-html="$t('scales.ipaq.q4')"></view>
 				<div class="input-row">
-					<input type="number" class="time-input" v-model="form.q4_hours" placeholder="小时" />
-					<text class="unit">小时</text>
-					<input type="number" class="time-input" v-model="form.q4_minutes" placeholder="分钟" />
-					<text class="unit">分钟</text>
+					<input type="number" class="time-input" v-model="form.q4_hours" :placeholder="$t('scales.ipaq.hours')" />
+					<text class="unit">{{ $t('scales.ipaq.hours') }}</text>
+					<input type="number" class="time-input" v-model="form.q4_minutes" :placeholder="$t('scales.ipaq.minutes')" />
+					<text class="unit">{{ $t('scales.ipaq.minutes') }}</text>
 				</div>
 			</view>
 
 			<!-- Q5 -->
 			<view v-if="currentPage === 5">
-				<view class="question-label">5. 在过去7天内，您在<text class="highlight">周末</text>平均每天坐着的时间是多少？</view>
+				<view class="question-label" v-html="$t('scales.ipaq.q5')"></view>
 				<div class="input-row">
-					<input type="number" class="time-input" v-model="form.q5_hours" placeholder="小时" />
-					<text class="unit">小时</text>
-					<input type="number" class="time-input" v-model="form.q5_minutes" placeholder="分钟" />
-					<text class="unit">分钟</text>
+					<input type="number" class="time-input" v-model="form.q5_hours" :placeholder="$t('scales.ipaq.hours')" />
+					<text class="unit">{{ $t('scales.ipaq.hours') }}</text>
+					<input type="number" class="time-input" v-model="form.q5_minutes" :placeholder="$t('scales.ipaq.minutes')" />
+					<text class="unit">{{ $t('scales.ipaq.minutes') }}</text>
 				</div>
 			</view>
 
 			<!-- Q6 -->
 			<view v-if="currentPage === 6">
-				<view class="question-label">6. 您认为自己目前的<text class="highlight">整体体力活动水平</text>如何？</view>
+				<view class="question-label" v-html="$t('scales.ipaq.q6')"></view>
 				<view class="radio-list">
 					<view v-for="item in activityLevels" :key="item.value" class="radio-item" :class="{ selected: form.q6 === item.value }" @click="form.q6 = item.value">
 						<view class="radio-dot" :class="{ active: form.q6 === item.value }"></view>
@@ -106,7 +106,7 @@
 
 			<!-- Q7 -->
 			<view v-if="currentPage === 7">
-				<view class="question-label">7. 您进行体力活动的主要<text class="highlight">阻碍因素</text>是什么？（可多选）</view>
+				<view class="question-label" v-html="$t('scales.ipaq.q7')"></view>
 				<view class="checkbox-list">
 					<view v-for="item in barriers" :key="item.value" class="checkbox-item" :class="{ selected: form.q7.includes(item.value) }" @click="toggleBarrier(item.value)">
 						<view class="checkbox-box" :class="{ checked: form.q7.includes(item.value) }">
@@ -120,9 +120,9 @@
 
 		<!-- 导航按钮 -->
 		<view class="nav-btns">
-			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">上一题</button>
-			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">下一题</button>
-			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">提交</button>
+			<button v-if="currentPage > 1" class="btn-prev" @click="prevPage">{{ $t('scales.common.prev') }}</button>
+			<button v-if="currentPage < totalPages" class="btn-next" @click="nextPage">{{ $t('scales.common.next') }}</button>
+			<button v-if="currentPage === totalPages" class="btn-submit" @click="submitForm">{{ $t('scales.common.submit') }}</button>
 		</view>
 	</view>
 </template>
@@ -141,22 +141,23 @@
 					q5_hours: '', q5_minutes: '',
 					q6: null,
 					q7: []
-				},
-				activityLevels: [
-					{ value: 1, label: '久坐不动（几乎不运动）' },
-					{ value: 2, label: '低度活跃（偶尔轻度活动）' },
-					{ value: 3, label: '中度活跃（每周3-4天中等活动）' },
-					{ value: 4, label: '高度活跃（每周5天以上剧烈活动）' }
-				],
-				barriers: [
-					{ value: 1, label: '时间不足' },
-					{ value: 2, label: '疲劳或体力不支' },
-					{ value: 3, label: '缺乏设施或场地' },
-					{ value: 4, label: '天气或环境因素' },
-					{ value: 5, label: '缺乏动力或兴趣' },
-					{ value: 6, label: '健康或伤病问题' }
-				]
+				}
 			};
+		},
+		computed: {
+			activityLevels() {
+				const raw = this.$t('scales.ipaq.activityLevels') || [];
+				return Array.isArray(raw) ? raw.map((label, idx) => ({ value: idx + 1, label })) : [];
+			},
+			barriers() {
+				const raw = this.$t('scales.ipaq.barriers') || [];
+				return Array.isArray(raw) ? raw.map((label, idx) => ({ value: idx + 1, label })) : [];
+			}
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('scales.ipaq.navTitle')
+			});
 		},
 		methods: {
 			prevPage() {
@@ -226,9 +227,18 @@
 					uni.setStorageSync('scale_history', sh);
 				} catch(e) {}
 			
+				const isEn = this.$i18n && this.$i18n.currentLang === 'en';
+				const displayLevel = isEn
+					? (totalMET >= 3000 ? 'Highly Active' : totalMET >= 600 ? 'Moderately Active' : 'Low Active')
+					: level;
+				const modalTitle = this.$t('scales.common.submitSuccess') || '提交成功';
+				const modalContent = isEn
+					? `Your Physical Activity Score: ${metScore}/100 pts\nTotal MET: ${totalMET}\nActivity Level: ${displayLevel}`
+					: `您的体力活动评分：${metScore}/100 分\n总 MET分：${totalMET}\n活动等级：${displayLevel}`;
+
 				uni.showModal({
-					title: '提交成功',
-					content: `您的体力活动评分：${metScore}/100 分\n总 MET分：${totalMET}\n活动等级：${level}`,
+					title: modalTitle,
+					content: modalContent,
 					showCancel: false,
 					success: () => { uni.navigateBack(); }
 				});

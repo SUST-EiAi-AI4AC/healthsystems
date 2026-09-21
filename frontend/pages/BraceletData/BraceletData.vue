@@ -4,15 +4,15 @@
 		<view class="update-section">
 			<button class="garmin-btn" @click="openGarminApp">
 				<text class="garmin-icon">📱</text>
-				<text class="garmin-text">打开Garmin</text>
+				<text class="garmin-text">{{ $t('bracelet.openGarmin') }}</text>
 			</button>
 			<button class="update-btn" @click="handleUpdate" :loading="isUpdating">
 				<text class="update-icon">🔄</text>
-				<text class="update-text">{{ isUpdating ? '更新中...' : '更新数据' }}</text>
+				<text class="update-text">{{ isUpdating ? $t('bracelet.updating') : $t('bracelet.updateData') }}</text>
 			</button>
 			<button class="report-btn" @click="openReport">
 				<text class="report-icon">📊</text>
-				<text class="report-text">数据报告</text>
+				<text class="report-text">{{ $t('bracelet.dataReport') }}</text>
 			</button>
 		</view>
 
@@ -22,133 +22,133 @@
 			<view class="heart-rate-card" @click="goToHeartrateHistory">
 				<view class="label-row">
 					<image class="icon-heart" src="/static/images/bracelet/xinlv.png" mode="aspectFit" />
-					<text class="data-label">昨日心率</text>
+					<text class="data-label">{{ $t('bracelet.yesterdayHeartRate') }}</text>
 				</view>
 				<div class="data-items">
-					<text class="data-value">最大心率 <span class="space"></span> <text class="value-number">
+					<text class="data-value">{{ $t('bracelet.maxHeartRate') }} <span class="space"></span> <text class="value-number">
 							{{ maxHeartRate }}
 						</text>
-						<span class="space"></span> <text v-if="maxHeartRate !== '暂无数据'"> 次/分钟</text>
+						<span class="space"></span> <text v-if="maxHeartRate !== '暂无数据' && maxHeartRate !== 'No Data'"> {{ $t('bracelet.bpmUnit') }}</text>
 					</text>
-					<text class="data-value">最小心率 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.minHeartRate') }} <span class="space"></span> <text
 							class="value-number">{{ minHeartRate }}</text>
-						<span class="space"></span> <text v-if="minHeartRate !== '暂无数据'"> 次/分钟</text>
+						<span class="space"></span> <text v-if="minHeartRate !== '暂无数据' && minHeartRate !== 'No Data'"> {{ $t('bracelet.bpmUnit') }}</text>
 					</text>
-					<text class="data-value">静息心率 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.restingHeartRate') }} <span class="space"></span> <text
 							class="value-number">{{ restingHeartRate }}</text>
-						<span class="space"></span> <text v-if="restingHeartRate !== '暂无数据'"> 次/分钟</text>
+						<span class="space"></span> <text v-if="restingHeartRate !== '暂无数据' && restingHeartRate !== 'No Data'"> {{ $t('bracelet.bpmUnit') }}</text>
 					</text>
 				</div>
-				<text class="update-date">{{ calendarDate }} 数据</text>
+				<text class="update-date">{{ calendarDate }} {{ $t('bracelet.dataSuffix') }}</text>
 			</view>
 			<!-- 昨日睡眠卡片 -->
 			<view class="sleep-card" style="margin-left: 4%" @click="goToSleepHistory">
 				<view class="label-row">
 					<image class="icon-sleep" src="/static/images/bracelet/shuimian.png" mode="aspectFit" />
-					<text class="data-label">昨日睡眠</text>
+					<text class="data-label">{{ $t('bracelet.yesterdaySleep') }}</text>
 				</view>
 				<div class="data-items">
-					<text class="data-value">睡眠得分 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.sleepScore') }} <span class="space"></span> <text
 							class="value-number">{{ sleep_score_overall }}</text>
-						<span class="space"></span> <text v-if="sleep_score_overall !== '暂无数据'"> 分</text></text>
-					<text class="data-value">持续时间 <span class="space"></span> <text
-							class="value-number">{{ sleepTimeSeconds !== null && sleepTimeSeconds !== undefined ? sleepTimeSeconds : '暂无数据' }}
+						<span class="space"></span> <text v-if="sleep_score_overall !== '暂无数据' && sleep_score_overall !== 'No Data'"> {{ $t('bracelet.scoreUnit') }}</text></text>
+					<text class="data-value">{{ $t('bracelet.sleepDuration') }} <span class="space"></span> <text
+							class="value-number">{{ sleepTimeSeconds !== null && sleepTimeSeconds !== undefined ? sleepTimeSeconds : ($t('bracelet.noData')) }}
 						</text></text>
-					<text class="data-value">清醒时间 <span class="space"></span> <text
-							class="value-number">{{ awakeSleepSeconds !== null && awakeSleepSeconds !== undefined ? awakeSleepSeconds : '暂无数据' }}
+					<text class="data-value">{{ $t('bracelet.awakeDuration') }} <span class="space"></span> <text
+							class="value-number">{{ awakeSleepSeconds !== null && awakeSleepSeconds !== undefined ? awakeSleepSeconds : ($t('bracelet.noData')) }}
 						</text></text>
-					<text class="data-value">睡眠压力 <span class="space"></span> <text
-							class="value-number">{{ avgSleepStress !== null && avgSleepStress !== undefined ? avgSleepStress : '暂无数据' }}
+					<text class="data-value">{{ $t('bracelet.sleepStress') }} <span class="space"></span> <text
+							class="value-number">{{ avgSleepStress !== null && avgSleepStress !== undefined ? avgSleepStress : ($t('bracelet.noData')) }}
 						</text></text>
 				</div>
-				<text class="update-date">{{ calendarDate }} 数据</text>
+				<text class="update-date">{{ calendarDate }} {{ $t('bracelet.dataSuffix') }}</text>
 			</view>
 			<!-- 昨日步数卡片 -->
 			<view class="steps-card" @click="goToStepsHistory">
 				<view class="label-row">
 					<image class="icon-steps" src="/static/images/bracelet/bushu.png" mode="aspectFit" />
-					<text class="data-label">昨日运动</text>
+					<text class="data-label">{{ $t('bracelet.yesterdayExercise') }}</text>
 				</view>
 				<div class="data-items">
-					<text class="data-value">运动步数 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.stepsLabel') }} <span class="space"></span> <text
 							class="value-number">{{ totalSteps }}</text>
-						<span class="space"></span> <text v-if="totalSteps !== '暂无数据'"> 步</text>
+						<span class="space"></span> <text v-if="totalSteps !== '暂无数据' && totalSteps !== 'No Data'"> {{ $t('bracelet.stepsUnit') }}</text>
 					</text>
-					<text class="data-value">行走距离 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.distanceLabel') }} <span class="space"></span> <text
 							class="value-number">{{ formattedDistance }}</text>
-						<span class="space"></span> <text v-if="totalDistance !== '暂无数据'"> 公里</text>
+						<span class="space"></span> <text v-if="totalDistance !== '暂无数据' && totalDistance !== 'No Data'"> {{ $t('bracelet.kmUnit') }}</text>
 					</text>
-					<text class="data-value">目标步数 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.stepGoalLabel') }} <span class="space"></span> <text
 							class="value-number">{{ stepGoal }}</text>
-						<span class="space"></span> <text v-if="stepGoal !== '暂无数据'"> 步</text>
+						<span class="space"></span> <text v-if="stepGoal !== '暂无数据' && stepGoal !== 'No Data'"> {{ $t('bracelet.stepsUnit') }}</text>
 					</text>
 				</div>
-				<text class="update-date">{{ calendarDate }} 数据</text>
+				<text class="update-date">{{ calendarDate }} {{ $t('bracelet.dataSuffix') }}</text>
 			</view>
 			<!-- 昨日身体电量卡片 -->
 			<view class="body-energy-card" @click="goToBodyBatteryHistory">
 				<view class="label-row">
 					<image class="icon-energy" src="/static/images/bracelet/shentidianliang.png" mode="aspectFit" />
-					<text class="data-label">昨日身体电量</text>
+					<text class="data-label">{{ $t('bracelet.yesterdayBodyBattery') }}</text>
 				</view>
 				<view class="data-items">
 					<!-- 充能项 -->
 					<view class="energy-item">
-						<text class="data-value">充能 <span class="space"></span> <text class="value-number"><template
+						<text class="data-value">{{ $t('bracelet.chargeLabel') }} <span class="space"></span> <text class="value-number"><template
 									v-if="charged !== null && charged !== undefined">+ {{ charged }}</template>
-								<template v-else>暂无数据</template></text></text>
-						<text class="energy-note">身体恢复的能量值</text>
+								<template v-else>{{ $t('bracelet.noData') }}</template></text></text>
+						<text class="energy-note">{{ $t('bracelet.chargeDesc') }}</text>
 					</view>
 
 					<!-- 耗能项 -->
 					<view class="energy-item">
-						<text class="data-value">耗能 <span class="space"></span> <text class="value-number"><template
+						<text class="data-value">{{ $t('bracelet.drainedLabel') }} <span class="space"></span> <text class="value-number"><template
 									v-if="drained !== null && drained !== undefined">- {{ drained }}</template>
-								<template v-else>暂无数据</template></text></text>
-						<text class="energy-note">身体消耗的能量值</text>
+								<template v-else>{{ $t('bracelet.noData') }}</template></text></text>
+						<text class="energy-note">{{ $t('bracelet.drainedDesc') }}</text>
 					</view>
 				</view>
-				<text class="update-date">{{ date }} 数据</text>
+				<text class="update-date">{{ date }} {{ $t('bracelet.dataSuffix') }}</text>
 			</view>
 			<!-- 昨日压力卡片 -->
 			<view class="stress-card" @click="goToStressHistory">
 				<view class="label-row">
 					<image class="icon-stress" src="/static/images/bracelet/yali.png" mode="aspectFit" />
-					<text class="data-label">昨日压力</text>
+					<text class="data-label">{{ $t('bracelet.yesterdayStress') }}</text>
 				</view>
 				<div class="data-items">
-					<text class="data-value">最大压力 <span class="space"></span> <text
-							class="value-number">{{ maxStressLevel !== null && maxStressLevel !== undefined ? maxStressLevel : '暂无数据' }}
+					<text class="data-value">{{ $t('bracelet.maxStress') }} <span class="space"></span> <text
+							class="value-number">{{ maxStressLevel !== null && maxStressLevel !== undefined ? maxStressLevel : ($t('bracelet.noData')) }}
 						</text></text>
-					<text class="data-value">平均压力 <span class="space"></span> <text
-							class="value-number">{{ avgStressLevel !== null && avgStressLevel !== undefined ? avgStressLevel : '暂无数据' }}
+					<text class="data-value">{{ $t('bracelet.avgStressLabel') }} <span class="space"></span> <text
+							class="value-number">{{ avgStressLevel !== null && avgStressLevel !== undefined ? avgStressLevel : ($t('bracelet.noData')) }}
 						</text></text>
-					<text class="tips-text">放松心情，压力是暂时的，放松是永恒的^^</text>
+					<text class="tips-text">{{ $i18n && $i18n.currentLang === 'en' ? 'Stay relaxed: stress is temporary, tranquility is forever ^^' : '放松心情，压力是暂时的，放松是永恒的^^' }}</text>
 				</div>
-				<text class="update-date">{{ calendarDate }} 数据</text>
+				<text class="update-date">{{ calendarDate }} {{ $t('bracelet.dataSuffix') }}</text>
 			</view>
 			<!-- 昨日血氧卡片 -->
 			<view class="spo2-card" @click="goToSpO2History">
 				<view class="label-row">
 					<image class="icon-spo2" src="/static/images/bracelet/xueyang.png" mode="aspectFit" />
-					<text class="data-label">昨日血氧</text>
+					<text class="data-label">{{ $t('bracelet.yesterdaySpO2') }}</text>
 				</view>
 				<div class="data-items">
-					<text class="data-value">平均SpO2 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.avgSpo2Short') }} <span class="space"></span> <text
 							class="value-number">{{ averageSpO2 }}
 						</text>
-						<span class="space"></span> <text v-if="averageSpO2 !== '暂无数据'"> %</text>
+						<span class="space"></span> <text v-if="averageSpO2 !== '暂无数据' && averageSpO2 !== 'No Data'"> %</text>
 					</text>
-					<text class="data-value">最低SpO2 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.minSpo2Short') }} <span class="space"></span> <text
 							class="value-number">{{ lowestSpO2 }}</text>
-						<span class="space"></span> <text v-if="lowestSpO2 !== '暂无数据'"> %</text>
+						<span class="space"></span> <text v-if="lowestSpO2 !== '暂无数据' && lowestSpO2 !== 'No Data'"> %</text>
 					</text>
-					<text class="data-value">睡眠期间 <span class="space"></span> <text
+					<text class="data-value">{{ $t('bracelet.sleepSpO2') }} <span class="space"></span> <text
 							class="value-number">{{ avgSleepSpO2 }}</text>
-						<span class="space"></span> <text v-if="avgSleepSpO2 !== '暂无数据'"> %</text>
+						<span class="space"></span> <text v-if="avgSleepSpO2 !== '暂无数据' && avgSleepSpO2 !== 'No Data'"> %</text>
 					</text>
 				</div>
-				<text class="update-date">{{ calendarDate }} 数据</text>
+				<text class="update-date">{{ calendarDate }} {{ $t('bracelet.dataSuffix') }}</text>
 			</view>
 		</view>
 
@@ -435,6 +435,11 @@
 				showReport: false
 
 			};
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('bracelet.navTitle') || '手环数据'
+			});
 		},
 		onLoad() {
 			this.fetchHeartRateData(); // 不再依赖 userId，获取心率数据

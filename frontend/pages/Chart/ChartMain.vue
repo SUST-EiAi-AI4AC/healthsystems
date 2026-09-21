@@ -2,18 +2,18 @@
 	<view>
 		<div class="head">
 			<div class="greet">
-				{{ userInfo.userName }}的记录
+				{{ userInfo.userName }}{{ $t('mineSub.chart.userRecords') }}
 			</div>
 			<img src="../../static/images/chart/chartmain.png"/>
 			<!-- <img url('@/static/chart/chartmain.png')/> -->
 		</div>
 
-		<div class="title">每日填报记录</div>
+		<div class="title">{{ $t('mineSub.chart.dailySectionTitle') }}</div>
 
 		<div class="content">
 			<div @click="DailyReportChart" class="box hover" id="dailyReport">
 				<div class="box-content">
-					<div class="box-title">日常状态</div>
+					<div class="box-title">{{ $t('mineSub.chart.dailyReportCard') }}</div>
 				</div>
 			</div>
 
@@ -24,24 +24,24 @@
 			</div> -->
 		</div>
 
-		<div class="title">自测量表记录</div>
+		<div class="title">{{ $t('mineSub.chart.scaleSectionTitle') }}</div>
 
 		<div class="content">
 			<div @click="PHQ9Chart" class="box hover" id="phq">
 				<div class="box-content">
-					<div class="box-title">抑郁</div>
+					<div class="box-title">{{ $t('mineSub.chart.depressionCard') }}</div>
 				</div>
 			</div>
 
 			<div @click="PSSChart" class="box hover" id="pss">
 				<div class="box-content">
-					<div class="box-title">压力</div>
+					<div class="box-title">{{ $t('mineSub.chart.stressCard') }}</div>
 				</div>
 			</div>
 
 			<div @click="SASChart" class="box hover" id="sas">
 				<div class="box-content">
-					<div class="box-title">焦虑</div>
+					<div class="box-title">{{ $t('mineSub.chart.anxietyCard') }}</div>
 				</div>
 			</div>
 		</div>
@@ -112,6 +112,11 @@
 		},
 		onLoad(parms) {
 			this.getUserName();
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.$t('mineSub.chart.navTitle') || '历史记录'
+			});
 		}
 	}
 </script>
