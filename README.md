@@ -23,7 +23,12 @@
 - **AI 心理陪伴与语音合成 (TTS)** - 内置"心晴" AI 心理助手，对接 `MiniMax-M2.5` 模型进行共情陪伴。集成 StepFun `stepaudio-2.5-tts` 模型，提供温柔贴心的女声语音（“邻家姐姐”音色）播报，支持一键音量全局静音控制与防重叠自动中断播放。
 - **HTP 房树人投射测验** - 支持房树人HTP测验，通过 AI 对绘画图像进行多维度量化分析并生成智能报告。
 - **综合健康报告** - 整合心理量表、手环生理指标、日常填报，自动生成多维度雷达图的综合健康报告。
-- **智能手环数据同步** - 基于 Garmin Connect API 与 `sync_garmin.py` 自动化脚本，全量覆盖 `activity` 数据库表 94 个指标字段（含卡路里消耗分项、心率、睡眠分期、步数、血氧、压力分布、身体能量及呼吸速率等），支持凭证 Token 长效持久化与 SSH 加密隧道通信。
+- **智能手环数据同步与可视化** - 
+  - **账号在线绑定**：支持在移动端直接弹窗绑定/解绑 Garmin Connect 平台账号与密码，凭据加密对接数据库 `user_info` 表；
+  - **实时数据拉取**：集成 Python `sync_garmin.py` 自动化服务，点击“更新数据”即可全量拉取并同步近 7 天健康数据；
+  - **全生理指标完整恢复**：彻底修复历史数据脏值导致的指标全空问题，全面覆盖心率、睡眠时长分期、运动步数、身体电量、压力等级与血氧饱和度；
+  - **全新“历史数据”可视化看板**：支持近 7/14/30 天周期自适应切换、6 大生理维度横向滚动、动态 KPI 胶囊统计、归一化趋势柱状图（带峰值高亮）与时间轴明细记录卡片。
+- **中英文多语言国际化** - 移动端首页左上角默认对齐简体中文 (`zh`)，支持与全局 TabBar 及系统文案联动的一键无缝双语切换。
 - **情绪瞬时评估 (EMA)** - 支持生态瞬时情绪评估（EMA），记录瞬时情绪变化并生成情绪分析图表。
 - **疗愈空间生态** - 集成 AI 对话、冥想音频引导、情绪日记与疗愈游戏，构建"评估-疗愈-追踪"的心理闭环。
 - **三维动态官网宣传页** - 提供专为平台设计、适配 PC 和移动端的 3D 官网宣传页 (`/welcome.html`)，包含炫酷的 3D 卡片轮播、ECharts 雷达图数据排版及平滑过渡动效，支持无缝跳转登录页。
@@ -134,7 +139,7 @@ frontend/
 │   │   ├── PSSChart.vue          # 压力历史
 │   │   └── SASChart.vue          # 焦虑历史
 │   ├── BraceletData/              # 手环数据
-│   │   ├── BraceletData.vue      # 手环数据总览
+│   │   ├── BraceletData.vue      # 手环数据总览 (Garmin账号在线绑定/解绑、一键数据同步、六大生理指标与全新多维历史数据可视化看板)
 │   │   ├── HeartRateChart.vue    # 心率历史
 │   │   ├── SleepChart.vue        # 睡眠历史
 │   │   ├── DailyStepsChart.vue   # 步数历史
@@ -404,7 +409,25 @@ database/
 | **冥想** | 引导式冥想练习 |
 | **日记** | 情绪日记记录，记录每日心情与事件 |
 
-### 5. ⌚ 智能手环数据同步模块
+### 5. ⌚ 智能手环数据同步与可视化模块
+
+#### 📱 功能亮点
+1. **Garmin 账号在线绑定与解绑**：
+   - 移动端原“打开Garmin”按钮全新升级为 **“绑定账号”**（已绑定状态显示为 **“已绑定账号”** 🔗）。
+   - 点击可呼出优雅的弹窗，支持用户输入 Garmin Connect 平台账号邮箱与密码。
+   - 凭证加密持久化保存至专属数据库（`user_info.email` 与 `user_info.garminPassword`），支持脱敏展示，同时支持一键取消解除绑定。
+2. **一键实时拉取同步**：
+   - 用户点击“更新数据”，后端服务实时调用部署于云端服务器的 `sync_garmin.py` 自动化脚本，拉取当前绑定账号最近 7 天的生理健康数据并无缝入库。
+3. **全项生理指标完整恢复**：
+   - 深入重构数据库查询与服务层逻辑，彻底排查并剔除了历史批处理全 NULL 脏数据导致的展示异常；
+   - 完美恢复**昨日心率**（最大/最小/静息心率）、**昨日睡眠**（综合得分/智能时分格式化时长如 `8小时28分`/清醒时间/睡眠压力）、**昨日运动**（步数/距离/目标步数）、**昨日身体电量**（充能/耗能）、**昨日压力**（最大/平均压力）与**昨日血氧**（平均/最低/睡眠血氧）。
+4. **全新“历史数据”交互式可视化看板**：
+   - 原“数据报告”按钮重构升级为 **“历史数据”**（📈），主界面任一健康卡片亦支持直接点击穿透查看对应维度的历史图表；
+   - **时间跨度灵活切换**：支持近 7 天、近 14 天、近 30 天的一键平滑切换；
+   - **6 大生理维度横向滚动**：🏃 步数运动、❤️ 心率、🌙 睡眠、⚡ 身体电量、🧘 压力、🩸 血氧；
+   - **多维动态 KPI 汇总胶囊**：实时计算当前周期内的日均值、峰值、达标天数、电量净储能等关键数据；
+   - **归一化趋势柱状图**：高度百分比自适应归一化展示、柱顶数值显示、自动识别最高峰值并辅以光晕高亮与交互选择；
+   - **时间轴明细卡片列表 (Timeline Cards)**：按日期倒序清晰列出历史每一天的指标记录网格与状态标签（达标/优质/平静/充盈等）。
 
 #### 支持的健康指标 (全量 94 列数据库表对齐)
 
@@ -419,16 +442,22 @@ database/
 | **身体能量** | Body Battery 充电值 (`bodyBatteryChargedValue`)、消耗值 (`bodyBatteryDrainedValue`)、全天最高/最低/最新电量值 | Garmin Connect |
 | **呼吸速率** | 平均醒来呼吸速率 (`avgWakingRespirationValue`)、最高/最低/最新呼吸频率 (`highestRespirationValue`/`lowestRespirationValue`/`latestRespirationValue`) | Garmin Connect |
 
-#### 数据同步流程
+#### 数据同步与展现流程
 
 ```
-Garmin 手环/手表 → Garmin Connect App → Garmin Cloud API (garth 认证 Session)
+前端 BraceletData.vue (绑定 Garmin 账号 / 点击更新数据)
     ↓
-Python 脚本 (sync_garmin.py) 定时拉取/自动打通 SSH 隧道
+后端 API (/garminDataProcess/bindGarmin & /updateByUserName)
+    ↓ 读取用户数据库凭据并调用
+Python 脚本 (sync_garmin.py --email --password --days 7)
     ↓
-数据解析与 94 字段全列映射 (ON DUPLICATE KEY UPDATE)
+Garmin Connect 官方云平台拉取最新生理数据与活动记录
     ↓
-MySQL 数据库 (`activity` 表存储) → Spring Boot API 查询 → 前端 ECharts 可视化图表展示
+入库 MySQL (activity, heart_rate, sleep, daily_steps, body_battery, stress, spo2)
+    ↓ 格式化处理 & 过滤清洗
+后端 HealthInfo API (/healthInfo/getCurrentDay* & /get*History)
+    ↓
+前端六大生理卡片实时更新 + 全新“历史数据”可视化看板 (柱状走势图 / KPI胶囊 / 明细卡片)
 ```
 
 ### 6. 🎭 情绪追踪模块
@@ -829,16 +858,22 @@ crontab -e
 | `/user/info` | GET | 获取用户信息 | 是 |
 | `/user/updatePassword` | POST | 修改密码 | 是 |
 
-#### 健康数据接口
+#### 健康生理数据接口 (`/healthInfo`)
 
 | 接口 | 方法 | 说明 | 认证 |
 |------|------|------|------|
-| `/health/heartrate` | GET | 获取心率数据 | 是 |
-| `/health/sleep` | GET | 获取睡眠数据 | 是 |
-| `/health/steps` | GET | 获取步数数据 | 是 |
-| `/health/spo2` | GET | 获取血氧数据 | 是 |
-| `/health/stress` | GET | 获取压力数据 | 是 |
-| `/health/bodyBattery` | GET | 获取身体能量 | 是 |
+| `/healthInfo/getCurrentDayHeartrate` | GET | 获取当日/最新心率数据（最大/最小/静息心率） | 是 |
+| `/healthInfo/getHeartrateHistory` | GET | 获取近 N 天心率历史数据列表 (参数 `period=7/14/30`) | 是 |
+| `/healthInfo/getCurrentDaySleep` | GET | 获取当日/最新睡眠数据（得分/格式化时长/清醒/压力） | 是 |
+| `/healthInfo/getSleepHistory` | GET | 获取近 N 天睡眠历史数据列表 (参数 `period=7/14/30`) | 是 |
+| `/healthInfo/getCurrentDaySteps` | GET | 获取当日/最新步数数据（总步数/行走距离/目标步数） | 是 |
+| `/healthInfo/getStepsHistory` | GET | 获取近 N 天步数历史数据列表 (参数 `period=7/14/30`) | 是 |
+| `/healthInfo/getCurrentDayBodyBattery`| GET | 获取当日/最新身体电量（充能值/耗能值） | 是 |
+| `/healthInfo/getBodyBatteryHistory` | GET | 获取近 N 天身体电量历史数据列表 (参数 `period=7/14/30`) | 是 |
+| `/healthInfo/getCurrentDayStress` | GET | 获取当日/最新压力数据（最大压力/平均压力） | 是 |
+| `/healthInfo/getStressHistory` | GET | 获取近 N 天压力历史数据列表 (参数 `period=7/14/30`) | 是 |
+| `/healthInfo/getCurrentDaySpO2` | GET | 获取当日/最新血氧数据（平均/最低/睡眠血氧） | 是 |
+| `/healthInfo/getSpO2History` | GET | 获取近 N 天血氧历史数据列表 (参数 `period=7/14/30`) | 是 |
 
 #### 量表评估接口
 
@@ -863,12 +898,16 @@ crontab -e
 | `/answer/speakAnytime` | POST | 提交随时倾诉内容 | 是 |
 | `/answer/video` | POST | 提交视频访谈 | 是 |
 
-#### Garmin 数据同步接口
+#### Garmin 账号绑定与数据同步接口 (`/garminDataProcess`)
 
 | 接口 | 方法 | 说明 | 认证 |
 |------|------|------|------|
-| `/garmin/sync` | POST | 同步 Garmin 数据 | 是 |
-| `/garmin/process` | POST | 处理 Garmin 数据 | 是 |
+| `/garminDataProcess/getBinding` | GET | 查询当前用户的 Garmin 绑定状态及脱敏邮箱 | 是 |
+| `/garminDataProcess/bindGarmin` | POST | 提交 Garmin 账号邮箱与密码完成绑定入库 | 是 |
+| `/garminDataProcess/unbindGarmin` | POST | 解除当前 Garmin 账号绑定 | 是 |
+| `/garminDataProcess/updateByUserName` | POST | 触发 Python 自动化脚本实时拉取并同步最新数据 | 是 |
+| `/garmin/sync` | POST | 传统/定时同步 Garmin 数据 | 是 |
+| `/garmin/process` | POST | 离线解析处理 Garmin 数据 | 是 |
 
 #### 医生管理接口
 
@@ -1045,6 +1084,22 @@ python3 example_modify.py
 3. SSL 证书是否有效
 4. 防火墙是否开放 1443 端口
 5. 后端 `CorsConfig.java` 跨域配置是否正确
+
+### Q4: 移动端手环数据如何绑定 Garmin 账号并拉取数据？
+
+1. 在移动端底部导航点击或进入“手环数据”页面（`BraceletData.vue`）；
+2. 点击顶部左侧 **“绑定账号”** 按钮唤起绑定对话框；
+3. 输入 Garmin Connect 官方账号（邮箱）与密码，点击 **“完成绑定”**；
+4. 绑定成功后，账号凭据将加密存入后端用户数据库并建立对接；
+5. 点击旁边的 **“更新数据”** 按钮，系统将自动调用云端 Python 数据同步流水线，拉取近 7 天健康数据；
+6. 若需更换绑定或取消授权，随时可在弹窗内点击 **“取消绑定”**。
+
+### Q5: 为什么手环数据卡片会出现 `--`？
+
+1. **未绑定账号**：请先在“绑定账号”弹窗中绑定有效的 Garmin Connect 账号并确保手环已与 Garmin Connect App 完成蓝牙同步；
+2. **数据未更新**：点击“更新数据”按钮从云端拉取最新生理数据；
+3. **脏数据过滤**：系统现已具备全 NULL 占位脏数据自动清洗与降级容错机制，若当天未佩戴手环（未产生心率、睡眠或血氧记录），系统将自动回退展示最近一次有效佩戴数据；
+4. **历史明细查看**：点击右上角 **“历史数据”** 按钮或点击任一指标卡片，可在全新可视化看板中查看以往 7/14/30 天的完整数据记录与趋势走势图。
 
 
 
