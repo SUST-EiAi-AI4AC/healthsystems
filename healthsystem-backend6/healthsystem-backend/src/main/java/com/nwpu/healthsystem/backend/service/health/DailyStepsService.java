@@ -24,7 +24,40 @@ public class DailyStepsService {
     }
 
     public DailySteps getCurrentDaySteps(String email) {
-        return dailyStepsMapper.findLatestStepsByUser(email);
+        DailySteps steps = dailyStepsMapper.findLatestStepsByUser(email);
+        if (steps != null && steps.getTotalSteps() != null && steps.getTotalSteps() > 0) {
+            return steps;
+        }
+
+        try {
+            java.util.Map<String, Object> act = dailyStepsMapper.findLatestActivitySteps(email);
+            if (act != null) {
+                DailySteps fallback = new DailySteps();
+                fallback.setEmail(email);
+                if (act.get("totalSteps") != null) {
+                    try {
+                        fallback.setTotalSteps(Integer.parseInt(act.get("totalSteps").toString()));
+                    } catch (Exception ignored) {}
+                }
+                if (act.get("totalDistance") != null) {
+                    try {
+                        fallback.setTotalDistance(Double.parseDouble(act.get("totalDistance").toString()));
+                    } catch (Exception ignored) {}
+                }
+                if (act.get("stepGoal") != null) fallback.setStepGoal(act.get("stepGoal").toString());
+                Object cd = act.get("calendarDate");
+                if (cd instanceof java.sql.Date) {
+                    fallback.setCalendarDate((java.sql.Date) cd);
+                } else if (cd instanceof java.util.Date) {
+                    fallback.setCalendarDate(new java.sql.Date(((java.util.Date) cd).getTime()));
+                }
+                return fallback;
+            }
+        } catch (Exception e) {
+            log.error("步数降级读取 activity 表异常: {}", e.getMessage());
+        }
+
+        return steps;
     }
 
     /**

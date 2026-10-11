@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import com.nwpu.healthsystem.backend.utils.JWTUtil;
+import com.nwpu.healthsystem.backend.utils.Response;
 
 @RestController
 @RequestMapping("/garminDataProcess")
@@ -61,6 +62,69 @@ public class GarminDataProcessController {
     @Autowired
     private UserInfoMapper userInfoMapper;
 
+    @GetMapping("/getBinding")
+    public Response getGarminBinding(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token == null || token.isEmpty()) {
+            return Response.fail("未登录");
+        }
+        String userName = JWTUtil.getUsername(token);
+        if (userName == null) {
+            return Response.fail("Token 无效");
+        }
+        UserInfo userInfo = userInfoMapper.findByUserName(userName);
+        if (userInfo == null) {
+            return Response.fail("用户不存在");
+        }
+        Map<String, Object> data = new HashMap<>();
+        String email = userInfo.getEmail();
+        String pwd = userInfo.getGarminPassword();
+        boolean isBound = (email != null && !email.trim().isEmpty() && pwd != null && !pwd.trim().isEmpty());
+        data.put("isBound", isBound);
+        data.put("email", email != null ? email : "");
+        data.put("hasPassword", pwd != null && !pwd.trim().isEmpty());
+        return Response.success(data);
+    }
+
+    @PostMapping("/bindGarmin")
+    public Response bindGarmin(@RequestBody Map<String, String> body, HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token == null || token.isEmpty()) {
+            return Response.fail("未登录");
+        }
+        String userName = JWTUtil.getUsername(token);
+        if (userName == null) {
+            return Response.fail("Token 无效");
+        }
+        String email = body != null ? body.get("email") : null;
+        String password = body != null ? body.get("password") : null;
+        if (password == null && body != null) {
+            password = body.get("garminPassword");
+        }
+        if (email == null || email.trim().isEmpty()) {
+            return Response.fail("Garmin 账号邮箱不能为空");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            return Response.fail("Garmin 密码不能为空");
+        }
+        userInfoMapper.updateGarminCredentials(userName, email.trim(), password.trim());
+        return Response.success("Garmin 账号绑定成功");
+    }
+
+    @PostMapping("/unbindGarmin")
+    public Response unbindGarmin(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token == null || token.isEmpty()) {
+            return Response.fail("未登录");
+        }
+        String userName = JWTUtil.getUsername(token);
+        if (userName == null) {
+            return Response.fail("Token 无效");
+        }
+        userInfoMapper.clearGarminCredentials(userName);
+        return Response.success("Garmin 账号已解除绑定");
+    }
+
     @PostMapping("/updateByUserName")
     public Map<String, Object> updateGarminDataByUserName(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
@@ -73,7 +137,6 @@ public class GarminDataProcessController {
                 return result;
             }
 
-            // 假设你使用的是 JWT，并且 user_name 存在 token 中
             String userName = JWTUtil.getUsername(token);
             if (userName == null) {
                 result.put("success", false);
@@ -92,24 +155,53 @@ public class GarminDataProcessController {
             String email = userInfo.getEmail();
             String garminPassword = userInfo.getGarminPassword();
 
-            if (email == null || garminPassword == null) {
+            if (email == null || email.trim().isEmpty() || garminPassword == null || garminPassword.trim().isEmpty()) {
                 result.put("success", false);
-                result.put("message", "用户信息不完整，缺少 email 或 garminPassword");
+                result.put("message", "请先绑定 Garmin 账号和密码");
                 return result;
             }
 
-            // 日期处理：获取昨天与最近7天的日期
+            // 优先使用 sync_garmin.py 直连数据库进行多表实时同步
+            String syncScriptPath = "/healthsystem-test/python_scripts/python-garminconnect-master/sync_garmin.py";
+            File syncScriptFile = new File(syncScriptPath);
+            if (!syncScriptFile.exists()) {
+                syncScriptFile = new File("python-garminconnect-master/sync_garmin.py");
+            }
+
+            if (syncScriptFile.exists()) {
+                List<String> syncCmd = new ArrayList<>();
+                syncCmd.add(pythonPath);
+                syncCmd.add(syncScriptFile.getAbsolutePath());
+                syncCmd.add("--email");
+                syncCmd.add(email);
+                syncCmd.add("--password");
+                syncCmd.add(garminPassword);
+                syncCmd.add("--days");
+                syncCmd.add("7");
+                syncCmd.add("--skip-tunnel");
+
+                System.out.println("[GarminSync] 执行数据同步命令：" + String.join(" ", syncCmd));
+                try {
+                    executePythonScript(syncCmd);
+                    result.put("success", true);
+                    result.put("message", "Garmin手环健康数据同步成功！");
+                    return result;
+                } catch (Exception syncErr) {
+                    System.err.println("[GarminSync] sync_garmin 执行报错: " + syncErr.getMessage());
+                    // 降级尝试 processGarminData
+                }
+            }
+
+            // 降级调用原有处理逻辑
             LocalDate endDate = LocalDate.now().minusDays(1); // 昨天
             LocalDate startDate = endDate.minusDays(6); // 最近7天（包含昨天）
 
             String startDateStr = startDate.format(formatter);
             String endDateStr = endDate.format(formatter);
 
-            // 调用已有处理逻辑
             String processResult = processGarminData(startDateStr, endDateStr, email, garminPassword);
 
-            // 根据处理结果设置返回信息
-            if (processResult.contains("成功")) {
+            if (processResult.contains("成功") || processResult.contains("完成")) {
                 result.put("success", true);
             } else {
                 result.put("success", false);

@@ -19,7 +19,32 @@ public class StressService {
     }
 
     public Stress getCurrentDayStress(String email) {
-        return stressMapper.findLatestStressByUser(email);
+        Stress st = stressMapper.findLatestStressByUser(email);
+        if (st != null && ((st.getMaxStressLevel() != null && !st.getMaxStressLevel().isEmpty() && !st.getMaxStressLevel().equalsIgnoreCase("null"))
+                || (st.getAvgStressLevel() != null && !st.getAvgStressLevel().isEmpty() && !st.getAvgStressLevel().equalsIgnoreCase("null")))) {
+            return st;
+        }
+
+        try {
+            java.util.Map<String, Object> act = stressMapper.findLatestActivityStress(email);
+            if (act != null) {
+                Stress fallback = new Stress();
+                fallback.setEmail(email);
+                if (act.get("maxStressLevel") != null) fallback.setMaxStressLevel(act.get("maxStressLevel").toString());
+                if (act.get("averageStressLevel") != null) fallback.setAvgStressLevel(act.get("averageStressLevel").toString());
+                Object cd = act.get("calendarDate");
+                if (cd instanceof java.sql.Date) {
+                    fallback.setCalendarDate((java.sql.Date) cd);
+                } else if (cd instanceof java.util.Date) {
+                    fallback.setCalendarDate(new java.sql.Date(((java.util.Date) cd).getTime()));
+                }
+                return fallback;
+            }
+        } catch (Exception e) {
+            log.error("压力降级读取 activity 表异常: {}", e.getMessage());
+        }
+
+        return st;
     }
 
     public List<Stress> getStressHistory(String email, int period) {

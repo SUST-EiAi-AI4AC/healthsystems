@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -23,6 +24,12 @@ public interface UserInfoMapper
 
     @Select("SELECT * FROM user_info WHERE user_name = #{userName}")
     UserInfo findByUserName(String userName);
+
+    @Update("UPDATE user_info SET email = #{email}, garminPassword = #{garminPassword} WHERE user_name = #{userName}")
+    int updateGarminCredentials(@Param("userName") String userName, @Param("email") String email, @Param("garminPassword") String garminPassword);
+
+    @Update("UPDATE user_info SET email = NULL, garminPassword = NULL WHERE user_name = #{userName}")
+    int clearGarminCredentials(@Param("userName") String userName);
 
     /***
      * 根据用户名获取用户信息

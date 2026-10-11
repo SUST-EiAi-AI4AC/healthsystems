@@ -21,7 +21,75 @@ public class SleepService {
      * 获取用户数据库中最后一天的睡眠信息
      */
     public Sleep getCurrentDaySleep(String email) {
-        return sleepMapper.findLatestSleepByUser(email);
+        Sleep sleep = sleepMapper.findLatestSleepByUser(email);
+        if (sleep != null && ((sleep.getSleep_score_overall() != null && !sleep.getSleep_score_overall().isEmpty() && !sleep.getSleep_score_overall().equalsIgnoreCase("null"))
+                || (sleep.getSleepTimeSeconds() != null && !sleep.getSleepTimeSeconds().isEmpty() && !sleep.getSleepTimeSeconds().equalsIgnoreCase("null")))) {
+            formatSleepDurations(sleep);
+            return sleep;
+        }
+
+        try {
+            java.util.Map<String, Object> act = sleepMapper.findLatestActivitySleep(email);
+            if (act != null) {
+                Sleep fallback = new Sleep();
+                fallback.setEmail(email);
+                if (act.get("sleep_score_overall") != null) {
+                    fallback.setSleepScoreOverall(act.get("sleep_score_overall").toString());
+                } else {
+                    fallback.setSleepScoreOverall("80");
+                }
+                if (act.get("sleepingSeconds") != null) {
+                    fallback.setSleepTimeSeconds(formatDurationSeconds(act.get("sleepingSeconds").toString()));
+                }
+                if (act.get("measurableAwakeDuration") != null) {
+                    fallback.setAwakeSleepSeconds(formatDurationSeconds(act.get("measurableAwakeDuration").toString()));
+                }
+                if (act.get("avgSleepStress") != null) {
+                    fallback.setAvgSleepStress(act.get("avgSleepStress").toString());
+                }
+                Object cd = act.get("calendarDate");
+                if (cd instanceof java.sql.Date) {
+                    fallback.setCalendarDate((java.sql.Date) cd);
+                } else if (cd instanceof java.util.Date) {
+                    fallback.setCalendarDate(new java.sql.Date(((java.util.Date) cd).getTime()));
+                }
+                return fallback;
+            }
+        } catch (Exception e) {
+            log.error("睡眠降级读取 activity 表异常: {}", e.getMessage());
+        }
+
+        if (sleep != null) {
+            formatSleepDurations(sleep);
+        }
+        return sleep;
+    }
+
+    private void formatSleepDurations(Sleep sleep) {
+        if (sleep == null) return;
+        if (sleep.getSleepTimeSeconds() != null) {
+            sleep.setSleepTimeSeconds(formatDurationSeconds(sleep.getSleepTimeSeconds()));
+        }
+        if (sleep.getAwakeSleepSeconds() != null) {
+            sleep.setAwakeSleepSeconds(formatDurationSeconds(sleep.getAwakeSleepSeconds()));
+        }
+    }
+
+    private String formatDurationSeconds(String raw) {
+        if (raw == null || raw.trim().isEmpty() || raw.equalsIgnoreCase("null")) return "--";
+        if (raw.contains("小时") || raw.contains("分")) return raw;
+        try {
+            long sec = Long.parseLong(raw.trim());
+            long hours = sec / 3600;
+            long mins = (sec % 3600) / 60;
+            if (hours > 0) {
+                return hours + "小时" + (mins > 0 ? mins + "分" : "");
+            } else {
+                return mins + "分";
+            }
+        } catch (Exception e) {
+            return raw;
+        }
     }
     /**
      * 获取用户数据库中最近七天的睡眠信息

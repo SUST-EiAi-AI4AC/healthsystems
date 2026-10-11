@@ -38,8 +38,31 @@ public class HeartrateService {
      * 获取用户数据库中最后一天的心率信息
      */
     public Heartrate getCurrentDayHeartrate(String email) {
-        // 修改为获取最后一天的数据
-        return heartrateMapper.findLatestHeartrateByUser(email);
+        Heartrate hr = heartrateMapper.findLatestHeartrateByUser(email);
+        if (hr != null && (hr.getMaxHeartRate() != null && !hr.getMaxHeartRate().isEmpty() && !hr.getMaxHeartRate().equalsIgnoreCase("null")
+                || hr.getRestingHeartRate() != null && !hr.getRestingHeartRate().isEmpty() && !hr.getRestingHeartRate().equalsIgnoreCase("null"))) {
+            return hr;
+        }
+        try {
+            java.util.Map<String, Object> act = heartrateMapper.findLatestActivityHeartrate(email);
+            if (act != null) {
+                Heartrate fallback = new Heartrate();
+                fallback.setEmail(email);
+                if (act.get("maxHeartRate") != null) fallback.setMaxHeartRate(act.get("maxHeartRate").toString());
+                if (act.get("minHeartRate") != null) fallback.setMinHeartRate(act.get("minHeartRate").toString());
+                if (act.get("restingHeartRate") != null) fallback.setRestingHeartRate(act.get("restingHeartRate").toString());
+                Object cd = act.get("calendarDate");
+                if (cd instanceof java.sql.Date) {
+                    fallback.setCalendarDate((java.sql.Date) cd);
+                } else if (cd instanceof java.util.Date) {
+                    fallback.setCalendarDate(new java.sql.Date(((java.util.Date) cd).getTime()));
+                }
+                return fallback;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return hr;
     }
     /**
      * 获取用户最近指定天数的心率历史记录

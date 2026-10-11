@@ -23,7 +23,32 @@ public class BodyBatteryService {
      * 获取当前最新的身体电量数据
      */
     public BodyBattery getCurrentDayBodyBattery(String email) {
-        return bodyBatteryMapper.findLatestBodyBatteryByUser(email);
+        BodyBattery bb = bodyBatteryMapper.findLatestBodyBatteryByUser(email);
+        if (bb != null && ((bb.getCharged() != null && !bb.getCharged().isEmpty() && !bb.getCharged().equalsIgnoreCase("null"))
+                || (bb.getDrained() != null && !bb.getDrained().isEmpty() && !bb.getDrained().equalsIgnoreCase("null")))) {
+            return bb;
+        }
+
+        try {
+            java.util.Map<String, Object> act = bodyBatteryMapper.findLatestActivityBodyBattery(email);
+            if (act != null) {
+                BodyBattery fallback = new BodyBattery();
+                fallback.setEmail(email);
+                if (act.get("bodyBatteryChargedValue") != null) fallback.setCharged(act.get("bodyBatteryChargedValue").toString());
+                if (act.get("bodyBatteryDrainedValue") != null) fallback.setDrained(act.get("bodyBatteryDrainedValue").toString());
+                Object cd = act.get("calendarDate");
+                if (cd instanceof java.sql.Date) {
+                    fallback.setDate((java.sql.Date) cd);
+                } else if (cd instanceof java.util.Date) {
+                    fallback.setDate(new java.util.Date(((java.util.Date) cd).getTime()));
+                }
+                return fallback;
+            }
+        } catch (Exception e) {
+            log.error("身体电量降级读取 activity 表异常: {}", e.getMessage());
+        }
+
+        return bb;
     }
 
     /**

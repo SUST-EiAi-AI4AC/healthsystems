@@ -10,8 +10,17 @@ import java.util.List;
 @Repository
 public interface StressMapper {
 
-    @Select("SELECT * FROM stress WHERE email = #{email} ORDER BY calendarDate DESC LIMIT 1")
+    @Select("SELECT * FROM stress WHERE email = #{email} " +
+            "AND ((maxStressLevel IS NOT NULL AND maxStressLevel != '' AND maxStressLevel != 'null') " +
+            "  OR (avgStressLevel IS NOT NULL AND avgStressLevel != '' AND avgStressLevel != 'null')) " +
+            "ORDER BY calendarDate DESC LIMIT 1")
     Stress findLatestStressByUser(String email);
+
+    @Select("SELECT maxStressLevel, averageStressLevel, calendarDate FROM activity WHERE email = #{email} " +
+            "AND ((maxStressLevel IS NOT NULL AND maxStressLevel != '' AND maxStressLevel != 'null') " +
+            "  OR (averageStressLevel IS NOT NULL AND averageStressLevel != '' AND averageStressLevel != 'null')) " +
+            "ORDER BY calendarDate DESC LIMIT 1")
+    java.util.Map<String, Object> findLatestActivityStress(String email);
 
     @Select("SELECT * FROM stress WHERE email = #{email} ORDER BY calendarDate DESC LIMIT #{period}")
     List<Stress> findRecentStressByUser(@Param("email") String email, @Param("period") int period);

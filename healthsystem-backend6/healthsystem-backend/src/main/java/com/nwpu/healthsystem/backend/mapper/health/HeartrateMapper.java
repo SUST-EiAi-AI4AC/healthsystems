@@ -13,9 +13,18 @@ public interface HeartrateMapper {
     // 这两行是实时的反应手环更新时间和数据
     @Select("SELECT * FROM heart_rate WHERE email = #{email} AND calendarDate = #{sqlDate} order by calendarDate desc")
     Heartrate findByUserAndDate(String email, Date sqlDate);
-    // 查询数据库表最后一天的心率数据
-    @Select("SELECT * FROM heart_rate WHERE email = #{email} ORDER BY calendarDate DESC LIMIT 1")
+    // 查询数据库表最后一天的心率数据（过滤空行）
+    @Select("SELECT * FROM heart_rate WHERE email = #{email} " +
+            "AND ((maxHeartRate IS NOT NULL AND maxHeartRate != '' AND maxHeartRate != 'null') " +
+            "  OR (restingHeartRate IS NOT NULL AND restingHeartRate != '' AND restingHeartRate != 'null')) " +
+            "ORDER BY calendarDate DESC LIMIT 1")
     Heartrate findLatestHeartrateByUser(String email);
+
+    @Select("SELECT maxHeartRate, minHeartRate, restingHeartRate, calendarDate FROM activity WHERE email = #{email} " +
+            "AND ((maxHeartRate IS NOT NULL AND maxHeartRate != '' AND maxHeartRate != 'null') " +
+            "  OR (restingHeartRate IS NOT NULL AND restingHeartRate != '' AND restingHeartRate != 'null')) " +
+            "ORDER BY calendarDate DESC LIMIT 1")
+    java.util.Map<String, Object> findLatestActivityHeartrate(String email);
 
     // 查询某个用户的最后一条心率数据的日期
     @Select("SELECT MAX(calendarDate) FROM heart_rate WHERE email = #{email}")

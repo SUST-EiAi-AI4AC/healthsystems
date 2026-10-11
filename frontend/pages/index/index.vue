@@ -203,6 +203,14 @@
 
 		onLoad(parms) {
 			try {
+				// 进入项目首页默认左上角切换到中文
+				if (this.$i18n && this.$i18n.currentLang !== 'zh') {
+					this.$i18n.currentLang = 'zh';
+				}
+				updateTabBarLanguage('zh');
+			} catch (e) {}
+
+			try {
 				// #ifdef APP-PLUS
 				var Color = plus.android.importClass("android.graphics.Color");
 				plus.android.importClass("android.view.Window");

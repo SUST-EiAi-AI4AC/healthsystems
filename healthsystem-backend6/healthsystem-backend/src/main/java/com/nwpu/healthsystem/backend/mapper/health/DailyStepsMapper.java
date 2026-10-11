@@ -11,8 +11,15 @@ import java.util.List;
 @Repository
 public interface DailyStepsMapper {
 
-    @Select("SELECT * FROM daily_steps WHERE email = #{email} ORDER BY calendarDate DESC LIMIT 1")
+    @Select("SELECT * FROM daily_steps WHERE email = #{email} " +
+            "AND (totalSteps IS NOT NULL AND totalSteps != '' AND totalSteps != 'null') " +
+            "ORDER BY calendarDate DESC LIMIT 1")
     DailySteps findLatestStepsByUser(String email);
+
+    @Select("SELECT totalSteps, totalDistance, stepGoal, calendarDate FROM activity WHERE email = #{email} " +
+            "AND (totalSteps IS NOT NULL AND totalSteps != '' AND totalSteps != 'null') " +
+            "ORDER BY calendarDate DESC LIMIT 1")
+    java.util.Map<String, Object> findLatestActivitySteps(String email);
 
     // 获取用户最后一天的日期（用于构造连续日期）
     @Select("SELECT calendarDate FROM daily_steps WHERE email = #{email} ORDER BY calendarDate DESC LIMIT 1")

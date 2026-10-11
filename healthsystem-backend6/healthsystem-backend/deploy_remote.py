@@ -6,7 +6,7 @@ def main():
     host = "47.109.49.174"
     username = "root"
     password = "nwpuhs@ABC123!@#"
-    local_jar = r"e:\Code\AI\Start\Web\Mindapp\healthsystem\healthsystem-backend6\healthsystem-backend\target\backend-0.0.1-SNAPSHOT.jar"
+    local_jar = r"e:\Code\AI\Start\Web\Mindapp\healthsystems\healthsystem-backend6\healthsystem-backend\target\backend-0.0.1-SNAPSHOT.jar"
     remote_path = "/healthsystem-test/backend-0.0.1-SNAPSHOT.jar"
     
     print(f"Local JAR exists? {os.path.exists(local_jar)}")
@@ -27,8 +27,16 @@ def main():
         sftp = ssh.open_sftp()
         print(f"Uploading JAR to remote path {remote_path}...")
         sftp.put(local_jar, remote_path)
+        print("Upload JAR successful!")
+
+        local_sync = r"e:\Code\AI\Start\Web\Mindapp\healthsystems\python-garminconnect-master\sync_garmin.py"
+        remote_sync = "/healthsystem-test/python_scripts/python-garminconnect-master/sync_garmin.py"
+        if os.path.exists(local_sync):
+            print(f"Uploading sync_garmin.py to remote path {remote_sync}...")
+            sftp.put(local_sync, remote_sync)
+            print("Upload sync_garmin.py successful!")
+
         sftp.close()
-        print("Upload successful!")
         
         # Kill any old processes on ports 8081 / 1443
         print("Force killing old processes on ports 8081 and 1443...")
