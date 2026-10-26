@@ -56,11 +56,12 @@
     <!--        select * from userInfo where userName=#{userName}-->
     <!--    </select>-->
 
+    <!--    role / permission 由 Service 层强制赋值（注册一律为普通用户），不采用前端传值 -->
     <insert id="insertUser">
         insert into user_info
-        (phone, user_name, password, email, garminPassword, real_name, identity_number, city, province, country, avatar, nwpu)
+        (phone, user_name, password, email, garminPassword, real_name, identity_number, city, province, country, avatar, nwpu, role, permission)
         values
-            (#{phone},#{userName},#{password},#{email},#{garminPassword},#{realName},#{identityNumber},#{city},#{province},#{country},#{avatar},#{nwpu})
+            (#{phone},#{userName},#{password},#{email},#{garminPassword},#{realName},#{identityNumber},#{city},#{province},#{country},#{avatar},#{nwpu},#{role},#{permission})
     </insert>
 
     <update id="updateUser">
@@ -112,11 +113,14 @@
 
     <select id="getUsersInfoOfDoctorByPage" resultType="com.nwpu.healthsystem.backend.common.dto.UserAllInfoDto">
         SELECT user_info.user_id, phone, user_name, email, garminPassword, real_name, identity_number, city, province, country,avatar, nwpu,
-        sex, birth_date, height, weight, depressed, remark, user_info.nwpu_id, college, grade, user_info.type, user_info.add_timestamp_mils,user_info.mod_timestamp_mils
+        sex, birth_date, height, weight, depressed, remark, user_info.nwpu_id, college, grade, user_info.type, user_info.role, user_info.permission, user_info.add_timestamp_mils,user_info.mod_timestamp_mils
         FROM user_info
         LEFT JOIN user_health_info on user_health_info.user_id = user_info.user_id
         LEFT JOIN nwpu_user_info on user_info.user_id = nwpu_user_info.user_id
         where user_health_info.doctor_id=#{doctorId}
+        <if test="role != null and role != ''">
+            AND user_info.role = #{role}
+        </if>
         <if test="userName != null and userName != ''">
             AND user_info.user_name like concat('%', #{userName} ,'%')
         </if>

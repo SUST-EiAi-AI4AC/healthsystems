@@ -38,4 +38,11 @@
         from invition_code
         where user_id = #{userId}
     </select>
+
+<!--    根据用户id 查询用户归属于哪个小组（无记录时返回 null，供没有邀请码的管理员账号使用） -->
+    <select id="getGroupIdByUserIdOrNull" resultType="java.lang.Long">
+        select group_id
+        from invition_code
+        where user_id = #{userId}
+    </select>
 </mapper>

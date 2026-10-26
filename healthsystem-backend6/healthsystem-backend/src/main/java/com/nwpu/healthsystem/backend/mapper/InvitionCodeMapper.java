@@ -21,4 +21,7 @@ public interface InvitionCodeMapper {
 
     //根据用户id 查询用户归属于哪个小组
     long getGroupIdByUserId(long userId);
+
+    //根据用户id 查询用户归属于哪个小组（无记录时返回 null，用于管理员等没有邀请码的账号）
+    Long getGroupIdByUserIdOrNull(long userId);
 }

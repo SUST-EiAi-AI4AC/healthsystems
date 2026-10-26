@@ -29,6 +29,8 @@ public class ShiroConfig {
         Map<String, String> filterRuleMap = new LinkedHashMap<>();
         filterRuleMap.put("/user/unauthorized/**", "anon");
         filterRuleMap.put("/user/login", "anon");
+        // 后台管理端登录接口（仅管理员/医生可用，内部按 user_info.role 校验）
+        filterRuleMap.put("/user/admin/login", "anon");
         filterRuleMap.put("/user/register", "anon");
         filterRuleMap.put("/doctor/register", "anon");
         filterRuleMap.put("/**", "jwt");

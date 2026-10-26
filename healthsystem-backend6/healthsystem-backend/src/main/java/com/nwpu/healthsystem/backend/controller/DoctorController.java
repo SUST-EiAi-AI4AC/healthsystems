@@ -57,8 +57,9 @@ public class DoctorController {
                                      @RequestParam(required = false) String userName,
                                      @RequestParam(required = false) String realName,
                                      @RequestParam(required = false) String sex,
-                                     @RequestParam(required = false) String phone){
-        Response usersInfoOfDoctor = doctorService.getUsersInfoOfDoctor(currentPage, pageSize, userName, realName, sex, phone);
+                                     @RequestParam(required = false) String phone,
+                                     @RequestParam(required = false) String role){
+        Response usersInfoOfDoctor = doctorService.getUsersInfoOfDoctor(currentPage, pageSize, userName, realName, sex, phone, role);
         return usersInfoOfDoctor;
     }
 

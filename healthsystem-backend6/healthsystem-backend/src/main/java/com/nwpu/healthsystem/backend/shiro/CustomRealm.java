@@ -1,5 +1,6 @@
 package com.nwpu.healthsystem.backend.shiro;
 
+import com.nwpu.healthsystem.backend.common.constant.RoleConstant;
 import com.nwpu.healthsystem.backend.entity.UserInfo;
 import com.nwpu.healthsystem.backend.mapper.UserInfoMapper;
 import com.nwpu.healthsystem.backend.utils.AccountCheckUtil;
@@ -93,7 +94,7 @@ public class CustomRealm extends AuthorizingRealm {
         //获得该用户角色
         UserInfo userInfo = userInfoMapper.getUserInfoByName(username);
 
-        String role = userInfo.getRole();
+        String role = RoleConstant.normalize(userInfo.getRole());
         //每个角色拥有默认的权限
         String rolePermission = userInfoMapper.getRolePermission(userInfo.getUserId());
         //每个用户可以设置新的权限
@@ -103,6 +104,11 @@ public class CustomRealm extends AuthorizingRealm {
         Set<String> permissionSet = new HashSet<>();
         //需要将 role, permission 封装到 Set 作为 info.setRoles(), info.setStringPermissions() 的参数
         roleSet.add(role);
+        // 管理员是医生的超集：后台管理页面大量调用 /doctor/** 下的 @RequiresRoles("doctor") 接口，
+        // 所以管理员账号需要同时具备 doctor 角色，否则后台列表等接口会鉴权失败
+        if (RoleConstant.ADMIN.equals(role)) {
+            roleSet.add(RoleConstant.DOCTOR);
+        }
         permissionSet.add(rolePermission);
         permissionSet.add(permission);
         //设置该用户拥有的角色和权限

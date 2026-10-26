@@ -38,6 +38,19 @@ public class UserController {
         return login;
     }
 
+    @ApiOperation(value = "后台管理端登录", notes = "专供后台管理页（templates/page/login.html）使用：" +
+            "仅管理员（admin）与医生（doctor）角色可登录，普通用户返回“该账号无后台管理权限”。" +
+            "App/H5 端请继续使用 /user/login，不受此限制影响")
+    @ApiResponses({
+            @ApiResponse(code=400,message="用户名/手机号或密码错误，登录失败；或该账号无后台管理权限"),
+            @ApiResponse(code=200,message = "登录成功", response = UserAllInfoDto.class)
+    })
+    @RequestMapping(value = "/admin/login", method = RequestMethod.POST)
+    public Object adminLogin(@RequestBody LoginRequestDto loginDto, HttpServletResponse response) {
+        Response login = userService.adminLogin(loginDto, response);
+        return login;
+    }
+
 
     @ApiOperation(value = "用户注册", notes = "用户注册需要确定的信息。 " +
             "要求：前端传数据变量名一定要一样，注意数据类型。\n" +

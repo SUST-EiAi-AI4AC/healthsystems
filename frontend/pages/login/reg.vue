@@ -153,6 +153,8 @@
 					userName: this.userName.trim(),
 					password: this.password,
 					inviteCode: this.inviteCode.trim(),
+					// 通过前端注册入口注册的账号一律为普通用户：后端 UserService.register
+					// 会强制写入 role=user，此处传值仅表意，不会影响最终角色
 					role: 'user',
 					permission: 'normal',
 					email: '',

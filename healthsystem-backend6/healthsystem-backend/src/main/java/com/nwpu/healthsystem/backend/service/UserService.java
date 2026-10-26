@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.nwpu.healthsystem.backend.common.constant.RoleConstant;
 import com.nwpu.healthsystem.backend.common.dto.LoginRequestDto;
 import com.nwpu.healthsystem.backend.common.dto.RegisterDoctorDto;
 import com.nwpu.healthsystem.backend.common.dto.UserAllInfoDto;
@@ -58,12 +59,32 @@ public class UserService {
     }
 
     /**
-     * 1、用户登录，包括医生和普通用户
+     * 1、用户登录，包括医生和普通用户（App/H5 端使用，不限制角色）
      *
      * @param loginRequestDto
      * @return
      */
     public Response login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        return doLogin(loginRequestDto, response, false);
+    }
+
+    /**
+     * 1.1、后台管理端登录：仅管理员（admin）与医生（doctor）可以登录
+     * 普通用户使用后台登录页时，直接返回“该账号无后台管理权限”，不生成 JWT、不写 Authorization 响应头
+     *
+     * @param loginRequestDto
+     * @return
+     */
+    public Response adminLogin(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        return doLogin(loginRequestDto, response, true);
+    }
+
+    /**
+     * 登录统一实现
+     *
+     * @param adminConsole true 表示后台管理端登录，需要校验角色；false 表示 App/H5 登录，不限制角色
+     */
+    private Response doLogin(LoginRequestDto loginRequestDto, HttpServletResponse response, boolean adminConsole) {
 
         try {
 //          先去检查是否存在用户
@@ -101,6 +122,13 @@ public class UserService {
             if(!passwordFromDB.equals(passwordRequst)) {
 //                System.out.println("密码错误");
                 return Response.fail("用户名/手机号或密码错误，登录失败");
+            }
+
+            // 后台管理端登录：只有管理员（admin）/ 医生（doctor）允许，普通用户直接拒绝
+            // 注意：必须放在生成 JWT 之前，保证拒绝时不下发任何有效后台会话
+            if (adminConsole && !RoleConstant.canAccessAdminConsole(userInfo.getRole())) {
+                log.warn("账号 {} 无后台管理权限，角色：{}", userInfo.getUserName(), userInfo.getRole());
+                return Response.fail("该账号无后台管理权限");
             }
 
 //密码验证准确, 用户验证成功
@@ -190,6 +218,10 @@ public class UserService {
             // 将 userAllInfoDto 分解
             UserInfo userInfo = new UserInfo();
             BeanUtil.copyProperties(userAllInfoDto, userInfo);
+            // 通过前端注册入口（/user/register）注册的账号一律为普通用户，
+            // 这里强制覆盖，忽略前端传入的 role，避免注册接口被用来提权
+            userInfo.setRole(RoleConstant.USER);
+            userInfo.setPermission(RoleConstant.PERMISSION_NORMAL);
             // 插入新用户
             int i2 = userInfoMapper.insertUser(userInfo);
 

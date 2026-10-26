@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.nwpu.healthsystem.backend.common.constant.RoleConstant;
 import com.nwpu.healthsystem.backend.common.dto.InvitionCodeDto;
 import com.nwpu.healthsystem.backend.common.dto.RegisterDoctorDto;
 import com.nwpu.healthsystem.backend.common.dto.UserAllInfoDto;
@@ -64,6 +65,10 @@ public class DoctorService {
             // 将 userAllInfoDto 分解
             UserInfo userInfo = new UserInfo();
             BeanUtil.copyProperties(userAllInfoDto, userInfo);
+            // 医生注册同样先按普通用户入库，随后由 updateRoleAndPermission4Doctor 提升为 doctor，
+            // 避免前端传值直接指定 role
+            userInfo.setRole(RoleConstant.USER);
+            userInfo.setPermission(RoleConstant.PERMISSION_NORMAL);
             // 插入新用户
             int i2 = userInfoMapper.insertUser(userInfo);
 
@@ -139,17 +144,20 @@ public class DoctorService {
      */
 
     public Response getUsersInfoOfDoctor(int currentPage, int pageSize,
-                                         String userName, String realName, String sex, String phone) {
+                                         String userName, String realName, String sex, String phone, String role) {
         try{
             // 步骤1：首先确定医生身份
             long doctorId = AccountCheckUtil.getUserIdFromToken();
-            long groupId = this.invitionCodeMapper.getGroupIdByUserId(doctorId);
-            doctorId = groupId;
+            // 历史普通用户提升为管理员后没有邀请码记录，此处返回 null，回退为自身 id（列表结果为空而不是报错）
+            Long groupId = this.invitionCodeMapper.getGroupIdByUserIdOrNull(doctorId);
+            if (groupId != null) {
+                doctorId = groupId;
+            }
 
             // 步骤2：业务逻辑
             PageInfo pageInfo = new PageInfo(currentPage, pageSize);
             List<UserAllInfoDto> usersInfoOfDoctorByPage = userInfoMapper.getUsersInfoOfDoctorByPage(doctorId, pageInfo,
-                    userName, realName, sex, phone);
+                    userName, realName, sex, phone, role);
 
             // 必须返回0，返回200 前端LayUi解析错误
             return Response.success(0, "操作成功",
@@ -296,6 +304,9 @@ public class DoctorService {
             // 将 userAllInfoDto 分解
             UserInfo userInfo = new UserInfo();
             BeanUtil.copyProperties(userAllInfoDto, userInfo);
+            // 医生在后台新增的用户，同样固定为普通用户
+            userInfo.setRole(RoleConstant.USER);
+            userInfo.setPermission(RoleConstant.PERMISSION_NORMAL);
             // 插入新用户
             int i2 = userInfoMapper.insertUser(userInfo);
 

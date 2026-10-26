@@ -37,6 +37,42 @@ function getUserInfo() {
     return localHealthSystem.UserInfo
 }
 
+// ===== 账号角色（user_info.role）展示规则，与后端 RoleConstant 保持一致 =====
+// 取值规则：
+//   admin  -> 管理员（可登录后台管理端）
+//   doctor -> 医生（可登录后台管理端，可使用医生端接口）
+//   其他/为空 -> 普通用户（回退，仅能使用 App/H5）
+function getRoleLabel(role) {
+    var value = (role == null ? '' : String(role)).trim().toLowerCase();
+    if (value === 'admin') {
+        return '管理员';
+    }
+    if (value === 'doctor') {
+        return '医生';
+    }
+    // 空值或未知取值统一回退为普通用户，避免列表出现空白
+    return '普通用户';
+}
+
+// 是否允许进入后台管理端：admin / doctor 允许，其余（含空值）一律拒绝
+// 与后端 RoleConstant.canAccessAdminConsole 保持一致
+function canAccessAdminConsole(role) {
+    var value = (role == null ? '' : String(role)).trim().toLowerCase();
+    return value === 'admin' || value === 'doctor';
+}
+
+// 表格/页面使用的徽章标签
+function getRoleBadge(role) {
+    var value = (role == null ? '' : String(role)).trim().toLowerCase();
+    var css = 'layui-bg-gray';
+    if (value === 'admin') {
+        css = 'layui-bg-green';
+    } else if (value === 'doctor') {
+        css = 'layui-bg-blue';
+    }
+    return '<span class="layui-badge ' + css + '" style="white-space: nowrap;">' + getRoleLabel(role) + '</span>';
+}
+
 // 从出生日期计算 年龄
 function jsGetAge(strBirthday) { //传入形式yyyy-MM-dd
     //strBirthday = util.formatTime(strBirthday);转换成yyyy-MM-dd形式

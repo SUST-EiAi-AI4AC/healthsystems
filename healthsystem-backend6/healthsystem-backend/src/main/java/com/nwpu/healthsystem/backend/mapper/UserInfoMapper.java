@@ -96,10 +96,12 @@ public interface UserInfoMapper
     /**
      * 医生端接口：返回某个医生所有用户数据
      *@param doctorId
+     *@param role 账号类型筛选（user/doctor/admin），为空则不筛选
      *@return
      */
     List<UserAllInfoDto> getUsersInfoOfDoctorByPage(@Param("doctorId")long doctorId, PageInfo pageInfo,
-                                                    String userName, String realName, String sex, String phone);
+                                                    String userName, String realName, String sex, String phone,
+                                                    @Param("role") String role);
 
     // 更新医生的角色和权限
     int updateRoleAndPermission4Doctor(long userId);
