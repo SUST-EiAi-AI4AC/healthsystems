@@ -11,7 +11,7 @@
   "menuInfo": [
       {
         "title": "用户管理",
-        "href": "page/table_user.html",
+        "href": "page/table_user.html?v=1.0.3",
         "icon": "fa fa-user",
         "target": "_self"
       },
@@ -35,7 +35,7 @@
       },
     {
       "title": "健康情况分析",
-      "href": "page/table_health.html?v=1.0.2",
+      "href": "page/table_health.html?v=1.0.3",
       "icon": "fa fa-bar-chart",
       "target": "_self"
     },
