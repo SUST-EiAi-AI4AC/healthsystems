@@ -4,7 +4,8 @@ import paramiko
 
 # 只读校验：把线上 /doctor/getuserlist 用到的新 SQL 直接在库上跑一遍，确认列名与 role 筛选可用
 PROJECT_ROOT = r"e:\Code\AI\Start\Web\Mindapp\healthsystems"
-CRED_SOURCE = os.path.join(PROJECT_ROOT, "scratch", "deploy_remote_optimized.py")
+CRED_SOURCE = os.path.join(PROJECT_ROOT, "scratch",
+                           "deploy_remote_optimized.py")
 DB = "healthsystem_test2"
 PWD = "nwpuhs@ABC123!@#"
 
@@ -35,9 +36,11 @@ def main():
     host, user, pwd = read_credentials()
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(host, username=user, password=pwd, timeout=20, banner_timeout=20)
+    ssh.connect(host, username=user, password=pwd,
+                timeout=20, banner_timeout=20)
     for sql in SQLS:
-        cmd = "mysql -uroot -p'%s' --default-character-set=utf8 %s -t -e \"%s\"" % (PWD, DB, sql)
+        cmd = "mysql -uroot -p'%s' --default-character-set=utf8 %s -t -e \"%s\"" % (
+            PWD, DB, sql)
         print("\n$ " + sql)
         stdin, stdout, stderr = ssh.exec_command(cmd, timeout=60)
         print(stdout.read().decode("utf-8", "ignore").rstrip())

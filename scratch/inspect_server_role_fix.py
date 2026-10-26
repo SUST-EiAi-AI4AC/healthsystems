@@ -5,7 +5,8 @@ import paramiko
 
 # 只读检查：确认线上后端的运行方式（nohup 还是 systemd）、jar 路径与时间、nginx 代理指向
 PROJECT_ROOT = r"e:\Code\AI\Start\Web\Mindapp\healthsystems"
-CRED_SOURCE = os.path.join(PROJECT_ROOT, "scratch", "deploy_remote_optimized.py")
+CRED_SOURCE = os.path.join(PROJECT_ROOT, "scratch",
+                           "deploy_remote_optimized.py")
 
 
 def read_credentials():
@@ -32,7 +33,8 @@ def main():
     host, user, pwd = read_credentials()
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(host, username=user, password=pwd, timeout=20, banner_timeout=20)
+    ssh.connect(host, username=user, password=pwd,
+                timeout=20, banner_timeout=20)
     for cmd in CMDS:
         print("\n$ " + cmd)
         stdin, stdout, stderr = ssh.exec_command(cmd, timeout=60)

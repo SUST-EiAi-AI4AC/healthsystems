@@ -4,7 +4,8 @@ import paramiko
 
 # 只读检查：确认当前后端进程的实际内存占用与服务器内存情况，用于判断能否交给 systemd(-Xmx512m) 托管
 PROJECT_ROOT = r"e:\Code\AI\Start\Web\Mindapp\healthsystems"
-CRED_SOURCE = os.path.join(PROJECT_ROOT, "scratch", "deploy_remote_optimized.py")
+CRED_SOURCE = os.path.join(PROJECT_ROOT, "scratch",
+                           "deploy_remote_optimized.py")
 
 
 def read_credentials():
@@ -29,7 +30,8 @@ def main():
     host, user, pwd = read_credentials()
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(host, username=user, password=pwd, timeout=20, banner_timeout=20)
+    ssh.connect(host, username=user, password=pwd,
+                timeout=20, banner_timeout=20)
     for cmd in CMDS:
         print("\n$ " + cmd)
         stdin, stdout, stderr = ssh.exec_command(cmd, timeout=60)

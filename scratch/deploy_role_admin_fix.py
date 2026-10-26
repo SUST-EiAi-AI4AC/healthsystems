@@ -18,12 +18,15 @@ import paramiko
 # =============================================================================
 
 PROJECT_ROOT = r"e:\Code\AI\Start\Web\Mindapp\healthsystems"
-BACKEND_DIR = os.path.join(PROJECT_ROOT, "healthsystem-backend6", "healthsystem-backend")
+BACKEND_DIR = os.path.join(
+    PROJECT_ROOT, "healthsystem-backend6", "healthsystem-backend")
 MIG_DIR = os.path.join(PROJECT_ROOT, "database", "migrations")
 LOCAL_JAR = os.path.join(BACKEND_DIR, "target", "backend-0.0.1-SNAPSHOT.jar")
 LOCAL_SQL_UP = os.path.join(MIG_DIR, "20261026_01_role_admin_upgrade.sql")
-LOCAL_SQL_ROLLBACK = os.path.join(MIG_DIR, "20261026_02_role_admin_rollback.sql")
-CRED_SOURCE = os.path.join(PROJECT_ROOT, "scratch", "deploy_remote_optimized.py")
+LOCAL_SQL_ROLLBACK = os.path.join(
+    MIG_DIR, "20261026_02_role_admin_rollback.sql")
+CRED_SOURCE = os.path.join(PROJECT_ROOT, "scratch",
+                           "deploy_remote_optimized.py")
 
 REMOTE_DIR = "/healthsystem-test"
 REMOTE_JAR = REMOTE_DIR + "/backend-0.0.1-SNAPSHOT.jar"
@@ -91,7 +94,8 @@ def main():
     sftp = paramiko.SFTPClient.from_transport(transport)
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(host, username=user, password=pwd, timeout=20, banner_timeout=20)
+    ssh.connect(host, username=user, password=pwd,
+                timeout=20, banner_timeout=20)
 
     # ---------- 1. 备份旧 jar，上传新 jar 与迁移脚本 ----------
     run(ssh, "mkdir -p %s %s" % (REMOTE_SQL_DIR, REMOTE_BAK_DIR))
@@ -104,22 +108,27 @@ def main():
     size = os.path.getsize(LOCAL_JAR)
     print("\n上传新 jar (%.1f MB)..." % (size / 1024.0 / 1024.0))
     sftp.put(LOCAL_JAR, REMOTE_JAR + ".new")
-    run(ssh, "mv -f %s.new %s && ls -l %s" % (REMOTE_JAR, REMOTE_JAR, REMOTE_JAR))
-    sftp.put(LOCAL_SQL_UP, REMOTE_SQL_DIR + "/" + os.path.basename(LOCAL_SQL_UP))
-    sftp.put(LOCAL_SQL_ROLLBACK, REMOTE_SQL_DIR + "/" + os.path.basename(LOCAL_SQL_ROLLBACK))
+    run(ssh, "mv -f %s.new %s && ls -l %s" %
+        (REMOTE_JAR, REMOTE_JAR, REMOTE_JAR))
+    sftp.put(LOCAL_SQL_UP, REMOTE_SQL_DIR +
+             "/" + os.path.basename(LOCAL_SQL_UP))
+    sftp.put(LOCAL_SQL_ROLLBACK, REMOTE_SQL_DIR +
+             "/" + os.path.basename(LOCAL_SQL_ROLLBACK))
 
     # ---------- 2. 停掉 systemd 死循环 + 老 nohup 进程，等待端口释放 ----------
     print("\n停止服务与残留进程...")
     run(ssh, "systemctl stop %s" % SERVICE)
     run(ssh, "pkill -f '[b]ackend-0.0.1-SNAPSHOT.jar'; sleep 3; true")
     for i in range(10):
-        code, out, _ = run(ssh, "ss -ltn | grep -E ':(8081|1443)' | wc -l", echo=False, timeout=30)
+        code, out, _ = run(
+            ssh, "ss -ltn | grep -E ':(8081|1443)' | wc -l", echo=False, timeout=30)
         if out.strip() == "0":
             print("端口已释放")
             break
         time.sleep(3)
     # 轮转 1GB 的旧日志（保留文件，不删除）
-    run(ssh, "test -f %s && mv %s %s.%s.old; true" % (REMOTE_LOG, REMOTE_LOG, REMOTE_LOG, stamp))
+    run(ssh, "test -f %s && mv %s %s.%s.old; true" %
+        (REMOTE_LOG, REMOTE_LOG, REMOTE_LOG, stamp))
 
     # ---------- 3. 用 systemd 启动新 jar ----------
     print("\n启动新后端（systemd 托管）...")
@@ -127,13 +136,16 @@ def main():
     ok, used = wait_http(ssh, 150)
     if not ok:
         print("!! 新 jar 启动失败，正在回滚到旧 jar ...")
-        run(ssh, "systemctl stop %s; pkill -f '[b]ackend-0.0.1-SNAPSHOT.jar'; sleep 3; true" % SERVICE)
-        run(ssh, "cp -a %s/backend-%s.jar %s" % (REMOTE_BAK_DIR, stamp, REMOTE_JAR))
+        run(ssh,
+            "systemctl stop %s; pkill -f '[b]ackend-0.0.1-SNAPSHOT.jar'; sleep 3; true" % SERVICE)
+        run(ssh, "cp -a %s/backend-%s.jar %s" %
+            (REMOTE_BAK_DIR, stamp, REMOTE_JAR))
         run(ssh, "systemctl start %s" % SERVICE)
         ok2, _ = wait_http(ssh, 90)
         run(ssh, "tail -n 80 " + REMOTE_LOG)
         print("回滚后服务状态: " + ("已恢复" if ok2 else "仍然失败，请人工介入"))
-        ssh.close(); transport.close()
+        ssh.close()
+        transport.close()
         sys.exit(1)
     print("新 jar 启动成功（%d 秒）" % used)
 
@@ -151,7 +163,8 @@ def main():
     if code != 0:
         print("!! 数据库备份失败，跳过迁移（未对数据库做任何修改）。可稍后手工执行 %s"
               % (REMOTE_SQL_DIR + "/" + os.path.basename(LOCAL_SQL_UP)))
-        ssh.close(); transport.close()
+        ssh.close()
+        transport.close()
         sys.exit(1)
 
     print("\n迁移前角色分布：")
@@ -161,8 +174,10 @@ def main():
     code, out, err = run(ssh, "mysql -u%s -p'%s' --default-character-set=utf8 %s < %s/%s"
                          % (DB_USER, DB_PASS, DB_NAME, REMOTE_SQL_DIR, os.path.basename(LOCAL_SQL_UP)))
     if code != 0:
-        print("!! 迁移执行失败，可用备份还原： mysql -u%s -p'***' %s < %s" % (DB_USER, DB_NAME, backup_sql))
-        ssh.close(); transport.close()
+        print("!! 迁移执行失败，可用备份还原： mysql -u%s -p'***' %s < %s" %
+              (DB_USER, DB_NAME, backup_sql))
+        ssh.close()
+        transport.close()
         sys.exit(1)
 
     print("\n迁移后核对：")
